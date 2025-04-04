@@ -1,0 +1,13 @@
+streamlit
+psycopg2-binary
+pandas
+pdfplumber
+sentence-transformers
+torch
+numpy
+matplotlib
+plotly
+dbt-postgres
+bcrypt # For password hashing
+python-jose[cryptography] # For JWT token generation
+passlib # For password hashing
