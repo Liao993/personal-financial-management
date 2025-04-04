@@ -7,50 +7,75 @@ from datetime import date
 st.set_page_config(page_title="Enter Income", page_icon="💰")
 
 def income_input_page():
-   
-    st.title("Input Your Income Here!")
+    st.markdown("<h1 style='color: orange;'>Please Input Your Income</h1>", unsafe_allow_html=True)
 
-    with st.form("income_form"):
+    if "edit_mode" not in st.session_state:
+        st.session_state["edit_mode"] = True
 
-        st.markdown("### Date")
-        income_date = st.date_input(value=date.today())
-        st.markdown("### Amount")
-        income_amount = st.number_input(min_value=0.0, format="%.2f", value=1717.85)
+    if st.session_state["edit_mode"]:
+        with st.form("income_form"):
+            st.markdown("### Date")
+            income_date = st.date_input("Date", value=date.today())
 
-        st.markdown("### Source")
-        source_options = ["Gov", "Tax Return", "Other"]
-        selected_source = st.selectbox("", source_options)
-        income_source = selected_source
+            st.markdown("### Amount")
+            income_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=1717.85)
 
-        if selected_source == "Other":
-            income_source = st.text_input("Enter Other Source")
-            if not income_source:
-                st.warning("Please enter the source not from Gov and Tax Return.")
-        else:
-            pass
-        
-        income_regular = st.checkbox("Regular Income", value=True)
+            st.markdown("### Source")
+            source_options = ["Gov", "Tax Return", "Other"]
+            selected_source = st.selectbox("Source", source_options)
+            income_source = selected_source
 
-        submitted = st.form_submit_button("Submit")
-
-        if submitted:
-            if not income_source:
-                st.error("Source cannot be empty.")
-                return
+            if selected_source == "Other":
+                income_source = st.text_input("Enter Other Source")
+                if not income_source:
+                    st.warning("Please enter the source not from Gov and Tax Return.")
             else:
-                st.text(f"Income Source: {income_source}")
-                st.text(f"Income Amount: {income_amount}")
-                st.text(f"Income Date: {income_date}")
-                st.text(f"Income Regular: {income_regular}")
+                pass
+
+            income_regular = st.checkbox("Regular Income", value=True)
+
+            review_button = st.form_submit_button("Review")
+
+        if review_button:
+            st.session_state["edit_mode"] = False
+            st.session_state["income_date"] = income_date
+            st.session_state["income_amount"] = income_amount
+            st.session_state["income_source"] = income_source
+            st.session_state["income_regular"] = income_regular
+            if selected_source == "Other":
+                st.session_state["other_source"] = income_source
+            st.rerun()
+    else:
+        st.subheader("Your Input Information:")
+        st.write(f"**Date:** {st.session_state.get('income_date', '')}")
+        st.write(f"**Amount:** {st.session_state.get('income_amount', '')}")
+        st.write(f"**Source:** {st.session_state.get('income_source', '')}")
+        st.write(f"**Regular Income:** {'Yes' if st.session_state.get('income_regular', False) else 'No'}")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            confirm_button = st.button("Confirm")
+        with col2:
+            edit_button = st.button("Edit")
+
+        if confirm_button:
+            st.info("Data sent for validation and saving...")
+            income_data = {
+                "date": st.session_state.get('income_date', ''),
+                "amount": st.session_state.get('income_amount', ''),
+                "source": st.session_state.get('income_source', ''),
+                "regular": st.session_state.get('income_regular', False),
+            }
+            st.write(income_data)
+            # Call validation and saving logic here
+
+        if edit_button:
+            st.session_state["edit_mode"] = True
+            st.rerun()
+        
 
 """
-                if submitted:
-            income_data = {
-                "date": income_date,
-                "amount": income_amount,
-                "source": income_source,
-                "regular": income_regular,
-            }
+            
 
             validation_errors = validate_income_data(income_data)
 
@@ -58,12 +83,7 @@ def income_input_page():
                 for error in validation_errors:
                     st.error(error)
             else:
-                income_model = Income(**income_data)  # Create Pydantic model
-                try:
-                    insert_income(income_model)  # Call the backend function
-                    st.success("Income data saved successfully!")
-                except Exception as e:
-                    st.error(f"An error occurred while saving data: {e}")
+                
 """
 
 if __name__ == "__main__":

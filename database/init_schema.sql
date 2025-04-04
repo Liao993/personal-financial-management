@@ -28,6 +28,7 @@ INSERT INTO income (date, amount, source) VALUES
     ('2099-01-15', 2500.00, 'Salary'),
     ('2099-02-01', 500.00, 'Freelance Work'),
     ('2099-02-28', 3000.00, 'Salary'),
+    ('2099-02-28', 70000.00, 'Salary'),
     ('2099-03-05', 100.00, 'Interest');
 
 INSERT INTO expense (date, amount, category) VALUES
