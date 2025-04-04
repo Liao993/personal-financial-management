@@ -5,7 +5,15 @@ CREATE TABLE IF NOT EXISTS income (
     id SERIAL PRIMARY KEY,
     date DATE NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    source VARCHAR(255) NOT NULL
+    source VARCHAR(255) NOT NULL,
+    regular BOOLEAN NOT NULL DEFAULT TRUE -- Use BOOLEAN here
+);
+
+-- Create the store table if it doesn't exist
+CREATE TABLE IF NOT EXISTS store (
+    id SERIAL PRIMARY KEY, -- Auto-incrementing primary key
+    store_name VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL
 );
 
 -- Example: Insert some sample income data
