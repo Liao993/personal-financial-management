@@ -46,7 +46,7 @@ def income_input_page():
             st.rerun()
     else:
         st.subheader("Your Input Information:")
-         st.write(f"**Date:** {st.session_state.get('income_date', '')} (Type: {type(st.session_state.get('income_date', ''))})")
+        st.write(f"**Date:** {st.session_state.get('income_date', '')} (Type: {type(st.session_state.get('income_date', ''))})")
         st.write(f"**Amount:** {st.session_state.get('income_amount', '')} (Type: {type(st.session_state.get('income_amount', ''))})")
         st.write(f"**Source:** {st.session_state.get('income_source', '')} (Type: {type(st.session_state.get('income_source', ''))})")
         st.write(f"**Regular Income:** {st.session_state.get('income_regular', False)} (Type: {type(st.session_state.get('income_regular', False))})")
