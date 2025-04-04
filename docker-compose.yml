@@ -32,7 +32,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: streamlit run /app/app/pages/home.py
+    command: streamlit run app/main.py
     container_name: budget_streamlit
     ports:
       - "${STREAMLIT_PORT}:8501"
