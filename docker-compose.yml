@@ -9,6 +9,7 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
+      - ./app/database/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
       - postgres_data:/var/lib/postgresql/data
     networks:
       - budget_network
@@ -22,7 +23,7 @@ services:
     ports:
       - "${PGADMIN_PORT}:80"
     volumes:
-      - pgadmin_data:/var/lib/pgadmin # Persistent storage for pgAdmi
+      - pgadmin_data:/var/lib/pgadmin # Persistent storage for pgAdmin
     depends_on:
       - db
     networks:
