@@ -1,4 +1,4 @@
-# app/models/income.py
+
 from pydantic import BaseModel # type: ignore
 from datetime import date
 

@@ -1,7 +1,6 @@
 import streamlit as st # type: ignore
 from datetime import date
-#from app.models.income import Income # type: ignore
-#from app.utils.database import get_db_connection, insert_income # type: ignore
+from utils.validation import validate_income_data
 
 st.set_page_config(page_title="Enter Income", page_icon="💰")
 
@@ -69,8 +68,15 @@ def income_input_page():
                 "source": st.session_state.get('income_source', ''),
                 "regular": st.session_state.get('income_regular', False),
             }
+            st.write("Data before validation:")
             st.write(income_data)
-            # Call validation and saving logic here
+
+            if validate_income_data(income_data):
+                st.success("Income data is valid!")
+                # Here you would call your database saving logic
+            else:
+                # The errors are already displayed in the validation function
+                pass
 
         if edit_button:
             st.session_state["edit_mode"] = True

@@ -1,5 +1,3 @@
-
-"""
 import psycopg2
 import os
 
@@ -27,4 +25,3 @@ if __name__ == "__main__":
         connection.close()
     else:
         print(f"Failed to establish connection: {connection_error}")
-"""
