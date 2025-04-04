@@ -1,6 +1,7 @@
 import streamlit as st # type: ignore
 from datetime import date
 from utils.validation import validate_income_data
+from backend.income_backend import process_income_data
 
 st.set_page_config(page_title="Enter Income", page_icon="💰")
 
@@ -23,36 +24,26 @@ def income_input_page():
             selected_source = st.selectbox("Source", source_options)
             income_source = selected_source
 
-            if selected_source == "Other":
-                income_source = st.text_input("Enter Other Source")
-                if not income_source:
-                    st.warning("Please enter the source not from Gov and Tax Return.")
-            else:
-                pass
 
             income_regular = st.checkbox("Regular Income", value=True)
 
             review_button = st.form_submit_button("Review")
 
         if review_button:
-            st.session_state["edit_mode"] = False
+            
             st.session_state["income_date"] = income_date
             st.session_state["income_amount"] = income_amount
             st.session_state["income_source"] = income_source
             st.session_state["income_regular"] = income_regular
-            if selected_source == "Other":
-                st.session_state["other_source"] = income_source
+            st.session_state["edit_mode"] = False
             st.rerun()
     else:
         st.subheader("Your Input Information:")
-        st.write(f"**Date:** {st.session_state.get('income_date', '')} (Type: {type(st.session_state.get('income_date', ''))})")
-        st.write(f"**Amount:** {st.session_state.get('income_amount', '')} (Type: {type(st.session_state.get('income_amount', ''))})")
-        st.write(f"**Source:** {st.session_state.get('income_source', '')} (Type: {type(st.session_state.get('income_source', ''))})")
-        st.write(f"**Regular Income:** {st.session_state.get('income_regular', False)} (Type: {type(st.session_state.get('income_regular', False))})")
-        #st.write(f"**Date:** {st.session_state.get('income_date', '')}")
-        #st.write(f"**Amount:** {st.session_state.get('income_amount', '')}")
-        #st.write(f"**Source:** {st.session_state.get('income_source', '')}")
-        #st.write(f"**Regular Income:** {'Yes' if st.session_state.get('income_regular', False) else 'No'}")
+       
+        st.write(f"**Date:** {st.session_state.get('income_date', '')}")
+        st.write(f"**Amount:** {st.session_state.get('income_amount', '')}")
+        st.write(f"**Source:** {st.session_state.get('income_source', '')}")
+        st.write(f"**Regular Income:** {'Yes' if st.session_state.get('income_regular', False) else 'No'}")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -72,8 +63,8 @@ def income_input_page():
             st.write(income_data)
 
             if validate_income_data(income_data):
-                st.success("Income data is valid!")
-                # Here you would call your database saving logic
+                st.info("Income data is valid, sending to backend for saving...") # Updated message
+                process_income_data(income_data)
             else:
                 # The errors are already displayed in the validation function
                 pass
