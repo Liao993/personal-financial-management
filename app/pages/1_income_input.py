@@ -1,29 +1,35 @@
 # app/pages/income_input.py
 import streamlit as st # type: ignore
 from datetime import date
-from app.models.income import Income # type: ignore
+#from app.models.income import Income # type: ignore
 #from app.utils.database import get_db_connection, insert_income # type: ignore
 
+st.set_page_config(page_title="Enter Income", page_icon="💰")
+
 def income_input_page():
-    st.set_page_config(page_title="Enter Income", page_icon="💰")
-    st.title("Income Input")
+   
+    st.title("Input Your Income Here!")
 
     with st.form("income_form"):
-        income_date = st.date_input("Date", value=date.today())
-        income_amount = st.number_input("Amount", min_value=0.0, format="%.2f")
-        
-        income_regular = st.checkbox("Regular Income", value=True)
 
-        source_options = ["Gov", "TAX Return", "Other"]
-        selected_source = st.selectbox("Source", source_options)
-        income_source = ""
+        st.markdown("### Date")
+        income_date = st.date_input(value=date.today())
+        st.markdown("### Amount")
+        income_amount = st.number_input(min_value=0.0, format="%.2f", value=1717.85)
+
+        st.markdown("### Source")
+        source_options = ["Gov", "Tax Return", "Other"]
+        selected_source = st.selectbox("", source_options)
+        income_source = selected_source
 
         if selected_source == "Other":
             income_source = st.text_input("Enter Other Source")
             if not income_source:
-                st.warning("Please enter the 'Other' source.")
+                st.warning("Please enter the source not from Gov and Tax Return.")
         else:
-            income_source = selected_source
+            pass
+        
+        income_regular = st.checkbox("Regular Income", value=True)
 
         submitted = st.form_submit_button("Submit")
 
@@ -32,11 +38,12 @@ def income_input_page():
                 st.error("Source cannot be empty.")
                 return
             else:
-                print(f"Income Source: {income_source}")
-                print(f"Income Amount: {income_amount}")
-                print(f"Income Date: {income_date}")
-                print(f"Income Regular: {income_regular}")
-                """
+                st.text(f"Income Source: {income_source}")
+                st.text(f"Income Amount: {income_amount}")
+                st.text(f"Income Date: {income_date}")
+                st.text(f"Income Regular: {income_regular}")
+
+"""
                 if submitted:
             income_data = {
                 "date": income_date,
@@ -57,7 +64,8 @@ def income_input_page():
                     st.success("Income data saved successfully!")
                 except Exception as e:
                     st.error(f"An error occurred while saving data: {e}")
-                """
+"""
 
 if __name__ == "__main__":
     income_input_page()
+

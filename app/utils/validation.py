@@ -1,6 +1,6 @@
 """
 from app.models.income import Income
-from pydantic import ValidationError
+from pydantic import ValidationError # type: ignore
 
 def validate_income_data(income_data: dict) -> list:
     errors = []
@@ -12,6 +12,5 @@ def validate_income_data(income_data: dict) -> list:
             error_message = error['msg']
             errors.append(f"Error in field '{field_name}': {error_message}")
     return errors
-
-# You can add validation functions for other models here
 """
+# You can add validation functions for other models here
