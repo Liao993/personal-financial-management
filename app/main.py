@@ -1,3 +1,9 @@
 import streamlit as st # type: ignore
 
-st.title("New Home page mina.py")
+
+def main():
+
+  st.title("This is the home page of the financial app. Let's get started!")
+
+if __name__ == "__main__":
+  main()

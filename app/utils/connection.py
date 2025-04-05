@@ -1,9 +1,9 @@
-import psycopg2
+import psycopg2 # type: ignore
 import os
+import streamlit as st # type: ignore
 
 def get_db_connection():
     conn = None
-    error = None
     try:
         conn = psycopg2.connect(
             host=os.getenv("POSTGRES_HOST"),
@@ -12,16 +12,10 @@ def get_db_connection():
             password=os.getenv("POSTGRES_PASSWORD"),
             port=os.getenv("POSTGRES_PORT"),
         )
-        print("Database connection successful.")
+        #st.info("Database connection successful.")
     except psycopg2.Error as e:
         error = f"Error connecting to the database: {e}"
-        print(error)
-    return conn, error
+        st.error(error) # Display connection error using streamlit
+    return conn
 
-# Example usage (can be removed or used for testing)
-if __name__ == "__main__":
-    connection, connection_error = get_db_connection()
-    if connection:
-        connection.close()
-    else:
-        print(f"Failed to establish connection: {connection_error}")
+

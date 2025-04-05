@@ -37,6 +37,8 @@ services:
     container_name: budget_streamlit
     ports:
       - "${STREAMLIT_PORT}:8501"
+    volumes:
+      - ./app:/app # Mount your local 'app' directory to '/app' in the container
     depends_on:
       - db
     environment:
