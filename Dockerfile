@@ -13,4 +13,4 @@ RUN pip install --upgrade pip && \
 
 COPY . /app
 
-CMD ["streamlit", "run", "app/app.py"]
+CMD ["streamlit", "run", "/app/Home.py"]
