@@ -1,14 +1,14 @@
 import streamlit as st # type: ignore
 from datetime import date
 from utils.validation import validate_income_data
-from backend.income_backend import process_income_data
+from backend.income_backend import insert_income_data
 
 st.set_page_config(page_title="Income Input", page_icon="💰")
 
 edit_mode_form = 'edit_mode_income'
 data_saved_key = 'data_saved_income'
 def income_input_page():
-    st.markdown("<h1 style='color: orange;'>Please Input Your Income</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: orange; text-align: center;'>Please Input Your Income</h1>", unsafe_allow_html=True)
 
     if edit_mode_form not in st.session_state:
         st.session_state[edit_mode_form] = True
@@ -18,13 +18,10 @@ def income_input_page():
 
     if st.session_state[edit_mode_form]:
         with st.form("income_form"):
-            st.markdown("### Date")
             income_date = st.date_input("Date", value=date.today())
 
-            st.markdown("### Amount")
             income_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=1717.85)
-
-            st.markdown("### Source")
+   
             source_options = ["Gov", "Tax Return", "Other"]
             selected_source = st.selectbox("Source", source_options)
             income_source = selected_source
@@ -69,7 +66,7 @@ def income_input_page():
                 }
 
                 if validate_income_data(income_data):
-                    process_income_data(income_data)
+                    insert_income_data(income_data)
                     st.success("Income data successfully saved!")
                     st.session_state[data_saved_key] = True
                     st.rerun() # Rerun to hide Confirm and Edit buttons
