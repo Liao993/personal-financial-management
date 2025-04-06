@@ -3,6 +3,7 @@ from datetime import date
 from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data
 from modules.input_pages.income_form import income_input_form
+from modules.input_pages.income_review import review_income_input
 st.set_page_config(page_title="Income Input", page_icon="💰")
 
 edit_mode_form = 'edit_mode_income'
@@ -11,33 +12,28 @@ review_data_key = 'review_income_data'
 
 def income_input_page():
     st.markdown("<h1 style='color: orange; text-align: center;'>Please Input Your Income</h1>", unsafe_allow_html=True)
-
+    # form shown or not
     if edit_mode_form not in st.session_state:
         st.session_state[edit_mode_form] = True
-    
+    # data saved or not
     if data_saved_key not in st.session_state:
         st.session_state[data_saved_key] = False
-    
+    # catch review data
     if review_data_key not in st.session_state:
         st.session_state[review_data_key] = {}
 
+
+    # if it is in edit mode, show the form
     if st.session_state[edit_mode_form]:
        income_input_form(edit_mode_form, review_data_key)
       
-
     else:
         if not st.session_state.get(data_saved_key, False):
             #the about condition means if data_saved_key is False or not active, then show the confirm and edit buttons
             
+            # Show input information for review
+            reviewed_data = review_income_input(review_data_key)
 
-            st.subheader("Your Input Information:")
-            reviewed_data = st.session_state.get(review_data_key, {})
-            st.write(f"**Date:** {reviewed_data.get('date', '')}")
-            st.write(f"**Amount:** {reviewed_data.get('amount', '')}")
-            st.write(f"**Source:** {reviewed_data.get('source', '')}")
-            st.write(f"**Regular Income:** {'Yes' if reviewed_data.get('regular', False) else 'No'}")
-
-        
             #Confirm and Edit buttons
             col1, col2 = st.columns(2)
             with col1:
