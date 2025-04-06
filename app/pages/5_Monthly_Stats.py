@@ -61,7 +61,7 @@ def monthly_stats_page():
 
           with right_col:
               
-              create_expense_pie_chart(monthly_expense, total_saving)
+              create_expense_pie_chart(monthly_expense, total_saving, travel_saving)
       else:
             st.warning("Please select a goal date to calculate monthly statistics.")
   else:
