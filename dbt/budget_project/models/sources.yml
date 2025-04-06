@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: public
+    database: "{{ env_var('POSTGRES_DB') }}"
+    schema: public
+    tables:
+      - name: expense
+        # Optional: Add columns and descriptions here
