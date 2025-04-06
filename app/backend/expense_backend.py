@@ -1,11 +1,9 @@
 import streamlit as st # type: ignore
 from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
+import pandas as pd # type: ignore
 
 def insert_expense_data(validated_data: dict):
-    #st.info("Received validated income data in income_backend.py:")
-    # Here you would add your logic to interact with the database
-    # using the validated_data (e.g., insert into the income table)
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -26,3 +24,30 @@ def insert_expense_data(validated_data: dict):
             conn.close()
     else:
         st.info("Database connection failed, cannot insert data.")
+
+# Get Montlhy Expenses by Summary Category
+def fetch_monthly_expenses_with_summary(year, month):
+
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+        SELECT date, amount, category, summary_category
+        FROM dbt_budget.intermediate_expenses_with_summary
+        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s;
+        """
+        try:
+            cursor.execute(query, (year, month))
+            columns = [desc[0] for desc in cursor.description]
+            df = pd.DataFrame(cursor.fetchall(), columns=columns)
+            st.table(df)
+            return df
+        except psycopg2.Error as e:
+            st.error(f"Error fetching monthly expenses with summary: {e}")
+            return pd.DataFrame()
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.error("Database connection failed, cannot fetch expense data.")
+        return pd.DataFrame()

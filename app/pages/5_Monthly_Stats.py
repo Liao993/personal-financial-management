@@ -7,6 +7,7 @@ from test.expense_data import create_expense_dataframe # type: ignore
 from modules.monthly_stats.charts.monthly_pie import create_expense_pie_chart # type: ignore
 from modules.monthly_stats.components.spending_table import display_spending_table # type: ignore
 from backend.income_backend import fetch_monthly_income # type: ignore
+from backend.expense_backend import fetch_monthly_expenses_with_summary # type: ignore
 
 st.set_page_config(page_title="Monthly Stats", page_icon="💰", layout="wide")
 
@@ -31,33 +32,26 @@ def monthly_stats_page():
           monthly_income = fetch_monthly_income(year, month)
           st.info(f"Monthly Income for {year}-{month:02d}: ${monthly_income:.2f}")
 
-          expense_data = create_expense_dataframe()
-          # Not Include traveling spending
-          monthly_expense_daily_data = expense_data[expense_data['category'] != 'traveling']
-          monthly_expense = monthly_expense_daily_data['price'].sum()
-          st.info(monthly_expense)
+          # Fetch expense data with summary_category from the database
+          expense_data_with_summary = fetch_monthly_expenses_with_summary(year, month) 
+          if not expense_data_with_summary.empty:
+            # Not Include traveling spending (using summary_category if appropriate)
+            monthly_expense_daily_data = expense_data_with_summary[expense_data_with_summary['category'] != 'Traveling'] # You might want to adjust this based on your summary categories
+            monthly_expense = monthly_expense_daily_data['amount'].sum()
+            st.info(f"Total Monthly Expense: ${monthly_expense:.2f}")
 
-          #Expense by Category
-          home_expense = monthly_expense_daily_data[monthly_expense_daily_data['category'] == 'home']['price'].sum()
-          saved_for_love_expense = monthly_expense_daily_data[monthly_expense_daily_data['category'] == 'saved for love']['price'].sum()
-          donation_and_gift_expense = monthly_expense_daily_data[monthly_expense_daily_data['category'].isin(['donation', 'gift'])]['price'].sum()
-          education_expense = monthly_expense_daily_data[monthly_expense_daily_data['category'] == 'education']['price'].sum()
-          daily_expense = monthly_expense - home_expense - saved_for_love_expense - donation_and_gift_expense - education_expense
-
-          spending_data = {
-                "Home": home_expense,
-                "Saved for Love": saved_for_love_expense,
-                "Donation & Gift": donation_and_gift_expense,
-                "Education": education_expense,
-                "Daily Expense": daily_expense
-            }
+            # Expense by Summary Category
+            spending_data_by_summary = monthly_expense_daily_data.groupby('summary_category')['amount'].sum().to_dict()
+            st.subheader("Spending by Summary Category")
+            st.write(spending_data_by_summary) # Display the raw dictionary for now
+          
             #Saving Calculation
-          total_saving = monthly_income - monthly_expense 
-          st.info(f"Total Saving: ${total_saving:.2f}")
+            total_saving = monthly_income - monthly_expense 
+            st.info(f"Total Saving: ${total_saving:.2f}")
+            travel_saving, retirement_saving, medium_term_saving = calculate_savings(
+              total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct
+            )
 
-          travel_saving, retirement_saving, medium_term_saving = calculate_savings(
-            total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct
-          )
           st.write("---")
           #Display Saving KPIs
           display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
@@ -67,7 +61,7 @@ def monthly_stats_page():
           left_col, right_col = st.columns(2)
 
           with left_col:
-              display_spending_table(spending_data, monthly_income)
+              display_spending_table(spending_data_by_summary, monthly_income)
 
           with right_col:
               
