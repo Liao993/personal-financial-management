@@ -39,8 +39,8 @@ def fetch_monthly_income(year, month):
     """
         try:
             cursor.execute(query, (year, month))
-            result = cursor.fetchall()
-
+            result = cursor.fetchone()
+            st.info(f"test {result}")
             if result and result[0] is not None:
                 return float(result[0])
             else:
