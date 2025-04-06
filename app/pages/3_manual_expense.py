@@ -78,7 +78,7 @@ def expense_input_page():
 
                 if validate_expense_data(expense_data):
                     insert_expense_data(expense_data)
-                    st.success("Expense data successfully saved!")
+                   
                     st.session_state[data_saved_key] = True
                     st.rerun() # Rerun to hide Confirm and Edit buttons
                 else:
@@ -90,6 +90,7 @@ def expense_input_page():
                 st.rerun()
 
         if st.session_state.get(data_saved_key, True):
+            st.success("Expense data successfully saved!")
             if st.button("Add More Expense"):
                 # Reset all form-related session state to default
                 st.session_state['expense_date'] = date.today()
