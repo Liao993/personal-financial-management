@@ -8,6 +8,7 @@ st.set_page_config(page_title="Expense Input", page_icon="💸")
 
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
+category_options = ["Grocery", "Food Outside", "Medicine", "Transportation", "Donation", "Education", "Saved for Love", "Home", "Traveling", "Gifts", "Clothes", "Liquar"]
 
 def expense_input_page():
     st.markdown("<h1 style='color: lightblue; text-align: center;'>Please Input Your Expense</h1>", unsafe_allow_html=True)
@@ -30,7 +31,7 @@ def expense_input_page():
             expense_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=100.00)
 
 
-            category_options = ["Grocery", "Food Outside", "Medicine", "Transportation", "Donation", "Education", "Saved for Love", "Home", "Traveling", "Gifts", "Clothes", "Liquar"]
+            
             selected_category = st.selectbox("Category", category_options)
             expense_category = selected_category
 
