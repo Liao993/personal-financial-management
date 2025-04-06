@@ -26,3 +26,32 @@ def insert_income_data(validated_data: dict):
             conn.close()
     else:
         st.info("Database connection failed, cannot insert data.")
+
+def fetch_monthly_income(year, month):
+    # Here you would add your logic to retrieve data from the database
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+        SELECT SUM(amount)
+        FROM income
+        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s;
+    """
+        try:
+            cursor.execute(query, (year, month))
+            result = cursor.fetchall()
+
+            if result and result[0] is not None:
+                return float(result[0])
+            else:
+                return 0.0
+            
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving income data: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return []
