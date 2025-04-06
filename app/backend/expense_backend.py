@@ -40,7 +40,6 @@ def fetch_monthly_expenses_with_summary(year, month):
             cursor.execute(query, (year, month))
             columns = [desc[0] for desc in cursor.description]
             df = pd.DataFrame(cursor.fetchall(), columns=columns)
-            st.table(df)
             return df
         except psycopg2.Error as e:
             st.error(f"Error fetching monthly expenses with summary: {e}")

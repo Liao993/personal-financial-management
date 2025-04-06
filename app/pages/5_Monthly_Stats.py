@@ -30,24 +30,20 @@ def monthly_stats_page():
           year = goal_date.year
           month = goal_date.month
           monthly_income = fetch_monthly_income(year, month)
-          st.info(f"Monthly Income for {year}-{month:02d}: ${monthly_income:.2f}")
+     
 
           # Fetch expense data with summary_category from the database
           expense_data_with_summary = fetch_monthly_expenses_with_summary(year, month) 
           if not expense_data_with_summary.empty:
             # Not Include traveling spending (using summary_category if appropriate)
             monthly_expense_daily_data = expense_data_with_summary[expense_data_with_summary['category'] != 'Traveling'] # You might want to adjust this based on your summary categories
-            monthly_expense = monthly_expense_daily_data['amount'].sum()
-            st.info(f"Total Monthly Expense: ${monthly_expense:.2f}")
+            monthly_expense = monthly_expense_daily_data['amount'].astype(float).sum()
+       
 
-            # Expense by Summary Category
-            spending_data_by_summary = monthly_expense_daily_data.groupby('summary_category')['amount'].sum().to_dict()
-            st.subheader("Spending by Summary Category")
-            st.write(spending_data_by_summary) # Display the raw dictionary for now
           
             #Saving Calculation
-            total_saving = monthly_income - monthly_expense 
-            st.info(f"Total Saving: ${total_saving:.2f}")
+            total_saving = monthly_income - monthly_expense
+         
             travel_saving, retirement_saving, medium_term_saving = calculate_savings(
               total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct
             )
@@ -61,7 +57,7 @@ def monthly_stats_page():
           left_col, right_col = st.columns(2)
 
           with left_col:
-              display_spending_table(spending_data_by_summary, monthly_income)
+              display_spending_table(monthly_expense_daily_data, monthly_income)
 
           with right_col:
               

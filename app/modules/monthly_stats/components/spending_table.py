@@ -1,19 +1,24 @@
-import streamlit as st
+import streamlit as st # type: ignore
 import pandas as pd
-from utils.calculation.incomeDistribution import calculate_spending_percentages # type: ignore
 
-def display_spending_table(spending_data, monthly_income):
-    """Displays the spending breakdown table."""
-    st.markdown("<h3 style='text-align: center;'>Spending Breakdown</h3>", unsafe_allow_html=True)
-    spending_percentages = calculate_spending_percentages(spending_data, monthly_income)
+def display_spending_table(monthly_expense_daily_data, monthly_income):
+    # Expense by Summary Category
+    spending_by_summary = monthly_expense_daily_data.groupby('summary_category')['amount'].sum().reset_index()
+    spending_by_summary.rename(columns={'summary_category': 'Summary Category', 'amount': 'Amount'}, inplace=True)
+    spending_by_summary['Amount'] = spending_by_summary['Amount'].astype(float)
 
-    spending_table_data = []
-    for category, amount in spending_data.items():
-        spending_table_data.append({
-            "Category": category,
-            "Amount": f"${amount:.2f}",
-            "Percentage (of Income)": f"{spending_percentages.get(category, 0.0):.2f}%"
-        })
+    # Calculate Total Expense
+    total_expense = spending_by_summary['Amount'].sum()
 
-    spending_df = pd.DataFrame(spending_table_data)
-    st.table(spending_df)
+    st.markdown(f"<h3 style='text-align: center;'>Spending Breakdown - Total Expense: <span style='color: #8B0000; font-size: 28px; font-weight: bold;'>${total_expense:.2f}</span></h3>", unsafe_allow_html=True)
+    st.write("")
+    if monthly_income > 0:
+        spending_by_summary['Percentage (of Income)'] = (spending_by_summary['Amount'] / monthly_income) * 100
+        spending_by_summary['Percentage (of Income)'] = spending_by_summary['Percentage (of Income)'].map('{:.2f}%'.format)
+    else:
+        spending_by_summary['Percentage (of Income)'] = 'N/A'
+
+    spending_by_summary['Amount'] = spending_by_summary['Amount'].map('${:.2f}'.format)
+
+    # Display the spending breakdown table
+    st.table(spending_by_summary.set_index('Summary Category'))
