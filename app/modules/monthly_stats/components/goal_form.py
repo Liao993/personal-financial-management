@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 from datetime import date
 
 def financial_goals_form():
-    st.markdown("<h2 style='color: green; text-align: center;'>Set Your Financial Goals</h2>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color: green; text-align: center;'>Set Your Financial Goals</h4>", unsafe_allow_html=True)
 
     with st.form("financial_goals") as form:
         # First line: Date and RBC Saving
@@ -27,17 +27,19 @@ def financial_goals_form():
         with col6:
             travel_fund_min = st.number_input("Traveling Fund Min", min_value=0.0, value=200.00, format="%.2f")
 
-        submit_button = st.form_submit_button("Save Financial Goals")
-
-        form_data = {}
-        if submit_button:
-            form_data['goal_date'] = goal_date
-            form_data['rbc_saving'] = rbc_saving
-            form_data['saving_goal'] = saving_goal
-            form_data['retirement_percentage'] = retirement_percentage / 100.0  # Store as a decimal
-            form_data['travel_fund_max'] = travel_fund_max
-            form_data['travel_fund_min'] = travel_fund_min
-            st.success("Financial goals saved!")
+        col7, col8 = st.columns(2)
+        with col7:
+            submit_button = st.form_submit_button("Save Financial Goals")
+        with col8:
+            form_data = {}
+            if submit_button:
+                form_data['goal_date'] = goal_date
+                form_data['rbc_saving'] = rbc_saving
+                form_data['saving_goal'] = saving_goal
+                form_data['retirement_percentage'] = retirement_percentage / 100.0  # Store as a decimal
+                form_data['travel_fund_max'] = travel_fund_max
+                form_data['travel_fund_min'] = travel_fund_min
+                st.success("Financial goals saved!")
 
         return form_data
 

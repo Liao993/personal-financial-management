@@ -3,7 +3,7 @@ def calculate_travel_fund_saving(total_saving,
                                   saving_goal, 
                                   min_travel_saving):
 
-    if total_saving < saving_goal / 2:
+    if total_saving <= saving_goal / 2:
         return 0
     elif total_saving < travel_fund_goal + saving_goal:
         return min(travel_fund_goal, max(min_travel_saving, total_saving - saving_goal))
@@ -31,9 +31,9 @@ def calculate_savings(total_saving,
     remaining = total_saving - travel_saving - rbc_saving
 
     # Retirement Saving
-    retirement_saving = remaining * retirement_saving_pct
+    retirement_saving = round(remaining * retirement_saving_pct, 2)
 
     # Medium-term Saving
-    medium_term_saving = remaining * (1 - retirement_saving_pct)
+    medium_term_saving = round(remaining * (1 - retirement_saving_pct), 2)
 
     return travel_saving, retirement_saving, medium_term_saving
