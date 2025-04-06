@@ -12,11 +12,11 @@ def calculate_travel_fund_saving(total_saving,
 
 
 def calculate_savings(total_saving, 
-                      travel_fund_goal=400, 
-                      saving_goal=1000, 
-                      min_travel_saving=200, 
-                      rbc_saving=100, 
-                      retirement_saving_pct=0.80):
+                      travel_fund_goal, 
+                      saving_goal, 
+                      min_travel_saving, 
+                      rbc_saving, 
+                      retirement_saving_pct):
    
 
     # Travel Saving
