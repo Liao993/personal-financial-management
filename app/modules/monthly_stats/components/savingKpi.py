@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st # type: ignore
 import pandas as pd
 
 def display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving):
