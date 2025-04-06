@@ -15,7 +15,12 @@ def insert_income_data(validated_data: dict):
                 INSERT INTO income (date, amount, source, regular)
                 VALUES (%s, %s, %s, %s)
                 """,
-                (validated_data['date'], validated_data['amount'], validated_data['source'], validated_data['regular']),
+                (
+                    validated_data['date'],
+                    validated_data['amount'],
+                    validated_data['source'],
+                    validated_data['regular'],
+                ),
             )
             conn.commit()
         except psycopg2.Error as e:
