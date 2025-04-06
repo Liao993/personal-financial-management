@@ -51,15 +51,17 @@ def expense_input_page():
             st.rerun()
 
     else:
-        st.subheader("Your Input Information:")
-       
-        st.write(f"**Date:** {st.session_state.get('expense_date', '')}")
-        st.write(f"**Items:** {st.session_state.get('expense_items', '')}")
-        st.write(f"**Amount:** {st.session_state.get('expense_amount', '')}")
-        st.write(f"**Category:** {st.session_state.get('expense_category', '')}")
-
+        
         if not st.session_state.get(data_saved_key, False):
             #the about condition means if data_saved_key is False or not active, then show the confirm and edit buttons
+
+            st.subheader("Your Input Information:")
+       
+            st.write(f"**Date:** {st.session_state.get('expense_date', '')}")
+            st.write(f"**Items:** {st.session_state.get('expense_items', '')}")
+            st.write(f"**Amount:** {st.session_state.get('expense_amount', '')}")
+            st.write(f"**Category:** {st.session_state.get('expense_category', '')}")
+
             col1, col2 = st.columns(2)
             with col1:
                 confirm_button = st.button("Confirm")
