@@ -31,8 +31,8 @@ def saving_actions_page():
 
     fund_categories = ["Traveling funds", "Retirement Saving", "Medium-term Saving", "Direct Investing", "other"]
     fund_category = st.selectbox("Fund Category", fund_categories)
-
-    account_name = st.selectbox("Account", ["RBC Chequing", "Questrade TFSA", "Questrade RRSP", "Moomoo TFSA", "RBC TFSA"])
+    account_name_list = ["RBC Chequing", "Questrade TFSA", "Questrade RRSP", "Moomoo TFSA", "RBC TFSA"]
+    account_name = st.selectbox("Account", account_name_list)
     amount = st.number_input("Amount", min_value=0.00)
     source_notes = st.text_input("Notes (Optional)")
    
@@ -48,7 +48,7 @@ def saving_actions_page():
             record_saving_transaction(transaction_date, account_name, "Withdrawal", -amount, fund_category, source_notes)
 
     elif action_type == "Transfer":
-        transfer_to_account = st.selectbox("Transfer To Account", account_name, index=1) # Default to a different account
+        transfer_to_account = st.selectbox("Transfer To Account", account_name_list, index=1) # Default to a different account
         if st.button("Record Transfer"):
             # For a transfer, we'll record two transactions: one out, one in
             record_saving_transaction(transaction_date, account_name, "Transfer_out", -amount, source_notes=f"Transfer to {transfer_to_account} - {source_notes}", transfer_to_account=transfer_to_account)
