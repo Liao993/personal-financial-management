@@ -21,20 +21,21 @@ CREATE TABLE IF NOT EXISTS expense (
     date DATE NOT NULL,
     items VARCHAR(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    category VARCHAR(255) NOT NULL
+    category VARCHAR(255) NOT NULL,
+    traveling_category VARCHAR(255)
 );
 
 CREATE TABLE saving_transactions (
     transaction_id SERIAL PRIMARY KEY,
     transaction_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    account_name TEXT NOT NULL,
-    transaction_type TEXT NOT NULL, -- 'Deposit', 'Withdrawal', 'Transfer_out', 'Transfer_into'
+    account_name VARCHAR(255) NOT NULL,
+    transaction_type VARCHAR(255) NOT NULL, -- 'Deposit', 'Withdrawal', 'Transfer_out', 'Transfer_into'
     amount NUMERIC(10, 2) NOT NULL,
     previous_balance NUMERIC(10, 2) NOT NULL,
     current_balance NUMERIC(10, 2) NOT NULL,
-    category TEXT,
+    fund_category VARCHAR(255),
     source_notes TEXT,
-    transfer_to_account TEXT
+    transfer_to_account VARCHAR(255)
 );
 
 -- Example: Insert some sample income data

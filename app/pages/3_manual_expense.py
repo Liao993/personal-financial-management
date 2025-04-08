@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 from datetime import date
 from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
-from utils.css import expense_drop_down_list
+from utils.css import drop_down_list
 
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
@@ -35,7 +35,7 @@ def expense_input_page():
             selected_category = st.selectbox("Category", category_options)
             expense_category = selected_category
 
-            expense_drop_down_list()
+            drop_down_list()
 
 
             review_button = st.form_submit_button("Review")

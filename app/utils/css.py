@@ -1,6 +1,6 @@
 import streamlit as st # type: ignore
 
-def expense_drop_down_list():
+def drop_down_list():
   st.markdown(
     """
     <style>
