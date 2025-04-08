@@ -24,6 +24,19 @@ CREATE TABLE IF NOT EXISTS expense (
     category VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE saving_transactions (
+    transaction_id SERIAL PRIMARY KEY,
+    transaction_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    account_name TEXT NOT NULL,
+    transaction_type TEXT NOT NULL, -- 'Deposit', 'Withdrawal', 'Transfer_out', 'Transfer_into'
+    amount NUMERIC(10, 2) NOT NULL,
+    previous_balance NUMERIC(10, 2) NOT NULL,
+    current_balance NUMERIC(10, 2) NOT NULL,
+    category TEXT,
+    source_notes TEXT,
+    transfer_to_account TEXT
+);
+
 -- Example: Insert some sample income data
 INSERT INTO income (date, amount, source) VALUES
     ('2099-01-15', 2500.00, 'Salary'),
