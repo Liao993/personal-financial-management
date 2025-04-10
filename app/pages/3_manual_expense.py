@@ -3,12 +3,11 @@ from datetime import date
 from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
 from utils.css import drop_down_list
-
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
-category_options = ["Grocery", "Food Outside", "Medicine", "Transportation", "Donation", "Education", "Saved for Love", "Home", "Traveling", "Gifts", "Clothes", "Liquar"]
+category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", "Home Deposit", "Medicine", "Saved for Love", "Transportation", "Education", "Traveling" , "Fun / Tickets", "Clothing", "Liquar", "Others"]
 
 def expense_input_page():
     st.markdown("<h1 style='color: lightblue; text-align: center;'>Please Input Your Expense</h1>", unsafe_allow_html=True)
@@ -33,6 +32,7 @@ def expense_input_page():
 
             
             selected_category = st.selectbox("Category", category_options)
+            # to all small characters
             expense_category = selected_category
 
             drop_down_list()
@@ -41,7 +41,6 @@ def expense_input_page():
             review_button = st.form_submit_button("Review")
 
         if review_button:
-            
             st.session_state["expense_date"] = expense_date
             st.session_state["expense_items"] = expense_items
             st.session_state["expense_amount"] = expense_amount
@@ -60,8 +59,8 @@ def expense_input_page():
             st.write(f"**Date:** {st.session_state.get('expense_date', '')}")
             st.write(f"**Items:** {st.session_state.get('expense_items', '')}")
             st.write(f"**Amount:** {st.session_state.get('expense_amount', '')}")
-            st.write(f"**Category:** {st.session_state.get('expense_category', '')}")
 
+            st.write(f"**Category:** {st.session_state.get('expense_category', '')}")
             col1, col2 = st.columns(2)
             with col1:
                 confirm_button = st.button("Confirm")
