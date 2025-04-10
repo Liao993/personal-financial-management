@@ -3,7 +3,6 @@ import pandas as pd # type: ignore
 from modules.monthly_stats.calculation.saving_formula import calculate_savings # type: ignore
 from modules.monthly_stats.components.savingKpi import display_saving_kpis # type: ignore
 from modules.monthly_stats.components.goal_form import financial_goals_form
-from test.expense_data import create_expense_dataframe # type: ignore 
 from modules.monthly_stats.charts.monthly_pie import create_expense_pie_chart # type: ignore
 from modules.monthly_stats.components.spending_table import display_spending_table # type: ignore
 from backend.income_backend import fetch_monthly_income # type: ignore
