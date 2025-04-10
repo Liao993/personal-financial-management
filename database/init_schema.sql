@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS expense (
     traveling_category VARCHAR(255)
 );
 
-CREATE TABLE saving_transactions (
+CREATE TABLE IF NOT EXISTS saving_transactions (
     transaction_id SERIAL PRIMARY KEY,
     transaction_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     account_name VARCHAR(255) NOT NULL,
