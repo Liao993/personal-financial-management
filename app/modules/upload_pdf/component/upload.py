@@ -18,8 +18,8 @@ def pdf_upload() -> List[UploadedFile]:
     )
   
     if uploaded_files:
-        if len(uploaded_files) > 3:
-            st.warning(f"You uploaded {len(uploaded_files)} files. Only the newest 3 will be considered.")
+        if len(uploaded_files) > 6:
+            st.warning(f"You uploaded {len(uploaded_files)} files. Only the newest 6 will be considered.")
             uploaded_files = uploaded_files[:3]
 
     return uploaded_files
