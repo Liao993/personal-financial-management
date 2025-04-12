@@ -1,7 +1,7 @@
-import streamlit as st
+import streamlit as st # type: ignore
 import pandas as pd
 from sentence_transformers import SentenceTransformer # type: ignore
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import cosine_similarity # type: ignore
 import numpy as np
 
 

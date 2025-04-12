@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st # type: ignore
 import pandas as pd
 from modules.upload_pdf.component.transformer import load_transformer, categorize_description
 
