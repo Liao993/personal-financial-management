@@ -1,7 +1,8 @@
 import streamlit as st # type: ignore
 from modules.upload_pdf.component.upload import pdf_upload
-from modules.upload_pdf.component.pipeline.pipeline import pipeline
-st.set_page_config(page_title="Expense Input", page_icon="💸")
+from modules.upload_pdf.pipeline.pipeline import pipeline
+
+st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
 
 def upload_expense():
     st.title("Upload Your Expenses PDF Here")

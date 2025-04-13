@@ -12,6 +12,5 @@ bcrypt # For password hashing
 python-jose[cryptography] # For JWT token generation
 passlib # For password hashing
 pydantic
-re
-sklearn
-st_aggrid
+scikit-learn
+streamlit-aggrid

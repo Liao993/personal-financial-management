@@ -10,8 +10,9 @@ common_store_directory = {
     'A&W': 'Food Outside',
     'SHOPPERSDRUGMART': 'Medicine',
     'GLOBALGROCERYSTORE': 'Grocery',
+    'COSTCO': 'Grocery',
     'TAKESUSHI': 'Food Outside',
-    'PETRO-CANADA': 'Gas',
+    'PETRO': 'Gas',
     'IKYUNOODLESLIMITED': 'Food Outside',
     'STARBUCKS': 'Food Outside',
     'IRVING': 'Gas',
@@ -29,3 +30,7 @@ common_store_directory = {
     'RECEIVERCOFFEE': 'Food Outside',
     'WAL-MART': 'Grocery'
 }
+
+daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL"]
+
+hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]

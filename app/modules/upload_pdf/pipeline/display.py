@@ -1,40 +1,41 @@
 import streamlit as st
 import pandas as pd
-from st_aggrid import AgGrid, GridOptionsBuilder, DataReturnMode, UpdateMode, GridUpdateMode
+
 
 def display_editable_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+  edited_df = df.copy()
+  rows_to_delete = set()
 
-    gb = GridOptionsBuilder.from_dataframe(df)
-    gb.configure_columns(['Category'], editable=True)
-    gb.configure_columns(['Amount'], editable=True)
-    gb.configure_selection('multiple', use_checkbox=True, groupSelectsChildren="Group column")
-    gridOptions = gb.build()
+  st.subheader("Editable Data")
 
-    grid_response = AgGrid(
-        df,
-        gridOptions=gridOptions,
-        data_return_mode='AS_INPUT',
-        update_mode='MODEL_CHANGED',
-        fit_columns_on_grid_load=True,
-        allow_unsafe_jscode=True,  # Set it to True to allow jsfunction to be injected
-        enable_enterprise_modules=False,
-        height=350,
-        width='100%',
-        reload_data=True
-    )
+  for index, row in df.iterrows():
+      col1, col2, col3, col4, col5 = st.columns(5)  # Adjust number of columns based on your DataFrame
 
-    updated_df = pd.DataFrame(grid_response['data'])
-    selected_rows = grid_response['selected_rows']
+      # Display original values (can be replaced with editable inputs)
+      with col1:
+          st.text_area("Description", row['Description'], key=f"description_{index}")
+          edited_df.loc[index, 'Description'] = st.session_state[f"description_{index}"]
+      with col2:
+          edited_amount = st.number_input("Amount", value=row['Amount'], key=f"amount_{index}")
+          edited_df.loc[index, 'Amount'] = edited_amount
+      with col3:
+          edited_category = st.text_input("Category", row['Category'], key=f"category_{index}")
+          edited_df.loc[index, 'Category'] = edited_category
+      # Add more columns as needed based on your DataFrame structure
 
-    if selected_rows:
-        st.subheader("Selected Rows for Deletion")
-        selected_df = pd.DataFrame(selected_rows)
-        st.table(selected_df)
+      with col5:
+          if st.checkbox("Delete", key=f"delete_{index}"):
+              rows_to_delete.add(index)
 
-        if st.button("Delete Selected Rows"):
-            indices_to_drop = [item['_index'] for item in selected_rows]
-            updated_df = updated_df.drop(indices_to_drop).reset_index(drop=True)
-            st.success("Selected rows deleted.")
-            st.rerun()  # Refresh the app to show the updated table
+      st.markdown("---")
 
-    return updated_df
+  if rows_to_delete:
+      st.subheader("Rows to be Deleted")
+      st.dataframe(df.loc[list(rows_to_delete)])
+
+      if st.button("Confirm Delete"):
+          edited_df = edited_df.drop(list(rows_to_delete)).reset_index(drop=True)
+          st.success("Selected rows deleted.")
+          st.rerun()
+
+  return edited_df
