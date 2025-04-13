@@ -2,6 +2,7 @@ import streamlit as st # type: ignore
 import pdfplumber # type: ignore
 import re
 
+#This page is used to extract the text from the PDF file
 def rbc_extracted(pdf_files):
     all_relevant_lines = {}
     months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
