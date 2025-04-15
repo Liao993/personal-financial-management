@@ -10,9 +10,9 @@ def record_saving_transaction(transaction_date, account_name, action_type, amoun
     transaction = {
         "Date": transaction_date,
         "Account": account_name,
-        "Type": action_type,
+        "Fund Category": fund_category,
+        "Transaction Type": action_type,
         "Amount": amount,
-        "Category": fund_category,
         "Notes": source_notes,
         "Transfer To": transfer_to_account
     }

@@ -9,12 +9,6 @@ CREATE TABLE IF NOT EXISTS income (
     notes TEXT,
 );
 
--- Create the store table if it doesn't exist
-CREATE TABLE IF NOT EXISTS store (
-    id SERIAL PRIMARY KEY, -- Auto-incrementing primary key
-    store_name VARCHAR(255) NOT NULL,
-    category VARCHAR(255) NOT NULL
-);
 
 -- Create the expense table if it doesn't exist
 CREATE TABLE IF NOT EXISTS expense (
@@ -24,9 +18,10 @@ CREATE TABLE IF NOT EXISTS expense (
     amount DECIMAL(10, 2) NOT NULL,
     category VARCHAR(255) NOT NULL,
     traveling_category VARCHAR(255)
+    notes TEXT,
 );
 
-CREATE TABLE IF NOT EXISTS saving_transactions (
+CREATE TABLE IF NOT EXISTS transactions (
     transaction_id SERIAL PRIMARY KEY,
     transaction_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     account_name VARCHAR(255) NOT NULL,
@@ -53,9 +48,6 @@ INSERT INTO expense (date, items, amount, category) VALUES
     ('2099-02-28', 'Home', 13000.00, 'Rent'),
     ('2099-03-05', 'Water', 5100.00, 'Utilities');
 
-INSERT INTO store (store_name, category) VALUES
-    ('Walmart', 'Grocery'),
-    ('Best Buy', 'Electronics'),
-    ('H&M', 'Clothing');
+
    
    
