@@ -67,6 +67,7 @@ def income_input_page():
                 st.session_state['amount'] = 1717.85
                 st.session_state['source'] = "Gov"
                 st.session_state['regular'] = True
+                st.session_state['notes'] = ""
                 st.session_state[edit_mode_form] = True
                 st.session_state[data_saved_key] = False
                 st.rerun()

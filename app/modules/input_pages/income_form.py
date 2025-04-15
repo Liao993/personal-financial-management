@@ -13,6 +13,8 @@ def income_input_form(edit_mode_form_key, review_data_key):
     selected_source = st.selectbox("Source", source_options)
     income_source = selected_source
 
+    notes = st.text_input("Notes", "")
+
     income_regular = st.checkbox("Regular Income", value=True)
 
     review_button = st.form_submit_button("Review")
@@ -22,7 +24,8 @@ def income_input_form(edit_mode_form_key, review_data_key):
           "date": income_date,          # Changed key name
           "amount": income_amount,        # Changed key name
           "source": income_source,        # Changed key name
-          "regular": income_regular,      # Changed key name
+          "regular": income_regular, 
+          "notes": notes# Changed key name
       }
       st.session_state[edit_mode_form_key] = False
       st.session_state['data_saved_income'] = False # Reset saved state when reviewing again
