@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS income (
     amount DECIMAL(10, 2) NOT NULL,
     source VARCHAR(255) NOT NULL,
     regular BOOLEAN NOT NULL DEFAULT TRUE -- Use BOOLEAN here
+    notes TEXT,
 );
 
 -- Create the store table if it doesn't exist
