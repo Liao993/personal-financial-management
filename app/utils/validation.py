@@ -1,5 +1,6 @@
 import streamlit as st # type: ignore
-from models.models import Income, Expense # type: ignore
+from models.income_models import Income
+from models.expense_models import Expense # type: ignore
 from pydantic import ValidationError # type: ignore
 
 def validate_income_data(income_data: dict) -> bool:

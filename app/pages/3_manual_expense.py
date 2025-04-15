@@ -36,7 +36,6 @@ def expense_input_page():
             # to all small characters
             expense_category = selected_category
 
-            notes = st.text_input("Notes", "")
 
             drop_down_list()
 
@@ -48,7 +47,7 @@ def expense_input_page():
             st.session_state["expense_items"] = expense_items
             st.session_state["expense_amount"] = expense_amount
             st.session_state["expense_category"] = expense_category
-            st.session_state["notes"] = notes
+           
             st.session_state[edit_mode_form] = False
             st.session_state[data_saved_key] = False
             st.rerun()
@@ -64,7 +63,7 @@ def expense_input_page():
             st.write(f"**Items:** {st.session_state.get('expense_items', '')}")
             st.write(f"**Amount:** {st.session_state.get('expense_amount', '')}")
             st.write(f"**Category:** {st.session_state.get('expense_category', '')}")
-            st.write(f"**Notes:** {st.session_state.get('notes', '')}")
+           
             col1, col2 = st.columns(2)
             with col1:
                 confirm_button = st.button("Confirm")
@@ -77,7 +76,6 @@ def expense_input_page():
                     "amount": st.session_state.get('expense_amount', ''),
                     "items": st.session_state.get('expense_items', ''),
                     "category": st.session_state.get('expense_category', ''),
-                    "notes": st.session_state.get('notes', ''),
                 }
 
                 if validate_expense_data(expense_data):
@@ -101,7 +99,6 @@ def expense_input_page():
                 st.session_state['expense_amount'] = 100
                 st.session_state['expense_items'] = ""
                 st.session_state['expense_category'] = ""
-                st.session_state['notes'] = ""
                 st.session_state[edit_mode_form] = True
                 st.session_state[data_saved_key] = False
                 st.rerun()

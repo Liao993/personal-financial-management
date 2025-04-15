@@ -13,7 +13,8 @@ def income_input_form(edit_mode_form_key, review_data_key):
     selected_source = st.selectbox("Source", source_options)
     income_source = selected_source
 
-    notes = st.text_input("Notes", "")
+    notes_input = st.text_input("Notes", "")
+    notes = notes_input if notes_input else None  # Set notes to None if empty string
 
     income_regular = st.checkbox("Regular Income", value=True)
 
@@ -25,7 +26,7 @@ def income_input_form(edit_mode_form_key, review_data_key):
           "amount": income_amount,        # Changed key name
           "source": income_source,        # Changed key name
           "regular": income_regular, 
-          "notes": notes# Changed key name
+          "notes": notes                # Changed key name
       }
       st.session_state[edit_mode_form_key] = False
       st.session_state['data_saved_income'] = False # Reset saved state when reviewing again
