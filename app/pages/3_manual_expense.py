@@ -3,11 +3,12 @@ from datetime import date
 from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
 from utils.css import drop_down_list
+from utils.data import expense_category_options
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
-category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", "Home Deposit", "Medicine", "Saved for Love", "Transportation", "Education", "Traveling" , "Fun / Tickets", "Clothing", "Liquar", "Others"]
+
 
 def expense_input_page():
     st.markdown("<h1 style='color: lightblue; text-align: center;'>Please Input Your Expense</h1>", unsafe_allow_html=True)
@@ -30,7 +31,7 @@ def expense_input_page():
             expense_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=100.00)
 
             
-            selected_category = st.selectbox("Category", category_options)
+            selected_category = st.selectbox("Category", expense_category_options)
 
             # to all small characters
             expense_category = selected_category

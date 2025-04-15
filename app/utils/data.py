@@ -1,3 +1,4 @@
+#expense
 common_store_directory = {
     'SOBEYS': 'Grocery',
     "LEONHARD": 'Food Outside',
@@ -36,4 +37,16 @@ common_store_directory = {
 
 daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT']
 
+expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
+                    "Home Deposit", "Medicine", "Saved for Love", "Transportation", "Education", "Traveling" , 
+                    "Fun / Tickets", "Clothing", "Liquor", "Others"]
+
+# travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
+
+#transaction
+usable_fund_categories = ["Traveling funds", "Retirement Saving", "Medium-term Saving", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
+
+account_name_list = ["RBC Chequing", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP", "RBC TFSA"]
+
+transaction_type_list = ["Deposit", "Withdrawal", "Transfer Between Accounts"]
