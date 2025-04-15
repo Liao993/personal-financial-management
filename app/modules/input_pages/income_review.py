@@ -8,5 +8,6 @@ def review_income_input(review_data_key):
     st.write(f"**Amount:** {reviewed_data.get('amount', '')}")
     st.write(f"**Source:** {reviewed_data.get('source', '')}")
     st.write(f"**Regular Income:** {'Yes' if reviewed_data.get('regular', False) else 'No'}")
+    st.write(f"**Notes:** {reviewed_data.get('notes', '')}")
 
     return reviewed_data
