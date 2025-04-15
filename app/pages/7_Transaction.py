@@ -12,6 +12,9 @@ def transaction_actions_page():
     if 'show_the_form' not in st.session_state:
         st.session_state['show_the_form'] = True
 
+    if 'recorded_transactions' not in st.session_state:
+        st.session_state['recorded_transactions'] = []
+
     if st.session_state['show_the_form']:
 
         transaction_form()
@@ -20,9 +23,10 @@ def transaction_actions_page():
         display_recorded_transactions()
         submitted = st.button("Submit Transactions")
         if submitted:
-            st.success("Transactions saved successfully!")
-            time.sleep(3)
+            st.success("Transactions saved successfully! and Wait for Loading back to the Transaction Form")
+            time.sleep(2)
             st.session_state['show_the_form'] = True
+            st.session_state['recorded_transactions'] = []
             st.rerun()
     
 if __name__ == "__main__":
