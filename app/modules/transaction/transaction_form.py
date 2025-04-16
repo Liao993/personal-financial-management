@@ -38,7 +38,7 @@ def transaction_form():
         transfer_to_fund_category = st.selectbox("Transfer To Usable Funds (Same Account Different Purpose)", usable_fund_categories, index=1) # Default to a different account
         if st.button("Record Transfer"):
             # For a transfer, we'll record two transactions: one out, one in
-            record_saving_transaction(transaction_date, account_name, "Transfer_Out", -amount, fund_category, source_notes=f"Transfer to {transfer_to_fund_category} - {source_notes}")
+            record_saving_transaction(transaction_date, account_name, "Transfer_Out", -amount, fund_category, source_notes=f"Transfer to {transfer_to_fund_category} - {source_notes}", transfer_to_fund_category=transfer_to_fund_category)
             record_saving_transaction(transaction_date, account_name, "Transfer_In", amount, transfer_to_fund_category, source_notes=f"Transfer from {account_name} - {source_notes}")
             st.session_state['show_the_form'] = False # Set session state
             st.rerun()
