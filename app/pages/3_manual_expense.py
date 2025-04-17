@@ -3,7 +3,7 @@ from datetime import date
 from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
 from utils.css import drop_down_list
-from utils.data import expense_category_options
+from utils.data import expense_category_options, common_store_list
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
 edit_mode_form = 'edit_mode_expense'
@@ -24,9 +24,9 @@ def expense_input_page():
   
             expense_date = st.date_input("Date", value=date.today())
 
-
-            expense_items = st.text_input("Items")
-
+            expense_common_items = st.selectbox("Items", common_store_list, key="common_item_select")
+            expense_items = st.text_input("Items (if not in common store list)", key="custom_item_input")
+            
  
             expense_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=100.00)
 
@@ -44,7 +44,16 @@ def expense_input_page():
 
         if review_button:
             st.session_state["expense_date"] = expense_date
-            st.session_state["expense_items"] = expense_items
+
+            if st.session_state.get("common_item_select") != "Not Common Store":
+                trimed_expense_common_items = expense_common_items.upper().replace(" ", "")
+                st.session_state["expense_items"] = trimed_expense_common_items
+             
+            else:
+                trimed_expense_items = expense_items.upper().replace(" ", "")
+                st.session_state["expense_items"] = trimed_expense_items
+             
+
             st.session_state["expense_amount"] = expense_amount
             st.session_state["expense_category"] = expense_category
            

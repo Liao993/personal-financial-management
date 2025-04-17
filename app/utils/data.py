@@ -35,6 +35,12 @@ common_store_directory = {
     
 }
 
+common_store_list = ['Not Common Store', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
+                     'Dollarama', 'A&W', 'Shoppers Drug Mart', 'Global Grocery', 'Costco', 
+                     'Take Sushi', 'Petro', 'Starbucks', 'Irving', 
+                     'Hopspot', 'Mike & Andreea', 'Tim Hortons', 'Panda Mart', 'Eastlink', 'Pho Vietnam Rest', 
+                     'Saigon Pho', 'Receiver Coffee', 'Wal-Mart', 'Hong Mall', 'Liquor', 'Cows', 'Alambe', 'Mucho Burrito']
+
 daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT']
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
