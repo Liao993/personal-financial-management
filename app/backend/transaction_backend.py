@@ -7,7 +7,6 @@ def insert_transaction_data(validated_data: dict):
     # Here you would add your logic to interact with the database
     # using the validated_data (e.g., insert into the income table)
     conn = get_db_connection()
-    st.info("Database connection established.")
     if conn:
         cursor = conn.cursor()
         success = False

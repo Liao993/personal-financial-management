@@ -3,7 +3,8 @@ import streamlit as st # type: ignore
 from backend.transaction_backend import insert_transaction_data  # Assuming you have this function
 from models.transaction_models import Transaction  # Import your Pydantic model
 
-def monthly_savings(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving):
+# Function to handle the data and insert it into the database
+def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving):
     transactions_to_insert = [
         Transaction(
             date=goal_datetime,
@@ -53,3 +54,19 @@ def monthly_savings(goal_datetime, source_notes, travel_saving, retirement_savin
             return False  # Stop if any validation fails
         
     return insert_successful
+
+# to be called in the Page when Save the Results button clicked
+def monthly_savings_action():
+    goal_datetime = st.session_state.get('goal_datetime')
+    source_notes = st.session_state.get('source_notes')
+    travel_saving = st.session_state.get('travel_saving')
+    retirement_saving = st.session_state.get('retirement_saving')
+    medium_term_saving = st.session_state.get('medium_term_saving')
+    rbc_saving = st.session_state.get('rbc_saving')
+
+    
+    success = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+    if success:
+        st.success("Monthly savings have been saved successfully!")
+    else:
+        st.error("Failed to save monthly savings. Please check your data.")

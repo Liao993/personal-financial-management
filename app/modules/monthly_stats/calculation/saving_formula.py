@@ -11,7 +11,7 @@ def calculate_travel_fund_saving(total_saving,
         return travel_fund_goal
 
 
-def calculate_savings(total_saving, 
+def savings_formula(total_saving, 
                       travel_fund_goal, 
                       saving_goal, 
                       min_travel_saving, 

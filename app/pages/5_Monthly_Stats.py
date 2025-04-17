@@ -1,106 +1,57 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
 from datetime import datetime # type: ignore
-from modules.monthly_stats.calculation.saving_formula import calculate_savings # type: ignore
+
 from modules.monthly_stats.components.savingKpi import display_saving_kpis # type: ignore
 from modules.monthly_stats.components.goal_form import financial_goals_form
-from modules.monthly_stats.charts.monthly_pie import create_expense_pie_chart # type: ignore
+from modules.monthly_stats.components.monthly_pie import create_expense_pie_chart # type: ignore
 from modules.monthly_stats.components.spending_table import display_spending_table # type: ignore
-from modules.monthly_stats.components.monthly_saving import monthly_savings
-from backend.income_backend import fetch_monthly_income # type: ignore
-from backend.expense_backend import fetch_monthly_expenses_with_summary # type: ignore
+from modules.monthly_stats.middle_layer.monthly_saving import monthly_savings_action
+from modules.monthly_stats.calculation.saving_calculation import expense_and_saving_calculation # type: ignore
 
 st.set_page_config(page_title="Monthly Stats", page_icon="💰", layout="wide")
 
-def save_monthly_savings_data():
-    goal_datetime = st.session_state.get('goal_datetime')
-    source_notes = st.session_state.get('source_notes')
-    travel_saving = st.session_state.get('travel_saving')
-    retirement_saving = st.session_state.get('retirement_saving')
-    medium_term_saving = st.session_state.get('medium_term_saving')
-    rbc_saving = st.session_state.get('rbc_saving')
-
-    
-    success = monthly_savings(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
-    if success:
-        st.success("Monthly savings have been saved successfully!")
-    else:
-        st.error("Failed to save monthly savings. Please check your data.")
 
 def monthly_stats_page():
   
   st.markdown("<h1 style='color: lightgreen; text-align: center;'>Monthly Stats</h1>", unsafe_allow_html=True)
-  if "display" not in st.session_state:
-        st.session_state["display"] = True
 
   financial_goals = financial_goals_form()
  
-  if st.session_state["display"] and financial_goals:
+  if financial_goals:
+    # calculate the monthly spending and saving if I got the financial goals
+    goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, \
+    monthly_expense_daily_data, monthly_income, monthly_expense = expense_and_saving_calculation(financial_goals)
+    
+    # Store calculated values in session state for sending to the database
+    st.session_state['goal_datetime'] = goal_date
+    st.session_state['source_notes'] = f"saved from {goal_date.year} 0{goal_date.month}"
+    st.session_state['travel_saving'] = travel_saving
+    st.session_state['retirement_saving'] = retirement_saving
+    st.session_state['medium_term_saving'] = medium_term_saving
+    st.session_state['rbc_saving'] = rbc_saving
 
-      goal_date = financial_goals.get('goal_date')
-      saving_goal = financial_goals.get('saving_goal', 0.0)
-      travel_fund_goal = financial_goals.get('travel_fund_max', 0.0)
-      min_travel_saving = financial_goals.get('travel_fund_min', 0.0)
-      rbc_saving = financial_goals.get('rbc_saving', 100.0)
-      retirement_saving_pct = financial_goals.get('retirement_percentage', 1.0)
+    #Display the spending and saving results
+    st.write("---")
+    #Display Saving KPIs
+    display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+    
+    st.write(" ")
+    st.write(" ")
+    left_col, right_col = st.columns(2)
 
-      if goal_date:
-          year = goal_date.year
-          month = goal_date.month
-          monthly_income = fetch_monthly_income(year, month)
-     
+    with left_col:
+        #Dsiplay the spending table and Save the Results button
+        display_spending_table(monthly_expense_daily_data, monthly_income)
+        st.write(" ")
+        st.write(" ")
+        if st.button("Save Your Results", on_click=monthly_savings_action):
+          pass # The action happens in the on_click function
 
-          # Fetch expense data with summary_category from the database
-          expense_data_with_summary = fetch_monthly_expenses_with_summary(year, month) 
-          if not expense_data_with_summary.empty:
-            # Not Include traveling spending (using summary_category if appropriate)
-            monthly_expense_daily_data = expense_data_with_summary[expense_data_with_summary['category'] != 'Traveling'] # You might want to adjust this based on your summary categories
-            monthly_expense = monthly_expense_daily_data['amount'].astype(float).sum()
+    with right_col:
+        create_expense_pie_chart(monthly_expense, total_saving, travel_saving)
         
-
-          
-            #Saving Calculation
-            total_saving = monthly_income - monthly_expense
-          
-            travel_saving, retirement_saving, medium_term_saving = calculate_savings(
-              total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct
-            )
-
-            st.write("---")
-            #Display Saving KPIs
-            display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
-            
-            st.write(" ")
-            st.write(" ")
-            left_col, right_col = st.columns(2)
-
-            with left_col:
-                display_spending_table(monthly_expense_daily_data, monthly_income)
-
-            with right_col:
-                
-                create_expense_pie_chart(monthly_expense, total_saving, travel_saving)
-
-            #Saving Information
-            goal_datetime = datetime(goal_date.year, goal_date.month, goal_date.day, 0, 0, 0)  # Convert date to datetime for timestamp
-            source_notes = f"saved from {year} {month}"
-
-
-            # Store calculated values in session state
-            st.session_state['goal_datetime'] = goal_datetime
-            st.session_state['source_notes'] = source_notes
-            st.session_state['travel_saving'] = travel_saving
-            st.session_state['retirement_saving'] = retirement_saving
-            st.session_state['medium_term_saving'] = medium_term_saving
-            st.session_state['rbc_saving'] = rbc_saving
-
-            if st.button("Save Monthly Savings", on_click=save_monthly_savings_data):
-                pass # The action happens in the on_click function
-        
-          else:
-            st.warning("No expense data available for the selected month. Please check your records.")
-      else:
-            st.warning("Please select a goal date to calculate monthly statistics.")
+    
   else:
      st.info("Please provide your financial goals to see monthly statistics.")
 
