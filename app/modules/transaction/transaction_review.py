@@ -24,5 +24,6 @@ def display_recorded_transactions():
         st.subheader("Recorded Transactions")
         df = pd.DataFrame(st.session_state['recorded_transactions'])
         st.dataframe(df)
+        return st.session_state['recorded_transactions']
     else:
         st.info("No transactions recorded yet.")

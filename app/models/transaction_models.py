@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator # type: ignore
 from typing import Optional
 from utils.data import transaction_type_database, account_name_list, usable_fund_categories
 

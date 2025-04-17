@@ -1,6 +1,7 @@
 import streamlit as st # type: ignore
 from modules.transaction.transaction_form import transaction_form
 from modules.transaction.transaction_review import display_recorded_transactions
+from modules.transaction.transaction_saving import transaction_savings_action
 import time
 
 st.set_page_config(page_title="Transaction", page_icon="💰", layout="wide")
@@ -20,10 +21,10 @@ def transaction_actions_page():
         transaction_form()
     else:
         
-        display_recorded_transactions()
+        data = display_recorded_transactions()
         submitted = st.button("Submit Transactions")
         if submitted:
-            st.success("Transactions saved successfully! and Wait for Loading back to the Transaction Form")
+            transaction_savings_action(data)
             time.sleep(2)
             st.session_state['show_the_form'] = True
             st.session_state['recorded_transactions'] = []
