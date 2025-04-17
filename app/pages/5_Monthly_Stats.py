@@ -39,37 +39,40 @@ def monthly_stats_page():
             # Not Include traveling spending (using summary_category if appropriate)
             monthly_expense_daily_data = expense_data_with_summary[expense_data_with_summary['category'] != 'Traveling'] # You might want to adjust this based on your summary categories
             monthly_expense = monthly_expense_daily_data['amount'].astype(float).sum()
-       
+        
 
           
             #Saving Calculation
             total_saving = monthly_income - monthly_expense
-         
+          
             travel_saving, retirement_saving, medium_term_saving = calculate_savings(
               total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct
             )
 
-          st.write("---")
-          #Display Saving KPIs
-          display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
-          
-          st.write(" ")
-          st.write(" ")
-          left_col, right_col = st.columns(2)
+            st.write("---")
+            #Display Saving KPIs
+            display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+            
+            st.write(" ")
+            st.write(" ")
+            left_col, right_col = st.columns(2)
 
-          with left_col:
-              display_spending_table(monthly_expense_daily_data, monthly_income)
+            with left_col:
+                display_spending_table(monthly_expense_daily_data, monthly_income)
 
-          with right_col:
-              
-              create_expense_pie_chart(monthly_expense, total_saving, travel_saving)
+            with right_col:
+                
+                create_expense_pie_chart(monthly_expense, total_saving, travel_saving)
 
-          #Saving Information
-          goal_datetime = datetime(goal_date.year, goal_date.month, goal_date.day, 0, 0, 0)  # Convert date to datetime for timestamp
-          source_notes = f"saved from {year} {month}"
-          if st.button("Save Monthly Savings"):
-              save_monthly_savings(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
-              st.success("Monthly savings have been saved successfully!")
+            #Saving Information
+            goal_datetime = datetime(goal_date.year, goal_date.month, goal_date.day, 0, 0, 0)  # Convert date to datetime for timestamp
+            source_notes = f"saved from {year} {month}"
+            st.info(goal_datetime)
+            if st.button("Save Monthly Savings"):
+                save_monthly_savings(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+                st.success("Monthly savings have been saved successfully!")
+          else:
+            st.warning("No expense data available for the selected month. Please check your records.")
       else:
             st.warning("Please select a goal date to calculate monthly statistics.")
   else:
