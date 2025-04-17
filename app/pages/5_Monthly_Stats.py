@@ -6,19 +6,36 @@ from modules.monthly_stats.components.savingKpi import display_saving_kpis # typ
 from modules.monthly_stats.components.goal_form import financial_goals_form
 from modules.monthly_stats.charts.monthly_pie import create_expense_pie_chart # type: ignore
 from modules.monthly_stats.components.spending_table import display_spending_table # type: ignore
-from modules.monthly_stats.components.monthly_saving import save_monthly_savings
+from modules.monthly_stats.components.monthly_saving import monthly_savings
 from backend.income_backend import fetch_monthly_income # type: ignore
 from backend.expense_backend import fetch_monthly_expenses_with_summary # type: ignore
 
 st.set_page_config(page_title="Monthly Stats", page_icon="💰", layout="wide")
 
+def save_monthly_savings_data():
+    goal_datetime = st.session_state.get('goal_datetime')
+    source_notes = st.session_state.get('source_notes')
+    travel_saving = st.session_state.get('travel_saving')
+    retirement_saving = st.session_state.get('retirement_saving')
+    medium_term_saving = st.session_state.get('medium_term_saving')
+    rbc_saving = st.session_state.get('rbc_saving')
+
+    
+    success = monthly_savings(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+    if success:
+        st.success("Monthly savings have been saved successfully!")
+    else:
+        st.error("Failed to save monthly savings. Please check your data.")
+
 def monthly_stats_page():
   
   st.markdown("<h1 style='color: lightgreen; text-align: center;'>Monthly Stats</h1>", unsafe_allow_html=True)
+  if "display" not in st.session_state:
+        st.session_state["display"] = True
 
   financial_goals = financial_goals_form()
-
-  if financial_goals:
+ 
+  if st.session_state["display"] and financial_goals:
 
       goal_date = financial_goals.get('goal_date')
       saving_goal = financial_goals.get('saving_goal', 0.0)
@@ -67,16 +84,26 @@ def monthly_stats_page():
             #Saving Information
             goal_datetime = datetime(goal_date.year, goal_date.month, goal_date.day, 0, 0, 0)  # Convert date to datetime for timestamp
             source_notes = f"saved from {year} {month}"
-            st.info(goal_datetime)
-            if st.button("Save Monthly Savings"):
-                save_monthly_savings(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
-                st.success("Monthly savings have been saved successfully!")
+
+
+            # Store calculated values in session state
+            st.session_state['goal_datetime'] = goal_datetime
+            st.session_state['source_notes'] = source_notes
+            st.session_state['travel_saving'] = travel_saving
+            st.session_state['retirement_saving'] = retirement_saving
+            st.session_state['medium_term_saving'] = medium_term_saving
+            st.session_state['rbc_saving'] = rbc_saving
+
+            if st.button("Save Monthly Savings", on_click=save_monthly_savings_data):
+                pass # The action happens in the on_click function
+        
           else:
             st.warning("No expense data available for the selected month. Please check your records.")
       else:
             st.warning("Please select a goal date to calculate monthly statistics.")
   else:
      st.info("Please provide your financial goals to see monthly statistics.")
+
 
   
 

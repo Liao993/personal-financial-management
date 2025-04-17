@@ -8,13 +8,9 @@ def insert_expense_data(validated_data: dict):
     if conn:
         cursor = conn.cursor()
         try:
-            cursor.execute(
-                """
-                INSERT INTO expense (date, items, amount, category)
-                VALUES (%s, %s, %s, %s)
-                """,
-                (validated_data['date'], validated_data['items'], validated_data['amount'], validated_data['category']),
-            )
+            query = "INSERT INTO expense (date, items, amount, category) VALUES (%s, %s, %s, %s)"
+            values = (validated_data['date'], validated_data['items'], validated_data['amount'], validated_data['category'])
+            cursor.execute(query, values)
             conn.commit()
         except psycopg2.Error as e:
             conn.rollback()

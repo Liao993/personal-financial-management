@@ -8,21 +8,17 @@ def insert_income_data(validated_data: dict):
     # using the validated_data (e.g., insert into the income table)
     conn = get_db_connection()
     if conn:
-        cursor = conn.cursor()
         try:
-            cursor.execute(
-                """
-                INSERT INTO income (date, amount, source, regular, notes)
-                VALUES (%s, %s, %s, %s)
-                """,
-                (
-                    validated_data['date'],
-                    validated_data['amount'],
-                    validated_data['source'],
-                    validated_data['regular'],
-                    validated_data['notes'],
-                ),
+            cursor = conn.cursor()
+            query = "INSERT INTO income (date, amount, source, regular, notes) VALUES (%s, %s, %s, %s, %s)"
+            values = (
+                validated_data['date'],
+                validated_data['amount'],
+                validated_data['source'],
+                validated_data['regular'],
+                validated_data['notes']
             )
+            cursor.execute(query, values)
             conn.commit()
         except psycopg2.Error as e:
             conn.rollback()
