@@ -1,10 +1,12 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
+from datetime import datetime # type: ignore
 from modules.monthly_stats.calculation.saving_formula import calculate_savings # type: ignore
 from modules.monthly_stats.components.savingKpi import display_saving_kpis # type: ignore
 from modules.monthly_stats.components.goal_form import financial_goals_form
 from modules.monthly_stats.charts.monthly_pie import create_expense_pie_chart # type: ignore
 from modules.monthly_stats.components.spending_table import display_spending_table # type: ignore
+from modules.monthly_stats.components.monthly_saving import save_monthly_savings
 from backend.income_backend import fetch_monthly_income # type: ignore
 from backend.expense_backend import fetch_monthly_expenses_with_summary # type: ignore
 
@@ -61,6 +63,13 @@ def monthly_stats_page():
           with right_col:
               
               create_expense_pie_chart(monthly_expense, total_saving, travel_saving)
+
+          #Saving Information
+          goal_datetime = datetime(goal_date.year, goal_date.month, goal_date.day, 0, 0, 0)  # Convert date to datetime for timestamp
+          source_notes = f"saved from {year} {month}"
+          if st.button("Save Monthly Savings"):
+              save_monthly_savings(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+              st.success("Monthly savings have been saved successfully!")
       else:
             st.warning("Please select a goal date to calculate monthly statistics.")
   else:
