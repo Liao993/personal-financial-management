@@ -6,3 +6,4 @@ dbt/profiles.yml
 *.log
 .DS_Store
 test/
+historical_data
