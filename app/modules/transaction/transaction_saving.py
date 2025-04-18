@@ -33,9 +33,6 @@ def process_transactions_and_save(transactions):
 def transaction_savings_action(returned_transaction_data):
     if returned_transaction_data:
         success = process_transactions_and_save(returned_transaction_data)
-        if success:
-            st.success("Transaction data has been saved successfully!")
-        else:
-            st.error("Failed to save transaction data. Please check the error messages above.")
+        return success
     else:
         st.warning("No transaction data was available to save.")

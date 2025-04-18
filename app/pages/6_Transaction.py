@@ -22,13 +22,29 @@ def transaction_actions_page():
     else:
         
         data = display_recorded_transactions()
-        submitted = st.button("Submit Transactions")
-        if submitted:
-            transaction_savings_action(data)
-            time.sleep(2)
-            st.session_state['show_the_form'] = True
-            st.session_state['recorded_transactions'] = []
-            st.rerun()
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            submitted = st.button("Submit Transactions")
+            if submitted:
+                success = transaction_savings_action(data)
+                if success:
+                    st.success("Transaction recorded successfully!")
+                    time.sleep(2)
+                    st.session_state['show_the_form'] = True
+                    st.session_state['recorded_transactions'] = []
+                    st.rerun()
+                else:
+                    st.error("Failed to record transaction. Please check the data.")
+                    time.sleep(20)
+                    st.session_state['show_the_form'] = True
+                    st.session_state['recorded_transactions'] = []
+                    st.rerun()
+        with col2:
+            edit_button = st.button("Edit Transactions")
+            if edit_button:
+                st.session_state['show_the_form'] = True
+                st.session_state['recorded_transactions'] = []
+                st.rerun()
     
 if __name__ == "__main__":
     transaction_actions_page()

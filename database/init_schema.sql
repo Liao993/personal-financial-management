@@ -28,8 +28,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     amount NUMERIC(10, 2) NOT NULL,
     fund_category VARCHAR(255),
     source_notes TEXT,
-    transfer_to_account VARCHAR(255),
-    transfer_to_fund_category VARCHAR(255)
+    transfer_to_account VARCHAR(255)
 );
 
 -- Example: Insert some sample income data

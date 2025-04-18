@@ -55,9 +55,9 @@ usable_fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term S
 
 account_name_list = ["RBC Chequing", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP", "RBC TFSA"]
 
-transaction_type_list = ["Deposit", "Withdrawal", "Transfer Between Accounts", "Transfer Between Usable Funds"]
+transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 
-transaction_type_database = ["Deposit", "Withdrawal", "Transfer_Out", "Transfer_In"]
+transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
 TFSA_room = 32500
 

@@ -13,6 +13,7 @@ def Medium_Term(selected_year, original_data):
   selected_year_deposit = medium_term_data[medium_term_data['transaction_type'].isin(['Deposit']) & (medium_term_data['date'].dt.year == selected_year)]['amount'].sum()
   other_year_deposit = medium_term_deposit - selected_year_deposit
   medium_term_withdrawal = medium_term_data[medium_term_data['transaction_type'].isin(['Withdrawal'])]['amount'].sum()
+  medium_term_left = medium_term_deposit + medium_term_withdrawal #withdrawal is negative
 
   # Create a dictionary to hold the data
   medium_term_summary_data = {
@@ -20,6 +21,7 @@ def Medium_Term(selected_year, original_data):
       "Other Year Contribution": [other_year_deposit],
       'Total Contribution': [medium_term_deposit],
       'Total Withdrawal': [medium_term_withdrawal],
+      'Total Amount Left': [medium_term_left],
   }
 
   # Create a Pandas DataFrame from the dictionary
