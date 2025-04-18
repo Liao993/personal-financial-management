@@ -11,16 +11,8 @@ services:
     volumes:
       - ./database/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
       - postgres_data:/var/lib/postgresql/data
-      - ./historical_data:/historical_data # Mount your historical_data folder
-      - /database:/database
     networks:
       - budget_network
-    command: >
-      bash -c "
-        set -e;
-        /docker-entrypoint-initdb.sh &&
-        python /database/historical_data_load.py
-      "
 
   pgadmin:
     image: dpage/pgadmin4

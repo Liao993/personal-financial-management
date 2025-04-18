@@ -1,8 +1,8 @@
 import os
 import psycopg2 # type: ignore
 from load_transaction_data import load_transactions
-from load_expense_data import load_expenses
-from load_income_data import load_income
+#from load_expense_data import load_expenses
+#from load_income_data import load_income
 
 # Database connection details (assuming environment variables are set)
 DB_HOST = os.environ.get("POSTGRES_HOST", "localhost")
@@ -17,8 +17,8 @@ def main():
         print("Successfully connected to the database!")
 
         load_transactions(conn)
-        load_expenses(conn)
-        load_income(conn)
+        #load_expenses(conn)
+        #load_income(conn)
 
         conn.close()
         print("Database connection closed.")

@@ -44,3 +44,27 @@ def insert_transaction_data(validated_data: dict):
         return False
 
 
+
+def fetch_transaction_data():
+    # Here you would add your logic to retrieve data from the database
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+        SELECT *
+        FROM transactions
+        """
+        try:
+            cursor.execute(query)
+            result = cursor.fetchall()  # Use fetchall() to get all rows
+            return result  # Return all the rows
+            
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving income data: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return []
