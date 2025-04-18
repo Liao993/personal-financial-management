@@ -11,6 +11,9 @@ services:
     volumes:
       - ./database/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
       - postgres_data:/var/lib/postgresql/data
+      - ./historical_data:/csv_data # Mount your historical_data folder to /csv_data in the container
+      - ./database/transaction_init_load.sql:/docker-entrypoint-initdb.d/transaction_init_load.sql
+
     networks:
       - budget_network
 

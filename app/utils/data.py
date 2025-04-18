@@ -58,3 +58,9 @@ account_name_list = ["RBC Chequing", "Questrade TFSA (Retire)", "Questrade TFSA 
 transaction_type_list = ["Deposit", "Withdrawal", "Transfer Between Accounts", "Transfer Between Usable Funds"]
 
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer_Out", "Transfer_In"]
+
+TFSA_room = 32500
+
+RRSP_room = 14729
+
+years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035]

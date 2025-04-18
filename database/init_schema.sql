@@ -47,18 +47,7 @@ INSERT INTO expense (date, items, amount, category) VALUES
     ('2099-03-05', 'Water', 5100.00, 'Utilities');
 
 
--- Example: Insert some sample transaction data
-INSERT INTO transactions (date, account_name, transaction_type, amount, fund_category, source_notes, transfer_to_account, transfer_to_fund_category) VALUES
-    ('2025-04-15', 'Checking Account', 'Deposit', 1200.00, 'Income', 'Monthly Salary', NULL, NULL),
-    ('2025-04-15', 'Credit Card', 'Withdrawal', -35.50, 'Groceries', 'Lunch at store', NULL, NULL),
-    ('2025-04-16', 'Savings Account', 'Deposit', 500.00, 'Savings', 'Transfer from Checking', 'Checking Account', NULL),
-    ('2025-04-16', 'Investment Account - RRSP', 'Deposit', 200.00, 'Retirement Savings', 'Regular Contribution', NULL, NULL),
-    ('2025-04-17', 'Checking Account', 'Withdrawal', -75.00, 'Utilities', 'Electricity Bill', NULL, NULL),
-    ('2025-04-17', 'Checking Account', 'Transfer_out', -100.00, NULL, 'Transfer to TFSA', 'Investment Account - TFSA', 'TFSA Savings'),
-    ('2025-04-17', 'Investment Account - TFSA', 'Transfer_into', 100.00, 'TFSA Savings', 'Transfer from Checking', 'Checking Account', NULL),
-    ('2025-04-18', 'Checking Account', 'Withdrawal', -12.00, 'Coffee', 'Morning coffee', NULL, NULL),
-    ('2025-04-18', 'Credit Card', 'Withdrawal', -60.00, 'Entertainment', 'Movie tickets', NULL, NULL),
-    ('2025-04-19', 'Savings Account', 'Withdrawal', -25.00, 'Emergency Fund', 'Small unexpected expense', NULL, NULL);
+
 
    
    

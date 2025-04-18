@@ -1,6 +1,6 @@
 import streamlit as st # type: ignore
-from modules.upload_pdf.component.upload import pdf_upload
-from modules.upload_pdf.pipeline.pipeline import pipeline
+from modules.upload_pdf.component.upload import pdf_upload # type: ignore
+from modules.upload_pdf.pipeline import pipeline # type: ignore
 
 st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
 

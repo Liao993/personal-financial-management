@@ -45,7 +45,7 @@ def insert_transaction_data(validated_data: dict):
 
 
 
-def fetch_transaction_data():
+def fetch_all_transaction_data():
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
     if conn:
@@ -56,8 +56,9 @@ def fetch_transaction_data():
         """
         try:
             cursor.execute(query)
+            column_names = [desc[0] for desc in cursor.description] 
             result = cursor.fetchall()  # Use fetchall() to get all rows
-            return result  # Return all the rows
+            return column_names, result  # Return all the rows
             
         except psycopg2.Error as e:
             st.error(f"Error retrieving income data: {e}")
