@@ -1,41 +1,58 @@
-import streamlit as st
+import streamlit as st # type: ignore
 import pandas as pd
+from modules.upload_pdf.pipeline.load import load_expense_data
+import time
+
+def display_editable_dataframe(dataframe):
+    if 'edit_mode' not in st.session_state:
+        st.session_state['edit_mode'] = True
+    if 'review_mode' not in st.session_state:
+        st.session_state['review_mode'] = False
+    if 'edited_df' not in st.session_state:
+        st.session_state['edited_df'] = dataframe.copy()
+    if 'save_completed' not in st.session_state:
+        st.session_state['save_completed'] = False
 
 
-def display_editable_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-  edited_df = df.copy()
-  rows_to_delete = set()
+    if st.session_state['edit_mode']:
+        st.success("Your data is being processed")
+        edited_df = st.data_editor(st.session_state['edited_df'], key="data_editor")
+        st.session_state['edited_df'] = edited_df # Update session state immediately on edit
 
-  st.subheader("Editable Data")
-
-  for index, row in df.iterrows():
-      col1, col2, col3, col4, col5 = st.columns(5)  # Adjust number of columns based on your DataFrame
-
-      # Display original values (can be replaced with editable inputs)
-      with col1:
-          st.text_area("Description", row['Description'], key=f"description_{index}")
-          edited_df.loc[index, 'Description'] = st.session_state[f"description_{index}"]
-      with col2:
-          edited_amount = st.number_input("Amount", value=row['Amount'], key=f"amount_{index}")
-          edited_df.loc[index, 'Amount'] = edited_amount
-      with col3:
-          edited_category = st.text_input("Category", row['Category'], key=f"category_{index}")
-          edited_df.loc[index, 'Category'] = edited_category
-      # Add more columns as needed based on your DataFrame structure
-
-      with col5:
-          if st.checkbox("Delete", key=f"delete_{index}"):
-              rows_to_delete.add(index)
-
-      st.markdown("---")
-
-  if rows_to_delete:
-      st.subheader("Rows to be Deleted")
-      st.dataframe(df.loc[list(rows_to_delete)])
-
-      if st.button("Confirm Delete"):
-          edited_df = edited_df.drop(list(rows_to_delete)).reset_index(drop=True)
-          st.success("Selected rows deleted.")
-          st.rerun()
-
-  return edited_df
+        if st.button("Confirm your changes"):
+            st.session_state['edit_mode'] = False
+            st.session_state['review_mode'] = True
+            st.session_state['save_completed'] = False # Reset save completed state
+            st.rerun()
+        return None
+    else:
+        if st.session_state['review_mode']:
+            st.info("View your information again before saving.")
+            st.table(st.session_state['edited_df'])
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Save"):
+                    st.session_state['review_mode'] = False
+                    done_status = load_expense_data(st.session_state['edited_df']) # Return the edited DataFrame for saving
+            
+                    if done_status:
+                            st.session_state['save_completed'] = True
+                            st.rerun()
+                    return done_status
+            with col2:
+                if st.button("Edit again"):
+                    st.session_state['edit_mode'] = True
+                    st.session_state['review_mode'] = False
+                    st.session_state['save_completed'] = False
+                    st.rerun()
+           
+        elif st.session_state['save_completed']:
+            st.success("Saved to database successfully!")
+         
+            time.sleep(2)
+            st.session_state['review_mode'] = False # Reset review mode
+            st.session_state['edit_mode'] = False # Go back to upload page-like state
+            st.session_state['save_completed'] = False # Reset save completed state
+            st.rerun()
+            return True # Indicate completion
+   

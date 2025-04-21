@@ -1,8 +1,10 @@
-import streamlit as st
+import streamlit as st # type: ignore
 
-def load_expense_data(edited_df):
-    
-    if st.button("Save Edited Data"):
-        # In a real application, you would save 'edited_df' to your database or file
-        st.success("Edited data saved (this is a placeholder).")
-        st.table(edited_df)
+def load_expense_data(updated_dataframe):
+    if updated_dataframe is not None:
+        st.info(updated_dataframe)
+            # Simulate backend saving
+        st.info("Saving data to database...")
+        return True
+    else:
+        st.warning("Your data can't be saved")

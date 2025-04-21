@@ -1,5 +1,3 @@
-
-
 from utils.data import daily_expense_in_other_provinces, hotel_booking
 
 def categorize_description_travel(description):

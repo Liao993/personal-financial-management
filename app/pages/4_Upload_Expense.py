@@ -1,6 +1,7 @@
 import streamlit as st # type: ignore
 from modules.upload_pdf.component.upload import pdf_upload # type: ignore
-from modules.upload_pdf.pipeline import pipeline # type: ignore
+from modules.upload_pdf.pipeline.pipeline import pipeline # type: ignore
+#from modules.upload_pdf.pipeline.display import display_editable_dataframe # type: ignore
 
 st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
 
@@ -9,27 +10,32 @@ def upload_expense():
 
     if 'upload_pdf_state' not in st.session_state:
         st.session_state['upload_pdf_state'] = True
-        st.session_state['uploaded_pdf'] = []
+        st.session_state['uploaded_pdf_files_list'] = []
         st.session_state['selected_action'] = None
-   
+    
 
     if st.session_state['upload_pdf_state']:
         action_options = ["RBC", "TD", "WISE", "CIBC"]
         st.session_state['selected_action'] = st.selectbox("Which Bank for your statements?", action_options)
         uploaded_pdf = pdf_upload()
         if uploaded_pdf: 
-            st.session_state['uploaded_pdf'] = uploaded_pdf
+            st.session_state['uploaded_pdf_files_list'] = uploaded_pdf
+            st.success(f"Uploaded {len(uploaded_pdf)} file(s).")
           
 
         if st.button("Submit"):
             st.session_state['upload_pdf_state'] = False
             st.rerun()
     else:
-        pipeline(st.session_state['selected_action'], st.session_state['uploaded_pdf'])
-        # remove cached data
-        if 'uploaded_pdf' in st.session_state:
-            del st.session_state['uploaded_pdf']
-
+        if st.session_state.get('uploaded_pdf_files_list'):
+            done = pipeline(st.session_state['selected_action'], st.session_state['uploaded_pdf_files_list'])
+            st.info(done)
+            if done:
+                #del first
+                if 'uploaded_pdf_files_list' in st.session_state:
+                    del st.session_state['uploaded_pdf_files_list']
+                st.session_state['upload_pdf_state'] = True # Go back to upload state
+                st.rerun() # Trigger the re-render to show the upload section again
    
     
 

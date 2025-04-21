@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import streamlit as st # type: ignore
+
 def text_to_table(extracted_data):
     selected_data = []
     if extracted_data:
@@ -16,7 +17,7 @@ def text_to_table(extracted_data):
                         continue
 
                     match = None
-                    st.info(line)
+                    #st.info(line)
                      # Condition : Transaction Date Post Date Description Amount (JANO1 JAN02 cookie 1.00 or -$1.70)
                     # Condition 1: Date Date Description $Amount (Handles optional - before $)
                     match = re.search(r'([A-Z]{3}\s?\d{2})\s([A-Z]{3}\s?\d{2})\s(.+?)\s*-\s*\$\s*(\d+\.\d{1,2})', line)

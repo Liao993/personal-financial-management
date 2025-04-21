@@ -9,7 +9,7 @@ def rbc_extracted(pdf_files):
 
     if pdf_files:
         for pdf_file_obj in pdf_files:
-            st.write(f"Processing file: {pdf_file_obj.name}")
+      
             relevant_lines = []
             try:
                 with pdfplumber.open(pdf_file_obj) as pdf:
