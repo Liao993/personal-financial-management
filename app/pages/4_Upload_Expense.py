@@ -12,6 +12,7 @@ def upload_expense():
         st.session_state['upload_pdf_state'] = True
         st.session_state['uploaded_pdf_files_list'] = []
         st.session_state['selected_action'] = None
+
     
 
     if st.session_state['upload_pdf_state']:
@@ -29,7 +30,6 @@ def upload_expense():
     else:
         if st.session_state.get('uploaded_pdf_files_list'):
             done = pipeline(st.session_state['selected_action'], st.session_state['uploaded_pdf_files_list'])
-            st.info(done)
             if done:
                 #del first
                 if 'uploaded_pdf_files_list' in st.session_state:

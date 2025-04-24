@@ -4,6 +4,7 @@ import pandas as pd
 from modules.upload_pdf.data_treatment.text_to_table import text_to_table
 from modules.upload_pdf.data_treatment.common_category import categorize_description_with_common_stores
 from modules.upload_pdf.data_treatment.travel_category import categorize_description_travel
+from modules.upload_pdf.data_treatment.format_date import format_transaction_date
 
 from utils.data import common_store_directory, hotel_booking
 
@@ -31,15 +32,23 @@ def categorize_items(df, common_store_directory):
                 traveling_categories.append(None)
     df['Category'] = categories
     df['Traveling_Category'] = traveling_categories
+
     return df
 
 def rbc_transformed(extracted_data):
+ 
     # Convert the extracted data into a table format
     extracted_df = text_to_table(extracted_data)
-    categorized_df = categorize_items(extracted_df, common_store_directory)
-    #model = load_transformer()
 
-    #category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", "Home Deposit", "Medicine", "Saved for Love", "Transportation", "Education", "Traveling" , "Fun / Tickets", "Clothing", "Liquar", "Others"]
-    #df['Category'] = df['Description'].apply(lambda x: categorize_description(x, model, category_options))
+    # Drop the "POST DATE" column if it exists
+    if "Post Date" in extracted_df.columns:
+        extracted_df = extracted_df.drop(columns=["Post Date"], errors='ignore')
+
+    # Format the transaction date
+    date_transformed_df = format_transaction_date(extracted_df, date_column='Transaction Date')
+
+    # Categorize items
+    categorized_df = categorize_items(date_transformed_df, common_store_directory)
+
 
     return categorized_df

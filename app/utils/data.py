@@ -28,10 +28,16 @@ common_store_directory = {
     'RECEIVERCOFFEE': 'Food Outside',
     'WAL-MART': 'Grocery',
     'HONGMALL': 'Grocery',
-    'LIQUOR' : 'Liquar',
+    'LIQUOR' : 'Liquor',
     'COWS': 'Food Outside',
     'ALAMBE': 'Food Outside',
     'MUCHOBURRITO': 'Food Outside',
+    'SOYAWAY': 'Food Outside',
+    'BBQ': 'Food Outside',
+    "DOMINO'S": 'Food Outside',
+    'KFC': 'Food Outside',
+    'MRSEAFOOD': 'Grocery',
+    'CROSSINGBRIDGE': 'Traveling'
     
 }
 
