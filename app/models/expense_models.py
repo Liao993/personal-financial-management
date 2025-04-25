@@ -1,7 +1,9 @@
 
 from pydantic import BaseModel, validator # type: ignore
 from datetime import date
-from utils.data import expense_category_options
+from decimal import Decimal
+from utils.data import expense_category_options, traveling_category
+
 class Expense(BaseModel):
     date: date
     items: str
@@ -19,7 +21,7 @@ class Expense(BaseModel):
 
     @validator('items')
     def items_not_empty(cls, value):
-        if not value.strip():  # Check for whitespace as well
+        if not value.strip():
             raise ValueError('Items should not be empty')
         return value
 
@@ -27,17 +29,20 @@ class Expense(BaseModel):
     def amount_not_empty(cls, value):
         if value is None:
             raise ValueError('Amount should not be empty')
-        if isinstance(value, (int, float)):
-            value = float(f"{value:.2f}")  # Ensure 2 decimal places
-            return value
+        if not isinstance(value, (int, float)):  # Allow int or float
+            raise TypeError('Amount must be a number')
         return value
 
-   
-
     @validator('category')
-    def category_not_empty(cls, value):
-        if not value.strip():  # Check for whitespace as well
+    def category_in_list(cls, value):
+        if not value.strip():
             raise ValueError('Category should not be empty')
         if value not in expense_category_options:
-            raise ValueError(f"Transaction type must be one of: {expense_category_options}")
+            raise ValueError(f'Category must be one of {expense_category_options}')
+        return value
+    
+    @validator('traveling_category')
+    def traveling_category_in_list(cls, value):
+        if value is not None and value not in traveling_category:
+            raise ValueError(f'Traveling category must be one of {traveling_category}')
         return value

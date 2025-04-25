@@ -32,9 +32,9 @@ def display_editable_dataframe(dataframe):
         st.success("Your data is being processed")
         edited_df = st.data_editor(
             st.session_state[review_data],
-            column_config={ "Category": st.column_config.SelectboxColumn(
-                    "Category",
-                    options=category_list if category_list else dataframe["Category"].unique(),
+            column_config={ "category": st.column_config.SelectboxColumn(
+                    "category",
+                    options=category_list if category_list else dataframe["category"].unique(),
                     required=True,
                 )
             } if category_list else None,

@@ -8,8 +8,15 @@ def insert_expense_data(validated_data: dict):
     if conn:
         cursor = conn.cursor()
         try:
-            query = "INSERT INTO expense (date, items, amount, category) VALUES (%s, %s, %s, %s)"
-            values = (validated_data['date'], validated_data['items'], validated_data['amount'], validated_data['category'])
+            query = "INSERT INTO expense (date, items, amount, category, traveling_category) VALUES (%s, %s, %s, %s, %s)"
+            #  validated_data['traveling_category'] can be None
+            values = (
+                validated_data['date'],
+                validated_data['items'],
+                validated_data['amount'],
+                validated_data['category'],
+                validated_data.get('traveling_category'),  # Use .get() to handle missing key
+            )
             cursor.execute(query, values)
             conn.commit()
         except psycopg2.Error as e:

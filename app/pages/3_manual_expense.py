@@ -3,7 +3,7 @@ from datetime import date
 from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
 from utils.css import drop_down_list
-from utils.data import expense_category_options, common_store_list
+from utils.data import expense_category_options, common_store_list, traveling_category
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
 edit_mode_form = 'edit_mode_expense'
@@ -33,6 +33,8 @@ def expense_input_page():
             
             selected_category = st.selectbox("Category", expense_category_options)
 
+            traveling_category = st.selectbox("Traveling Category", ["None"] + traveling_category)
+
             # to all small characters
             expense_category = selected_category
 
@@ -56,6 +58,7 @@ def expense_input_page():
 
             st.session_state["expense_amount"] = expense_amount
             st.session_state["expense_category"] = expense_category
+            st.session_state["traveling_category"] = traveling_category
            
             st.session_state[edit_mode_form] = False
             st.session_state[data_saved_key] = False
@@ -72,6 +75,7 @@ def expense_input_page():
             st.write(f"**Items:** {st.session_state.get('expense_items', '')}")
             st.write(f"**Amount:** {st.session_state.get('expense_amount', '')}")
             st.write(f"**Category:** {st.session_state.get('expense_category', '')}")
+            st.write(f"**Traveling Category:** {st.session_state.get('traveling_category', 'None')}")
            
             col1, col2 = st.columns(2)
             with col1:
@@ -85,6 +89,7 @@ def expense_input_page():
                     "amount": st.session_state.get('expense_amount', ''),
                     "items": st.session_state.get('expense_items', ''),
                     "category": st.session_state.get('expense_category', ''),
+                    "traveling_category": st.session_state.get('traveling_category', None) if st.session_state.get('traveling_category') != "None" else None,
                 }
 
                 if validate_expense_data(expense_data):
@@ -108,6 +113,7 @@ def expense_input_page():
                 st.session_state['expense_amount'] = 100
                 st.session_state['expense_items'] = ""
                 st.session_state['expense_category'] = ""
+                st.session_state['traveling_category'] = "None"
                 st.session_state[edit_mode_form] = True
                 st.session_state[data_saved_key] = False
                 st.rerun()
