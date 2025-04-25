@@ -2,6 +2,7 @@ import streamlit as st # type: ignore
 import pandas as pd
 import time
 from utils.data import expense_category_options as category_list
+from modules.upload_pdf.pipeline.load import load_expense_data
 
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
@@ -68,10 +69,7 @@ def display_editable_dataframe(dataframe):
             if confirm_button:
                 data_to_saved = reviewed_data
                 st.info("Saving your information...")
-                #st.info(income_data)
-                #if validate_income_data(income_data):
-                #    insert_income_data(income_data)
-                if data_to_saved is not None:
+                if load_expense_data(data_to_saved):
                     st.session_state[data_saved_key] = True
                     st.rerun()
                 else:

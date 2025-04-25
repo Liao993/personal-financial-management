@@ -41,6 +41,8 @@ def text_to_table(extracted_data):
                         selected_data.append([match.group(1).replace(' ', ''), match.group(2).replace(' ', ''), match.group(3).replace('$', '').strip(), match.group(4), year])
                         continue
 
-        df = pd.DataFrame(selected_data, columns=["Transaction Date", "Post Date", "Description", "Amount", "Year"])     
+        df = pd.DataFrame(selected_data, columns=["date", "Post Date", "items", "amount", "year"])  
+
+        df = df.drop(columns=["Post Date"], errors='ignore') 
             
     return df

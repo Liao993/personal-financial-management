@@ -12,7 +12,7 @@ def categorize_items(df, common_store_directory):
     
     categories = []
     traveling_categories = []
-    for description in df['Description']:
+    for description in df['items']:
         category = categorize_description_travel(description)
         if category:
             if category == "Traveling":
@@ -30,8 +30,8 @@ def categorize_items(df, common_store_directory):
             else:
                 categories.append("Not Categorized")  # Or any other default value
                 traveling_categories.append(None)
-    df['Category'] = categories
-    df['Traveling_Category'] = traveling_categories
+    df['category'] = categories
+    df['traveling_category'] = traveling_categories
 
     return df
 
@@ -40,12 +40,10 @@ def rbc_transformed(extracted_data):
     # Convert the extracted data into a table format
     extracted_df = text_to_table(extracted_data)
 
-    # Drop the "POST DATE" column if it exists
-    if "Post Date" in extracted_df.columns:
-        extracted_df = extracted_df.drop(columns=["Post Date"], errors='ignore')
 
     # Format the transaction date
-    date_transformed_df = format_transaction_date(extracted_df, date_column='Transaction Date')
+    date_transformed_df = format_transaction_date(extracted_df, date_column='date')
+
 
     # Categorize items
     categorized_df = categorize_items(date_transformed_df, common_store_directory)
