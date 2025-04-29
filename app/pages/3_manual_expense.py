@@ -1,9 +1,10 @@
 import streamlit as st # type: ignore
 from datetime import date
+import time
 from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
 from utils.css import drop_down_list
-from utils.data import expense_category_options, common_store_list, traveling_category
+from utils.data import expense_category_options, common_store_list, traveling_category_options
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
 edit_mode_form = 'edit_mode_expense'
@@ -33,7 +34,7 @@ def expense_input_page():
             
             selected_category = st.selectbox("Category", expense_category_options)
 
-            traveling = st.selectbox("Traveling Category", ["None"] + traveling_category)
+            traveling = st.selectbox("Traveling Category", ["None"] + traveling_category_options)
 
             # to all small characters
             expense_category = selected_category
@@ -86,13 +87,15 @@ def expense_input_page():
             if confirm_button:
                 expense_data = {
                     "date": st.session_state.get('expense_date', ''),
-                    "amount": st.session_state.get('expense_amount', ''),
                     "items": st.session_state.get('expense_items', ''),
+                    "amount": st.session_state.get('expense_amount', ''),
                     "category": st.session_state.get('expense_category', ''),
                     "traveling_category": st.session_state.get('traveling_category', None) if st.session_state.get('traveling_category') != "None" else None,
                 }
 
                 if validate_expense_data(expense_data):
+                    st.info(expense_data)
+                    time.sleep(10)
                     insert_expense_data(expense_data)
                    
                     st.session_state[data_saved_key] = True

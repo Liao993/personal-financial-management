@@ -11,7 +11,6 @@ class Transaction(BaseModel):
     fund_category: str
     source_notes: Optional[str] = None
     transfer_to_account: Optional[str] = None
-    transfer_to_fund_category: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -62,10 +61,6 @@ class Transaction(BaseModel):
 
     @validator('transfer_to_account', pre=True)
     def empty_string_to_none_transfer_account(cls, value):
-        return value if value and value.strip() else None
-
-    @validator('transfer_to_fund_category', pre=True)
-    def empty_string_to_none_transfer_fund_category(cls, value):
         return value if value and value.strip() else None
 
     @validator('source_notes', pre=True)

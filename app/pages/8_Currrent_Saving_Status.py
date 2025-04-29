@@ -20,7 +20,7 @@ def current_saving_status():
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.markdown("<h3 style='text-align: center; color:#e56b6f'>Total Fund Category Current Status</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; color:#e56b6f'>Fund Category Current Status</h3>", unsafe_allow_html=True)
         total_fund_status = original_data.groupby('fund_category')['amount'].sum().reset_index()
         st.dataframe(total_fund_status.set_index('fund_category'))
        
@@ -29,7 +29,7 @@ def current_saving_status():
         account_status = original_data.groupby('account_name')['amount'].sum().reset_index()
         st.dataframe(account_status.set_index('account_name'))
     with col3:
-        st.markdown("<h3 style='text-align: center; color:#2a9df4'>RBC Chequing Fund Current Status</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; color:#2a9df4'>RBC Chequing Current Status</h3>", unsafe_allow_html=True)
         rbc_status = original_data[original_data['account_name'] == 'RBC Chequing'].groupby('fund_category')['amount'].sum().reset_index()
         st.dataframe(rbc_status.set_index('fund_category'))
 

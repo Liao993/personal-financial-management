@@ -16,7 +16,7 @@ def insert_transaction_data(validated_data: dict):
                date, account_name, transaction_type, amount,
                fund_category, source_notes, transfer_to_account
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
              """
             values = (
                 validated_data['date'],

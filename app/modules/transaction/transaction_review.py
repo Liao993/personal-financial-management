@@ -3,7 +3,7 @@ import pandas as pd
 
 
 
-def record_saving_transaction(transaction_date, account_name, action_type, amount, fund_category=None, source_notes=None, transfer_to_account=None, transfer_to_fund_category=None):
+def record_saving_transaction(transaction_date, account_name, action_type, amount, fund_category=None, source_notes=None, transfer_to_account=None):
     st.subheader("Review Recorded Transaction")
 
     transaction = {
@@ -13,8 +13,7 @@ def record_saving_transaction(transaction_date, account_name, action_type, amoun
         "Transaction Type": action_type,
         "Amount": amount,
         "Notes": source_notes,
-        "Transfer To Account": transfer_to_account,
-        "Transfer To Funds": transfer_to_fund_category
+        "Transfer To Account": transfer_to_account
     }
     st.session_state['recorded_transactions'].append(transaction)
     

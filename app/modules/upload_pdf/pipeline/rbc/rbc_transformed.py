@@ -43,7 +43,10 @@ def rbc_transformed(extracted_data):
 
     # Format the transaction date
     date_transformed_df = format_transaction_date(extracted_df, date_column='date')
+    date_transformed_df['date'] = pd.to_datetime(date_transformed_df['date']).dt.date
 
+    #Amount data type
+    date_transformed_df['amount'] = date_transformed_df['amount'].astype(float).map(lambda x: f"{x:.2f}")
 
     # Categorize items
     categorized_df = categorize_items(date_transformed_df, common_store_directory)

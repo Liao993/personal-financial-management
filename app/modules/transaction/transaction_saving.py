@@ -17,7 +17,6 @@ def process_transactions_and_save(transactions):
                 fund_category=transaction_data.get('Usable Fund Category'),
                 source_notes=transaction_data.get('Notes'),
                 transfer_to_account=transaction_data.get('Transfer To Account'),
-                transfer_to_fund_category=transaction_data.get('Transfer To Funds'),
             )
             validated_data = transaction.dict() # Get dictionary for database insertion
             success = insert_transaction_data(validated_data)
