@@ -33,7 +33,7 @@ def expense_input_page():
             
             selected_category = st.selectbox("Category", expense_category_options)
 
-            traveling_category = st.selectbox("Traveling Category", ["None"] + traveling_category)
+            traveling = st.selectbox("Traveling Category", ["None"] + traveling_category)
 
             # to all small characters
             expense_category = selected_category
@@ -58,7 +58,7 @@ def expense_input_page():
 
             st.session_state["expense_amount"] = expense_amount
             st.session_state["expense_category"] = expense_category
-            st.session_state["traveling_category"] = traveling_category
+            st.session_state["traveling_category"] = traveling
            
             st.session_state[edit_mode_form] = False
             st.session_state[data_saved_key] = False

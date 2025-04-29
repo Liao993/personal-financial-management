@@ -2,7 +2,6 @@ import streamlit as st # type: ignore
 import pdfplumber # type: ignore
 import re
 
-from modules.upload_pdf.data_treatment.year_extraction import extract_year_from_statement
 
 #This page is used to extract the text from the PDF file
 def rbc_extracted(pdf_files):
