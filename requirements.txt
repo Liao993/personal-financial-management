@@ -14,3 +14,4 @@ passlib # For password hashing
 pydantic
 scikit-learn
 streamlit-aggrid
+seaborn

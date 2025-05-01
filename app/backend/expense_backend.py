@@ -53,3 +53,39 @@ def fetch_monthly_expenses_with_summary(year, month):
     else:
         st.error("Database connection failed, cannot fetch expense data.")
         return pd.DataFrame()
+
+
+def fetch_annual_expense(year):
+    """Fetches annual expense data from the database."""
+    conn = get_db_connection()
+    if conn:
+        try:
+            cursor = conn.cursor()
+            if year == "All Year":
+                query = """
+                    SELECT date, amount, category, summary_category
+                    FROM dbt_budget.intermediate_expenses_with_summary
+                    WHERE summary_category != 'Traveling'
+                """
+                cursor.execute(query)
+            elif isinstance(year, int):
+                query = """
+                    SELECT date, amount, category, summary_category
+                    FROM dbt_budget.intermediate_expenses_with_summary
+                    WHERE EXTRACT(YEAR FROM date) = %s AND summary_category != 'Traveling'
+                """
+                cursor.execute(query, (year,))
+            else:
+                st.error("Invalid year format.  Please select 'All' or a valid year.")
+                return pd.DataFrame()
+
+            rows = cursor.fetchall()
+            cols = [col[0] for col in cursor.description]  # Get column names
+            df = pd.DataFrame(rows, columns=cols)
+            return df
+
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving expense data: {e}")
+            return pd.DataFrame()
+        finally:
+            cursor.close()
