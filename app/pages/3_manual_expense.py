@@ -5,6 +5,7 @@ from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
 from utils.css import drop_down_list
 from utils.data import expense_category_options, common_store_list, traveling_category_options
+from Home import main
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
 edit_mode_form = 'edit_mode_expense'
@@ -94,10 +95,9 @@ def expense_input_page():
                 }
 
                 if validate_expense_data(expense_data):
-                    st.info(expense_data)
-                    time.sleep(10)
+                    st.info("Data is saving to database .......")
+                    time.sleep(5)
                     insert_expense_data(expense_data)
-                   
                     st.session_state[data_saved_key] = True
                     st.rerun() # Rerun to hide Confirm and Edit buttons
                 else:
@@ -109,20 +109,17 @@ def expense_input_page():
                 st.rerun()
 
         if st.session_state.get(data_saved_key, True):
-            st.success("Expense data successfully saved!")
-            if st.button("Add More Expense"):
-                # Reset all form-related session state to default
-                st.session_state['expense_date'] = date.today()
-                st.session_state['expense_amount'] = 100
-                st.session_state['expense_items'] = ""
-                st.session_state['expense_category'] = ""
-                st.session_state['traveling_category'] = "None"
-                st.session_state[edit_mode_form] = True
-                st.session_state[data_saved_key] = False
-                st.rerun()
-
-        
-
+            st.success("Expense data successfully saved! Moving Back to Input Page")
+            time.sleep(5)
+            # Reset form-related session state to default for the next input
+            st.session_state['expense_date'] = date.today()
+            st.session_state['expense_amount'] = 100.0
+            st.session_state['expense_items'] = ""
+            st.session_state['expense_category'] = "Grocery"
+            st.session_state['traveling_category'] = "None"
+            st.session_state[edit_mode_form] = True # Go back to the input form
+            st.session_state[data_saved_key] = False # Reset the saved state
+            st.rerun()
 if __name__ == "__main__":
     expense_input_page()
 

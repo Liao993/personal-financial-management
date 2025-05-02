@@ -14,16 +14,15 @@ def historical_spending():
     if edit_mode not in st.session_state:
         st.session_state[edit_mode] = True
 
-    if year_select_key not in st.session_state:
-        st.session_state[year_select_key] = None
-
     selected_year = None
+
     if st.session_state[edit_mode]:
         st.markdown("<h1 style='color: orange; text-align: center;'>Historical Stats</h1>", unsafe_allow_html=True)
-        selected_year = selected_year_choice(key=year_select_key)  # Pass the key
-        if selected_year:
-          st.session_state[year_select_key] = selected_year  # Store using the key
-        st.session_state[edit_mode] = False
+        selected_year_choice(key=year_select_key)  # Pass the key
+        if st.button("Submit", key="submit_year"):
+            st.session_state[edit_mode] = False
+            st.rerun()
+
     else:
         selected_year = st.session_state.get(year_select_key)  # Access using the key
 
@@ -44,7 +43,7 @@ def historical_spending():
                 with col1:
                     create_summary_bar_chart(all_fetched_expense)
                 with col2:
-                    create_line_chart()
-
+                    create_line_chart(all_fetched_expense, annual_income)
+                
 if __name__ == "__main__":
     historical_spending()
