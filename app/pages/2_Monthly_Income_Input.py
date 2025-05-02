@@ -2,8 +2,8 @@ import streamlit as st # type: ignore
 from datetime import date
 from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data
-from modules.input_pages.income_form import income_input_form
-from modules.input_pages.income_review import review_income_input
+from modules.income_input.income_form import income_input_form
+from modules.income_input.income_review import review_income_input
 st.set_page_config(page_title="Income Input", page_icon="💰")
 
 edit_mode_form = 'edit_mode_income'

@@ -89,3 +89,31 @@ def fetch_annual_expense(year):
             return pd.DataFrame()
         finally:
             cursor.close()
+
+def fetch_trip_list():
+   
+    """
+    Fetches the unique values from a specified column in a database table.
+
+    Args:
+        conn (psycopg2.connection): A database connection object.
+        table_name (str): The name of the table.
+        column_name (str): The name of the column.
+
+    Returns:
+        list: A list of unique values from the column, or an empty list on error.
+    """
+    conn = get_db_connection()
+    if conn:
+        try:
+            cursor = conn.cursor()
+            query = f"SELECT DISTINCT trip FROM expense"
+            cursor.execute(query)
+            unique_values = [row[0] for row in cursor.fetchall()]  # Fetch and extract values
+            cursor.close()
+            return unique_values
+        except psycopg2.Error as e:
+            st.error(f"Error fetching unique values: {e}")
+            if cursor:
+                cursor.close()
+            return []

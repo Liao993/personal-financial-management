@@ -1,4 +1,4 @@
-import streamlit as st 
+import streamlit as st  # type: ignore
 
 def create_line_chart():
-  st.info("next step")
+  st.markdown("<h3 style='text-align: center; color: #e67e22;'>Major Categroy Monthly Expense Percentage</h3>", unsafe_allow_html=True)
