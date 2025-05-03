@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS expense (
 
 CREATE TABLE IF NOT EXISTS transactions (
     transaction_id SERIAL PRIMARY KEY,
-    date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    date DATE NOT NULL,
     account_name VARCHAR(255) NOT NULL,
     transaction_type VARCHAR(255) NOT NULL, -- 'Deposit', 'Withdrawal', 'Transfer_out', 'Transfer_into'
     amount NUMERIC(10, 2) NOT NULL,

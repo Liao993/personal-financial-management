@@ -1,7 +1,9 @@
 from datetime import datetime
 import streamlit as st # type: ignore
+import pandas as pd
 from backend.transaction_backend import insert_transaction_data  # Assuming you have this function
 from models.transaction_models import Transaction  # Import your Pydantic model
+from backend.transaction_backend import fetch_transaction_deposit_check
 
 # Function to handle the data and insert it into the database
 def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving):
@@ -40,20 +42,30 @@ def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, re
         ),
     ]
 
-    insert_successful = True
     
-    for transaction in transactions_to_insert:
-        try:
-            validated_data = Transaction(**transaction.dict()) # Validate against the Pydantic model
-            success = insert_transaction_data(validated_data.dict())
-            if not success:
-                insert_successful = False
-                st.error(f"Failed to insert transaction: {validated_data.dict()}") # More specific error
-        except Exception as e:
-            st.error(f"Validation error for transaction: {transaction.dict()}. Error: {e}")
-            return False  # Stop if any validation fails
-        
-    return insert_successful
+  
+    data = fetch_transaction_deposit_check(goal_datetime.year, goal_datetime.month)
+
+    if not data.empty:
+        st.button("Update Btn")
+        return "existing_data", data
+    else:
+        insertion_errors = []
+        for transaction in transactions_to_insert:
+            try:
+                validated_data = Transaction(**transaction.dict()) # Validate against the Pydantic model
+                success = insert_transaction_data(validated_data.dict())
+                if not success:
+                    insertion_errors.append(validated_data.dict())
+            except Exception as e:
+                st.error(f"Validation error for transaction: {transaction.dict()}. Error: {e}")
+                return "validation_error", data # Return error type and potentially the fetched data
+
+        if insertion_errors:
+            st.error(f"Failed to insert some transactions: {insertion_errors}")
+            return "insertion_failed", data
+        else:
+            return "success", data
 
 # to be called in the Page when Save the Results button clicked
 def monthly_savings_action():
@@ -65,8 +77,14 @@ def monthly_savings_action():
     rbc_saving = st.session_state.get('rbc_saving')
 
     
-    success = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
-    if success:
-        st.success("Monthly savings have been saved successfully!")
-    else:
-        st.error("Failed to save monthly savings. Please check your data.")
+    status, data = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+    if status == "existing_data":
+         st.warning(f"Previous deposits for {goal_datetime.year}-{goal_datetime.month} exist. Do you want to update them?")
+         st.table(data)
+    elif status == "insertion_failed":
+        st.error("Failed to insert some or all transaction data. Please check the logs above for specific errors.")
+    elif status == "validation_error":
+        # The specific validation error is already displayed within the handling function
+        pass
+    elif status == "success":
+        st.success("Data saved successfully!")

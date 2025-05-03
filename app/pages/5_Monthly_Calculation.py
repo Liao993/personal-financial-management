@@ -8,7 +8,7 @@ from modules.monthly_stats.components.monthly_pie import create_expense_pie_char
 from modules.monthly_stats.components.spending_table import display_spending_table # type: ignore
 from modules.monthly_stats.middle_layer.monthly_saving import monthly_savings_action
 from modules.monthly_stats.calculation.saving_calculation import expense_and_saving_calculation # type: ignore
-from backend.transaction_backend import fetch_transaction_check
+
 
 st.set_page_config(page_title="Monthly Stats", page_icon="💰", layout="wide")
 
@@ -47,14 +47,8 @@ def monthly_stats_page():
         st.write(" ")
         st.write(" ")
         if st.button("Save Your Results", on_click=monthly_savings_action):
-          # check if the transation is already in the database
-          st.info(goal_date.year, goal_date.month)
-          data = fetch_transaction_check(goal_date.year, goal_date.month)
-          if len(data) == 0:
-             st.info("Insert transation data for the next step")
-          else:
-             st.warning(f"You previous deposit for {goal_date.year}-{goal_date.month} existed, Do you want to update it?")
-             st.table(data)
+           pass
+          
 
     with right_col:
         create_expense_pie_chart(monthly_expense, total_saving, travel_saving)

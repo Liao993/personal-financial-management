@@ -70,24 +70,21 @@ def fetch_all_transaction_data():
         return []
 
 
-def fetch_transaction_check(year, month):
+def fetch_transaction_deposit_check(year, month):
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         query = """
         SELECT date, fund_category, amount
-        FROM dbt_budget.intermediate_expenses_with_summary
-        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit' AND fund_category='Retirement Saving' ";
+        FROM transactions
+        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit';
         """
         try:
             cursor.execute(query, (year, month))
-            result = cursor.fetchone()
-            if result:
-                df = pd.DataFrame([result], columns=['date', 'fund_category', 'amount'])
-                return df
-            else:
-                return pd.DataFrame(columns=['date', 'fund_category', 'amount']) 
+            columns = [desc[0] for desc in cursor.description]
+            df = pd.DataFrame(cursor.fetchall(), columns=columns)
+            return df
             
         except psycopg2.Error as e:
             st.error(f"Error retrieving transaction data: {e}")

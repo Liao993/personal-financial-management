@@ -18,7 +18,7 @@ def financial_goals_form():
             saving_goal = st.number_input("Saving Goal", min_value=0.0, value=1000.00, format="%.2f")
         with col4:
             retirement_percentage_options = [100, 80, 70, 60, 50, 30, 20]
-            retirement_percentage = st.selectbox("Retirement Percentage (%)", retirement_percentage_options, index=0) # Default to 100
+            retirement_percentage = st.selectbox("Retirement Percentage (%)", retirement_percentage_options, index=1) # Default to 80
 
         # Third line: Traveling Fund Max and Min
         col5, col6 = st.columns(2)
