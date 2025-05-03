@@ -1,6 +1,7 @@
 import streamlit as st # type: ignore
 from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
+import pandas as pd
 
 def insert_transaction_data(validated_data: dict):
     #st.info("Received validated income data in income_backend.py:")
@@ -60,6 +61,36 @@ def fetch_all_transaction_data():
             
         except psycopg2.Error as e:
             st.error(f"Error retrieving income data: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return []
+
+
+def fetch_transaction_check(year, month):
+    # Here you would add your logic to retrieve data from the database
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+        SELECT date, fund_category, amount
+        FROM dbt_budget.intermediate_expenses_with_summary
+        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit' AND fund_category='Retirement Saving' ";
+        """
+        try:
+            cursor.execute(query, (year, month))
+            result = cursor.fetchone()
+            if result:
+                df = pd.DataFrame([result], columns=['date', 'fund_category', 'amount'])
+                return df
+            else:
+                return pd.DataFrame(columns=['date', 'fund_category', 'amount']) 
+            
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving transaction data: {e}")
             return []
         finally:
             cursor.close()
