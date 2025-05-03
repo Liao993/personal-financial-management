@@ -1,6 +1,7 @@
 from datetime import datetime
 import streamlit as st # type: ignore
 import pandas as pd
+import time
 from backend.transaction_backend import insert_transaction_data  # Assuming you have this function
 from models.transaction_models import Transaction  # Import your Pydantic model
 from backend.transaction_backend import fetch_transaction_deposit_check
@@ -41,14 +42,14 @@ def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, re
             source_notes=source_notes,
         ),
     ]
-
     
   
     data = fetch_transaction_deposit_check(goal_datetime.year, goal_datetime.month)
 
     if not data.empty:
-        st.button("Update Btn")
-        return "existing_data", data
+        st.warning(f"Previous deposits for {goal_datetime.year}-0{goal_datetime.month} found")
+        return False
+
     else:
         insertion_errors = []
         for transaction in transactions_to_insert:
@@ -59,13 +60,12 @@ def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, re
                     insertion_errors.append(validated_data.dict())
             except Exception as e:
                 st.error(f"Validation error for transaction: {transaction.dict()}. Error: {e}")
-                return "validation_error", data # Return error type and potentially the fetched data
 
         if insertion_errors:
             st.error(f"Failed to insert some transactions: {insertion_errors}")
-            return "insertion_failed", data
+            
         else:
-            return "success", data
+            return True
 
 # to be called in the Page when Save the Results button clicked
 def monthly_savings_action():
@@ -77,14 +77,8 @@ def monthly_savings_action():
     rbc_saving = st.session_state.get('rbc_saving')
 
     
-    status, data = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
-    if status == "existing_data":
-         st.warning(f"Previous deposits for {goal_datetime.year}-{goal_datetime.month} exist. Do you want to update them?")
-         st.table(data)
-    elif status == "insertion_failed":
-        st.error("Failed to insert some or all transaction data. Please check the logs above for specific errors.")
-    elif status == "validation_error":
-        # The specific validation error is already displayed within the handling function
-        pass
-    elif status == "success":
-        st.success("Data saved successfully!")
+    status = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+     
+    if status:
+        st.success("Data is successfully saved !")
+        

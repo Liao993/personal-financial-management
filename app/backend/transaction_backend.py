@@ -73,15 +73,16 @@ def fetch_all_transaction_data():
 def fetch_transaction_deposit_check(year, month):
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
+    search_pattern = "saved from%"
     if conn:
         cursor = conn.cursor()
         query = """
-        SELECT date, fund_category, amount
+        SELECT transaction_id, date, fund_category, amount
         FROM transactions
-        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit';
+        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit' AND source_notes LIKE %s;
         """
         try:
-            cursor.execute(query, (year, month))
+            cursor.execute(query, (year, month, search_pattern))
             columns = [desc[0] for desc in cursor.description]
             df = pd.DataFrame(cursor.fetchall(), columns=columns)
             return df
