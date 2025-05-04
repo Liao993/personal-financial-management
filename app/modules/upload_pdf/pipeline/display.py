@@ -1,7 +1,7 @@
 import streamlit as st # type: ignore
 import pandas as pd
 import time
-from utils.data import expense_category_options as category_list, traveling_category_options
+from utils.data import expense_category_options as category_list, traveling_category_options, trip_destination
 from modules.upload_pdf.pipeline.load import load_expense_data
 
 edit_mode_form = 'edit_mode_expense'
@@ -46,6 +46,11 @@ def display_editable_dataframe(dataframe):
                 "traveling_category": st.column_config.SelectboxColumn(  # Add traveling_category
                 "Traveling Category",  # Label for the column
                 options=[None] + traveling_category_options,  # Use your options, include None
+                required=False,  # traveling_category is not required
+                ),
+                 "trip": st.column_config.SelectboxColumn(  # Add traveling_category
+                "Trip",  # Label for the column
+                options=[None] + trip_destination,  # Use your options, include None
                 required=False,  # traveling_category is not required
                 ),
             } if category_list else None,
