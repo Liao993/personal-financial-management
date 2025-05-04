@@ -44,23 +44,30 @@ def insert_transaction_data(validated_data: dict):
 
 
 
-def fetch_all_transaction_data():
+def fetch_transaction_data_by_month(year):
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         query = """
-        SELECT *
-        FROM transactions
-        """
+            SELECT EXTRACT(MONTH FROM date) AS month, fund_category, SUM(amount) AS total_amount
+            FROM transactions
+            WHERE EXTRACT(YEAR FROM date) = %s AND transaction_type = 'Deposit'
+            GROUP BY EXTRACT(MONTH FROM date), fund_category
+            ORDER BY month;  -- Order by month for consistency
+            """
         try:
-            cursor.execute(query)
-            column_names = [desc[0] for desc in cursor.description] 
-            result = cursor.fetchall()  # Use fetchall() to get all rows
-            return column_names, result  # Return all the rows
+            cursor.execute(query, (year,))
+            columns = ['month', 'fund_category', 'total_amount']  # Define column names
+            data = cursor.fetchall()
+            if data:
+                df = pd.DataFrame(data, columns=columns)
+                return df
+            else:
+                return pd.DataFrame(columns=columns) # return empty df
             
         except psycopg2.Error as e:
-            st.error(f"Error retrieving income data: {e}")
+            st.error(f"Error retrieving transaction data: {e}")
             return []
         finally:
             cursor.close()
@@ -96,3 +103,39 @@ def fetch_transaction_deposit_check(year, month):
     else:
         st.info("Database connection failed, cannot retrieve data.")
         return []
+
+
+def fetch_all_transaction_data():
+    """
+    Fetches all data from the transactions table.
+
+    Returns:
+        pd.DataFrame: A Pandas DataFrame containing all transaction data,
+                      or an empty DataFrame if no data is found or an error occurs.
+                      Returns None if the database connection fails.
+    """
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT *
+            FROM transactions
+            """
+        try:
+            cursor.execute(query) #removed the extra parameter
+            columns = [desc[0] for desc in cursor.description] #added this line to get the column names
+            data = cursor.fetchall()
+            if data:
+                df = pd.DataFrame(data, columns=columns) # Pass the column names to the DataFrame constructor
+                return columns, df
+            else:
+                return pd.DataFrame()  # Return empty DataFrame
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving transaction data: {e}")
+            return columns, None # Return None on error
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return columns, None  # Return None on connection failure

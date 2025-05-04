@@ -3,39 +3,47 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def create_line_chart(data, annual_income):
+def create_expense_line_chart(expense, income):
     # Calculate monthly income
-    monthly_income = annual_income / 12
-    data['income'] = monthly_income # set monthly income
+    monthly_income = 1000
+    expense['income'] = monthly_income # set monthly income
 
     st.markdown(f"<h3 style='text-align: center; color: #e67e22;'>Percentage of Monthly Expense by Category </h3>", unsafe_allow_html=True)
     
     # Extract the month from the 'date' column
-    data['date'] = pd.to_datetime(data['date'])
-    data['month'] = data['date'].dt.month
+    expense['date'] = pd.to_datetime(expense['date'])
+    expense['month'] = expense['date'].dt.month
 
     # Filter for the specified categories
     categories_of_interest = ['Grocery', 'Food Outside', 'Home Deposit', 'Donation']
-    data['major_category'] = data['category'].apply(lambda x: x if x in categories_of_interest else 'Others')
+    expense['major_category'] = expense['category'].apply(lambda x: x if x in categories_of_interest else 'Others')
 
     # Group data
     grouped = (
-        data.groupby(['month', 'major_category'], as_index=False)['amount']
+        expense.groupby(['month', 'major_category'], as_index=False)['amount']
         .sum()
         .rename(columns={'amount': 'total_amount'})
     )
-
+   
     # Create full month-category grid
     all_months = pd.Series(range(1, 13), name='month')
-    all_categories = pd.Series(data['major_category'].unique(), name='major_category')
+    all_categories = pd.Series(expense['major_category'].unique(), name='major_category')
     full_grid = pd.merge(all_months.to_frame(), all_categories.to_frame(), how='cross')
 
     # Join grouped data with full grid
     monthly_expenses = pd.merge(full_grid, grouped, on=['month', 'major_category'], how='left')
     monthly_expenses['total_amount'] = monthly_expenses['total_amount'].fillna(0)
+  
 
-    # Compute percentage
-    monthly_expenses['percentage'] = (monthly_expenses['total_amount'] / int(monthly_income)) * 100
+    #Merge Income Data
+    merged_df = pd.merge(monthly_expenses, income, on='month', how='left')
+    merged_df['total_income'].fillna(0, inplace=True)
+
+    # Compute percentage with null income treatment
+    merged_df['percentage'] = merged_df.apply(
+        lambda row: (row['total_amount'] / row['total_income']) * 100 if row['total_income'] != 0 else 0,
+        axis=1
+    )
 
     # Define colors
     category_colors = {
@@ -50,7 +58,7 @@ def create_line_chart(data, annual_income):
     # Plot
     plt.figure(figsize=(10, 8))
     ax = sns.lineplot(
-        data=monthly_expenses,
+        data=merged_df,
         x='month',
         y='percentage',
         hue='major_category',
@@ -70,7 +78,7 @@ def create_line_chart(data, annual_income):
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         fontsize=14
     )
-    plt.yticks(fontsize=14)
+    plt.yticks(ticks=range(0, 110, 10), fontsize=14)
     plt.grid(axis='y')
     plt.tight_layout()
 
@@ -78,5 +86,7 @@ def create_line_chart(data, annual_income):
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
+    plt.ylim(0, 100)
+    plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
 

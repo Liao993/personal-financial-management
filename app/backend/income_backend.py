@@ -1,7 +1,7 @@
 import streamlit as st # type: ignore
 from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
-
+import pandas as pd
 def insert_income_data(validated_data: dict):
     #st.info("Received validated income data in income_backend.py:")
     # Here you would add your logic to interact with the database
@@ -29,23 +29,27 @@ def insert_income_data(validated_data: dict):
     else:
         st.info("Database connection failed, cannot insert data.")
 
-def fetch_annual_income(year):
+def fetch_annual_income_by_month(year):
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         query = """
-        SELECT SUM(amount)
-        FROM income
-        WHERE EXTRACT(YEAR FROM date) = %s;
+            SELECT EXTRACT(MONTH FROM date) AS month, SUM(amount) As amount
+            FROM income
+            WHERE EXTRACT(YEAR FROM date) = %s
+            GROUP BY EXTRACT(MONTH FROM date)
+            ORDER BY month;  -- Order by month for consistency
     """
         try:
             cursor.execute(query, (year,))
-            result = cursor.fetchone()
-            if result and result[0] is not None:
-                return float(result[0])
+            columns = ['month', 'total_income']  # Define column names
+            data = cursor.fetchall()
+            if data:
+                df = pd.DataFrame(data, columns=columns)
+                return df
             else:
-                return 0.0
+                return pd.DataFrame(columns=columns) # return empty df
             
         except psycopg2.Error as e:
             st.error(f"Error retrieving income data: {e}")

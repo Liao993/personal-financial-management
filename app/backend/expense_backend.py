@@ -61,22 +61,16 @@ def fetch_annual_expense(year):
     if conn:
         try:
             cursor = conn.cursor()
-            if year == "All Year":
+         
+            if isinstance(year, int):
                 query = """
                     SELECT date, amount, category, summary_category
                     FROM dbt_budget.intermediate_expenses_with_summary
-                    WHERE summary_category != 'Traveling'
-                """
-                cursor.execute(query)
-            elif isinstance(year, int):
-                query = """
-                    SELECT date, amount, category, summary_category
-                    FROM dbt_budget.intermediate_expenses_with_summary
-                    WHERE EXTRACT(YEAR FROM date) = %s AND summary_category != 'Traveling'
+                    WHERE EXTRACT(YEAR FROM date) = %s AND category != 'Traveling'
                 """
                 cursor.execute(query, (year,))
             else:
-                st.error("Invalid year format.  Please select 'All' or a valid year.")
+                st.error("Invalid year format.  Please select a valid year.")
                 return pd.DataFrame()
 
             rows = cursor.fetchall()
