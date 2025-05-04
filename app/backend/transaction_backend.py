@@ -47,17 +47,18 @@ def insert_transaction_data(validated_data: dict):
 def fetch_transaction_data_by_month(year):
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
+    search_pattern = "saved from%"
     if conn:
         cursor = conn.cursor()
         query = """
             SELECT EXTRACT(MONTH FROM date) AS month, fund_category, SUM(amount) AS total_amount
             FROM transactions
-            WHERE EXTRACT(YEAR FROM date) = %s AND transaction_type = 'Deposit'
+            WHERE EXTRACT(YEAR FROM date) = %s AND transaction_type = 'Deposit' AND source_notes LIKE %s
             GROUP BY EXTRACT(MONTH FROM date), fund_category
             ORDER BY month;  -- Order by month for consistency
             """
         try:
-            cursor.execute(query, (year,))
+            cursor.execute(query, (year, search_pattern))
             columns = ['month', 'fund_category', 'total_amount']  # Define column names
             data = cursor.fetchall()
             if data:

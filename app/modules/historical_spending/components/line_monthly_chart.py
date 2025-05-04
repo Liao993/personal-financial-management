@@ -74,7 +74,7 @@ def create_monthly_line_chart(expense, income, transaction):
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
-    plt.ylim(0, 200)
+    plt.ylim(0, 100)
     plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
 
