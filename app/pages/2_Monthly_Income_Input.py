@@ -1,5 +1,6 @@
 import streamlit as st # type: ignore
 from datetime import date
+import time
 from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data
 from modules.income_input.income_form import income_input_form
@@ -28,6 +29,7 @@ def income_input_page():
        income_input_form(edit_mode_form, review_data_key)
       
     else:
+       
         if not st.session_state.get(data_saved_key, False):
             #the about condition means if data_saved_key is False or not active, then show the confirm and edit buttons
             
@@ -44,7 +46,7 @@ def income_input_page():
             #Validate Data and Save Data after clicking confirm button
             if confirm_button:
                 income_data = reviewed_data
-                st.info(income_data)
+                #st.info(income_data)
                 if validate_income_data(income_data):
                     insert_income_data(income_data)
                     st.session_state[data_saved_key] = True
@@ -59,19 +61,18 @@ def income_input_page():
 
         # If data is saved, show the option to add more income
         elif st.session_state.get(data_saved_key, True):
-            st.success("Income data successfully saved!")
-            if st.button("Add More Income"):
-
-                # Reset all form-related session state to default
-                st.session_state['date'] = date.today()
-                st.session_state['amount'] = 1717.85
-                st.session_state['source'] = "Gov"
-                st.session_state['regular'] = True
-                st.session_state['notes'] = ""
-                st.session_state[edit_mode_form] = True
-                st.session_state[data_saved_key] = False
-                st.rerun()
-
+            st.success("Income data successfully saved! Move back to database!")
+            time.sleep(3)
+            # Reset all form-related session state to default
+            st.session_state['date'] = date.today()
+            st.session_state['amount'] = 1717.85
+            st.session_state['source'] = "Gov"
+            st.session_state['regular'] = True
+            st.session_state['notes'] = ""
+            st.session_state[edit_mode_form] = True
+            st.session_state[data_saved_key] = False
+            st.rerun()
+       
         
 
 if __name__ == "__main__":
