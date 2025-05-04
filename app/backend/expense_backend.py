@@ -56,6 +56,44 @@ def fetch_monthly_expenses_with_summary(year, month):
         return pd.DataFrame()
 
 
+def fetch_trip_expense(year_start, year_end):
+    """Fetches annual expense data from the database."""
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+         # To calculate total_spending by trip and the % for category in SQL first
+        query = """
+                SELECT
+                    trip,
+                    traveling_category,
+                    SUM(amount) AS category_spending,
+                    SUM(SUM(amount)) OVER (PARTITION BY trip) AS total_spending,
+                    ROUND((SUM(amount)  / SUM(SUM(amount) ) OVER (PARTITION BY trip)  * 100.0), 2) AS percentage
+                FROM
+                    dbt_budget.intermediate_expenses_with_summary
+                WHERE
+                    category = 'Traveling' AND EXTRACT(YEAR FROM date) >= %s AND EXTRACT(YEAR FROM date) <= %s
+                GROUP BY
+                    trip,
+                    traveling_category
+                ORDER BY
+                    trip,
+                    traveling_category;
+
+            """
+        try:
+            cursor.execute(query, (year_start, year_end))
+            rows = cursor.fetchall()
+            cols = [col[0] for col in cursor.description]  # Get column names
+            df = pd.DataFrame(rows, columns=cols)
+            return df
+
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving expense data: {e}")
+            return pd.DataFrame()
+        finally:
+            cursor.close()
+
 def fetch_annual_expense(year):
     """Fetches annual expense data from the database."""
     conn = get_db_connection()
