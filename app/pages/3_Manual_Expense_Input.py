@@ -4,7 +4,7 @@ import time
 from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
 from utils.css import drop_down_list
-from utils.data import expense_category_options, common_store_list, traveling_category_options
+from utils.data import expense_category_options, common_store_list, traveling_category_options, trip_destination
 from Home import main
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
@@ -37,6 +37,8 @@ def expense_input_page():
 
             traveling = st.selectbox("Traveling Category", ["None"] + traveling_category_options)
 
+            trip = st.selectbox("Trip", ["None"] + trip_destination)
+
             # to all small characters
             expense_category = selected_category
 
@@ -61,7 +63,8 @@ def expense_input_page():
             st.session_state["expense_amount"] = expense_amount
             st.session_state["expense_category"] = expense_category
             st.session_state["traveling_category"] = traveling
-           
+            st.session_state["trip"] = trip
+
             st.session_state[edit_mode_form] = False
             st.session_state[data_saved_key] = False
             st.rerun()
@@ -78,7 +81,8 @@ def expense_input_page():
             st.write(f"**Amount:** {st.session_state.get('expense_amount', '')}")
             st.write(f"**Category:** {st.session_state.get('expense_category', '')}")
             st.write(f"**Traveling Category:** {st.session_state.get('traveling_category', 'None')}")
-           
+            st.write(f"**Trip:** {st.session_state.get('trip', 'None')}")
+
             col1, col2 = st.columns(2)
             with col1:
                 confirm_button = st.button("Confirm")
@@ -92,11 +96,12 @@ def expense_input_page():
                     "amount": st.session_state.get('expense_amount', ''),
                     "category": st.session_state.get('expense_category', ''),
                     "traveling_category": st.session_state.get('traveling_category', None) if st.session_state.get('traveling_category') != "None" else None,
+                    "trip": st.session_state.get('trip', None) if st.session_state.get('trip') != "None" else None,
                 }
 
                 if validate_expense_data(expense_data):
                     st.info("Data is saving to database .......")
-                    time.sleep(5)
+                    time.sleep(3)
                     insert_expense_data(expense_data)
                     st.session_state[data_saved_key] = True
                     st.rerun() # Rerun to hide Confirm and Edit buttons
@@ -110,13 +115,14 @@ def expense_input_page():
 
         if st.session_state.get(data_saved_key, True):
             st.success("Expense data successfully saved! Moving Back to Input Page")
-            time.sleep(5)
+            time.sleep(3)
             # Reset form-related session state to default for the next input
             st.session_state['expense_date'] = date.today()
             st.session_state['expense_amount'] = 100.0
             st.session_state['expense_items'] = ""
             st.session_state['expense_category'] = "Grocery"
             st.session_state['traveling_category'] = "None"
+            st.session_state['trip'] = "None"
             st.session_state[edit_mode_form] = True # Go back to the input form
             st.session_state[data_saved_key] = False # Reset the saved state
             st.rerun()

@@ -8,7 +8,7 @@ def insert_expense_data(validated_data: dict):
     if conn:
         cursor = conn.cursor()
         try:
-            query = "INSERT INTO expense (date, items, amount, category, traveling_category) VALUES (%s, %s, %s, %s, %s)"
+            query = "INSERT INTO expense (date, items, amount, category, traveling_category, trip) VALUES (%s, %s, %s, %s, %s, %s)"
             #  validated_data['traveling_category'] can be None
             values = (
                 validated_data['date'],
@@ -16,6 +16,7 @@ def insert_expense_data(validated_data: dict):
                 validated_data['amount'],
                 validated_data['category'],
                 validated_data.get('traveling_category'),  # Use .get() to handle missing key
+                validated_data.get('trip'),  # Use .get() to handle missing key
             )
             cursor.execute(query, values)
             conn.commit()
@@ -83,31 +84,3 @@ def fetch_annual_expense(year):
             return pd.DataFrame()
         finally:
             cursor.close()
-
-def fetch_trip_list():
-   
-    """
-    Fetches the unique values from a specified column in a database table.
-
-    Args:
-        conn (psycopg2.connection): A database connection object.
-        table_name (str): The name of the table.
-        column_name (str): The name of the column.
-
-    Returns:
-        list: A list of unique values from the column, or an empty list on error.
-    """
-    conn = get_db_connection()
-    if conn:
-        try:
-            cursor = conn.cursor()
-            query = f"SELECT DISTINCT trip FROM expense"
-            cursor.execute(query)
-            unique_values = [row[0] for row in cursor.fetchall()]  # Fetch and extract values
-            cursor.close()
-            return unique_values
-        except psycopg2.Error as e:
-            st.error(f"Error fetching unique values: {e}")
-            if cursor:
-                cursor.close()
-            return []

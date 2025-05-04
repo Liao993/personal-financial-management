@@ -10,6 +10,7 @@ class Expense(BaseModel):
     amount: float
     category: str
     traveling_category: Optional[str] = None 
+    trip: Optional[str] = None 
 
     class Config:
         orm_mode = True
@@ -49,6 +50,7 @@ class Expense(BaseModel):
         if value is not None and value not in traveling_category_options:
             raise ValueError(f'Traveling category must be one of {traveling_category_options}')
         return value
+    
 
     @validator('category')
     def category_traveling_check(cls, value, values):
@@ -64,4 +66,13 @@ class Expense(BaseModel):
             raise ValueError("If traveling_category is provided, category must be 'Traveling'")
         if category == 'Traveling' and value is None:
             raise ValueError("If category is 'Traveling', traveling_category cannot be None")
+        return value
+    
+    @validator('trip')
+    def trip_check(cls, value, values):
+        category = values.get('category')
+        if value is not None and category != 'Traveling':
+            raise ValueError("If trip is provided, category must be 'Traveling'")
+        if category == 'Traveling' and value is None:
+            raise ValueError("If category is 'Traveling', trip cannot be None")
         return value

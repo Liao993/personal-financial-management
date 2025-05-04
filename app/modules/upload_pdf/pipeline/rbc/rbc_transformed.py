@@ -32,7 +32,7 @@ def categorize_items(df, common_store_directory):
                 traveling_categories.append(None)
     df['category'] = categories
     df['traveling_category'] = traveling_categories
-
+    df['trip'] = 'Halifax'
     return df
 
 def rbc_transformed(extracted_data):
