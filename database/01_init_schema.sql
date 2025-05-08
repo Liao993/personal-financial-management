@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS income (
     id SERIAL PRIMARY KEY,
     date DATE NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
     source VARCHAR(255) NOT NULL,
     regular BOOLEAN NOT NULL DEFAULT TRUE, -- Use BOOLEAN here
     notes TEXT
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS expense (
     id SERIAL PRIMARY KEY, -- Auto-incrementing primary key
     date DATE NOT NULL,
     items VARCHAR(255) NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
     category VARCHAR(255) NOT NULL,
     traveling_category VARCHAR(255),
     trip VARCHAR(255)
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     source_notes TEXT,
     transfer_to_account VARCHAR(255)
 );
-
+/*
 -- Example: Insert some sample income data
 INSERT INTO income (date, amount, source, notes) VALUES
     ('2025-04-15', 1000.00, 'Part-time Job', 'Payment for April work'),
@@ -45,7 +45,7 @@ INSERT INTO expense (date, items, amount, category) VALUES
     ('2099-02-01', 'Anchery', 11500.00, 'Entertainment'),
     ('2099-02-28', 'Home', 13000.00, 'Rent'),
     ('2099-03-05', 'Water', 5100.00, 'Utilities');
-
+*/
 
 
 

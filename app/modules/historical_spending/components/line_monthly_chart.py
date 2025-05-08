@@ -40,7 +40,7 @@ def create_monthly_line_chart(expense, income, transaction):
         'Total Spending': 'red',
         'House': '#16a085',
         'Retirement Saving': '#5dade2',
-        'Medium-term Saving': 'blue'
+        'Medium-term Saving': '#f39c12' #orange
     }
     palette = {cat: category_colors.get(cat, 'gray') for cat in all_categories}
 

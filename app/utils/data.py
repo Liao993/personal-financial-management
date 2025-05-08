@@ -51,11 +51,11 @@ daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'H
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
                     "Home Deposit", "Medicine", "Saved for Love", "Transportation", "Education", "Traveling" , 
-                    "Fun / Tickets", "Clothing", "Liquor", "Others"]
+                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car"]
 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
-traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas", "Food", "Tickets", "Others"]
+traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking", "Food", "Tickets", "Others"]
 trip_destination = ['Halifax', 'Vancouver', 'Taiwan', 'Japan', 'Moncton', "Toronto Road Trip"]
 #transaction
 usable_fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
@@ -70,4 +70,4 @@ TFSA_room = 32500
 
 RRSP_room = 14729
 
-years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035]
+years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]

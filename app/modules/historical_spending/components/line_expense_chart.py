@@ -4,9 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 def create_expense_line_chart(expense, income):
-    # Calculate monthly income
-    monthly_income = 1000
-    expense['income'] = monthly_income # set monthly income
+    
+   
 
     st.markdown(f"<h3 style='text-align: center; color: #e67e22;'>Percentage of Monthly Expense by Category </h3>", unsafe_allow_html=True)
     
@@ -44,7 +43,9 @@ def create_expense_line_chart(expense, income):
         lambda row: (row['total_amount'] / row['total_income']) * 100 if row['total_income'] != 0 else 0,
         axis=1
     )
-
+    #Monthly Income
+    # Calculate monthly income
+    monthly_income = merged_df['total_income'].mean()
     # Define colors
     category_colors = {
         'Grocery': 'orange',
@@ -78,7 +79,7 @@ def create_expense_line_chart(expense, income):
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         fontsize=14
     )
-    plt.yticks(ticks=range(0, 110, 10), fontsize=14)
+    plt.yticks(ticks=range(0, 70, 5), fontsize=14)
     plt.grid(axis='y')
     plt.tight_layout()
 
@@ -86,7 +87,7 @@ def create_expense_line_chart(expense, income):
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
-    plt.ylim(0, 100)
+    plt.ylim(0, 60)
     plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
 
