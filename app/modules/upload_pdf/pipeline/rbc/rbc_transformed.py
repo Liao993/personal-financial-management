@@ -1,6 +1,6 @@
 import streamlit as st # type: ignore
 import pandas as pd
-
+import numpy as np
 from modules.upload_pdf.data_treatment.text_to_table import text_to_table
 from modules.upload_pdf.data_treatment.common_category import categorize_description_with_common_stores
 from modules.upload_pdf.data_treatment.travel_category import categorize_description_travel
@@ -32,7 +32,7 @@ def categorize_items(df, common_store_directory):
                 traveling_categories.append(None)
     df['category'] = categories
     df['traveling_category'] = traveling_categories
-    df['trip'] = 'Halifax'
+    df['trip'] = None
     return df
 
 def rbc_transformed(extracted_data):

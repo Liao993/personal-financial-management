@@ -1,7 +1,8 @@
 import streamlit as st # type: ignore
 import pandas as pd
 import time
-from utils.data import expense_category_options as category_list, traveling_category_options, trip_destination
+import numpy as np
+from utils.data import expense_category_options as category_list, traveling_category_options
 from modules.upload_pdf.pipeline.load import load_expense_data
 
 edit_mode_form = 'edit_mode_expense'
@@ -11,7 +12,7 @@ review_data = 'review_expense_data'
 
 
 def display_editable_dataframe(dataframe):
-
+   
     if edit_mode_form not in st.session_state:
         st.session_state[edit_mode_form] = True
     # data saved or not
@@ -19,7 +20,7 @@ def display_editable_dataframe(dataframe):
         st.session_state[data_saved_key] = False
     # catch review data
     if review_data not in st.session_state:
-        st.session_state[review_data] = dataframe.copy()
+        st.session_state[review_data] = dataframe
     
      # Add "Not Categorized" option
     if "Not Categorized" not in category_list:
@@ -30,6 +31,9 @@ def display_editable_dataframe(dataframe):
      # if it is in edit mode, show the form
     if st.session_state[edit_mode_form]:
         st.success("Your data is being processed")
+        st.write("Please input your trip below!")
+        single_trip = st.checkbox("Single Trip", value=True)
+        trip_input = st.text_input("Trip-Year-Month (e.g., Vancouver-24-01)")
         edited_df = st.data_editor(
             st.session_state[review_data],
             column_config={
@@ -48,11 +52,6 @@ def display_editable_dataframe(dataframe):
                 options=[None] + traveling_category_options,  # Use your options, include None
                 required=False,  # traveling_category is not required
                 ),
-                 "trip": st.column_config.SelectboxColumn(  # Add traveling_category
-                "Trip",  # Label for the column
-                options=[None] + trip_destination,  # Use your options, include None
-                required=False,  # traveling_category is not required
-                ),
             } if category_list else None,
             use_container_width=True,
             hide_index=True,
@@ -60,8 +59,16 @@ def display_editable_dataframe(dataframe):
            
         )
 
-
+        
         if st.button("Confirm your changes"):
+            if single_trip:
+                # 4.  Use .loc to correctly assign the 'trip' value based on the 'category'.
+                edited_df.loc[edited_df['category'] == 'Traveling', 'trip'] = trip_input
+                # 5.  For other categories,  it is better to assign a value, such as 'None'
+                edited_df.loc[edited_df['category'] != 'Traveling', 'trip'] = None
+            else:
+                edited_df
+
             st.info("Loading your information...")
             st.session_state[review_data] = edited_df
             st.session_state[edit_mode_form] = False
