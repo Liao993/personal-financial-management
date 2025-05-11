@@ -5,7 +5,8 @@ from modules.upload_pdf.pipeline.pipeline import pipeline # type: ignore
 st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
 
 def upload_expense():
-    st.title("Upload Your Expenses PDF Here")
+    st.markdown("<h1 style='color: #e74c3c; text-align: center;'>Upload Your Expenses PDF Here</h1>", unsafe_allow_html=True)
+  
 
     if 'upload_pdf_state' not in st.session_state:
         st.session_state['upload_pdf_state'] = True

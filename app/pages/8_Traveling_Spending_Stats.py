@@ -10,7 +10,7 @@ year_start_selected = "year_start"
 year_end_selected = 'year_end'
 
 def traveling_stats():
-    st.markdown(f"<h2 style='text-align: center; color: #1AA7EC;'>Trip Stats</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h1 style='text-align: center; color: #1e8449 ;'>Traveling Stats</h1>", unsafe_allow_html=True)
     if edit_mode not in st.session_state:
         st.session_state[edit_mode] = True
 

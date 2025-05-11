@@ -12,7 +12,7 @@ data_saved_key = 'data_saved_income'
 review_data_key = 'review_income_data'
 
 def income_input_page():
-    st.markdown("<h1 style='color: orange; text-align: center;'>Please Input Your Income</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: #f39c12; text-align: center;'>Please Input Your Income</h1>", unsafe_allow_html=True)
     # form shown or not
     if edit_mode_form not in st.session_state:
         st.session_state[edit_mode_form] = True

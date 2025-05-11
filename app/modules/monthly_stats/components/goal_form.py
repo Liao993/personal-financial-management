@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 from datetime import date
 
 def financial_goals_form():
-    st.markdown("<h4 style='color: green; text-align: center;'>Set Your Financial Goals</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color: #1f618d; text-align: center;'>Set Your Financial Goals</h4>", unsafe_allow_html=True)
 
     with st.form("financial_goals") as form:
         # First line: Date and RBC Saving

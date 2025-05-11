@@ -72,7 +72,7 @@ def create_expense_line_chart(expense, income):
 
     plt.title(f'Avg. Monthly Income: ${monthly_income:.2f}', loc='right', fontsize=20)
     plt.xlabel('Month', fontsize=18)
-    plt.ylabel('Percentage of Earning', fontsize=22)
+    plt.ylabel('Percentage of Earning(Income)', fontsize=22)
     plt.xticks(
         ticks=range(1, 13),
         labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

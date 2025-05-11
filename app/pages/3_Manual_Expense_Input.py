@@ -12,7 +12,7 @@ edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
 expense_data_key = 'expense_data'
 def expense_input_page():
-    st.markdown("<h1 style='color: lightblue; text-align: center;'>Please Input Your Expense</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: #2e86c1; text-align: center;'>Please Input Your Expense</h1>", unsafe_allow_html=True)
 
     
     # Initialize session state variables

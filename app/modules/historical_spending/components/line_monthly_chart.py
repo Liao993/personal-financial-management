@@ -34,12 +34,13 @@ def create_monthly_line_chart(expense, income, transaction):
         axis=1
     )
 
+
     all_categories = merged_df['category'].unique()
     # Define colors
     category_colors = {
         'Total Spending': 'red',
         'House': '#16a085',
-        'Retirement Saving': '#5dade2',
+        'Retirement Saving': '#1AA7EC',
         'Medium-term Saving': '#f39c12' #orange
     }
     palette = {cat: category_colors.get(cat, 'gray') for cat in all_categories}
@@ -57,7 +58,6 @@ def create_monthly_line_chart(expense, income, transaction):
         markersize=8,
         dashes=False
     )
-
     plt.xlabel('Month', fontsize=18)
     plt.ylabel('Percentage of Earning', fontsize=22)
     plt.xticks(

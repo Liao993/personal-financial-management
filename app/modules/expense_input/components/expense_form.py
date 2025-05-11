@@ -17,7 +17,7 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
       expense_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=100.00)
       expense_category = st.selectbox("Category", expense_category_options, index=1)
       traveling = st.selectbox("Traveling Category", [None] + traveling_category_options)
-      trip_input = st.text_input("Trip-Year-Month (e.g., Vancouver-2024-01)")
+      trip_input = st.text_input("Trip-Year-Month (e.g., Vancouver-24-01)")
       trip = trip_input if trip_input else None
 
       #expense items handling

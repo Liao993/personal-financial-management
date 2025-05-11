@@ -15,6 +15,7 @@ def create_summary_bar_chart(data):
 
     # Create the horizontal bar chart using Seaborn
     plt.figure(figsize=(10, 8))  # Adjust figure size as needed
+    plt.title("Spending Percentage is calculated by Total Expense", loc='right', fontsize=20)
     ax = sns.barplot(x='amount', y='summary_category', data=summary_data)
     plt.xlabel('Amount', fontsize=18)
     plt.ylabel(None)

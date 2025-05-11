@@ -18,7 +18,7 @@ def monthly_stats_page():
     Displays monthly statistics, including a form for financial goals,
     calculation results, and a button to save the results.
     """
-    st.markdown("<h1 style='color: lightgreen; text-align: center;'>Monthly Stats</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: #a9cce3; text-align: center;'>Monthly Stats</h1>", unsafe_allow_html=True)
 
     financial_goals = financial_goals_form()
 
