@@ -11,12 +11,11 @@ services:
     volumes:
       - ./database/01_init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql
       - postgres_data:/var/lib/postgresql/data
-      - ./historical_data:/csv_data # Mount your historical_data folder to /csv_data in the container
+      - ./historical_data:/csv_data
       - ./database/02_csv_init_load.sql:/docker-entrypoint-initdb.d/02_csv_init_load.sql
 
     networks:
       - budget_network
-
   pgadmin:
     image: dpage/pgadmin4
     container_name: budget_pgadmin
@@ -46,6 +45,10 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REPORTING_DB_USER: ${REPORTING_DB_USER}
+      REPORTING_DB_PASSWORD: ${REPORTING_DB_PASSWORD}
+      DATA_ENTRY_DB_USER: ${DATA_ENTRY_DB_USER}
+      DATA_ENTRY_DB_PASSWORD: ${DATA_ENTRY_DB_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: db
       POSTGRES_PORT: ${POSTGRES_PORT}

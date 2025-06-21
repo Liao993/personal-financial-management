@@ -49,7 +49,7 @@ def create_category_spending_bar_chart(df):
 
     # Set the title
     fig.update_layout(
-        title=f"Total Spending of the {city} trip in {month_name}, {year} is ${total_spending:.2f}",
+        title=f"{city} trip in {month_name}, {year} : ${total_spending:.2f}",
         title_font=dict(size=20),
         xaxis_title="Spending Category",
         xaxis_title_font=dict(size=18),

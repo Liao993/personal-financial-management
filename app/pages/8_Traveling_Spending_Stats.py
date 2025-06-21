@@ -12,7 +12,8 @@ def traveling_stats():
     
     st.markdown(f"<h1 style='text-align: center; color: #1e8449 ;'>Traveling Stats</h1>", unsafe_allow_html=True)
     the_trip = selected_the_trip()
-    st.write("")
+    st.write(" ")
+    st.write(" ")
     if the_trip is not None:
         all_fetched_expense = fetch_trip_expense(the_trip)
         if (len(all_fetched_expense) == 0):
