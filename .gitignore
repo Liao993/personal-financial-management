@@ -7,3 +7,4 @@ dbt/profiles.yml
 .DS_Store
 test/
 historical_data
+backups
