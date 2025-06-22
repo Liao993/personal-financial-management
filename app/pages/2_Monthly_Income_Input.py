@@ -61,7 +61,7 @@ def income_input_page():
 
         # If data is saved, show the option to add more income
         elif st.session_state.get(data_saved_key, True):
-            st.success("Income data successfully saved! Move back to database!")
+            st.success("Income data successfully saved! Move back to Input Page")
             time.sleep(3)
             # Reset all form-related session state to default
             st.session_state['date'] = date.today()

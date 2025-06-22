@@ -9,12 +9,23 @@ def transaction_form():
 
     drop_down_list()
 
-    st.write("If money balance BETWEEN DIFFERENT FUNDS, choose deposit or withdraw, if it is the same funds but in different accounts, choose transfer between accounts.")
-    st.write("For example, From Medium-term Saving to Traveling Funds, please make 'TWO' transactions. choose Withdrawl for Medium-term and Deposit for Traveling Funds")
+    st.markdown(f"<p style='font-size: 20px;'>"
+                "If money balance BETWEEN <b style='color:#e74c3c;'>DIFFERENT FUNDS</b>, "
+                "choose <b style='color:#e74c3c;'>deposit</b>  or  <b style='color:#e74c3c;'>withdraw</b>,", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 20px;'>Example: From Medium-term Saving to Traveling Funds, please make <b style='color:orange'>'TWO'</b> transactions. "
+                " Choose <b style='color:#e74c3c;'>Withdrawal</b> for Medium-term and <b style='color:#e74c3c;'>Deposit</b> for Traveling Funds</p>", unsafe_allow_html=True)
+    st.write("___")
+    st.markdown(f"<p style='font-size: 20px;'>"
+               "if it is the <b style='color:yellow;'>same funds</b> but in different accounts, "
+                "choose <b style='color:yellow;'>transfer between accounts.</b></p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 20px;'>Example: Retirement Saving From RBC Chequing  to Questrade TFSA (Retire), please make <b style='color:orange'>'ONE'</b> transaction."
+                " Choose <b style='color:yellow;'>Transfer Between Accounts</b> for Retirement Saving</p>", unsafe_allow_html=True)
+    st.write("___")
+    st.markdown(f"<p style='font-size: 24px; color: #16a085;'><b>Please choose the action type and fill the form below:</b></p>", unsafe_allow_html=True)
     action_type = st.radio(
-        "What type of action would you like to record?",
+        "",
         transaction_type_list,
-         key="action_type_form"
+        key="action_type_form"
     )
     transaction_date = st.date_input("Transaction Date", datetime.now().date())
     fund_category = st.selectbox("Usable Fund Category", usable_fund_categories)
