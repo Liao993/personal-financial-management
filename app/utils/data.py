@@ -50,7 +50,7 @@ common_store_list = ['Not Common Store', 'Sobeys', 'Leonhard', 'Superstore', 'Am
 daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT']
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
-                    "Home Deposit", "Medicine", "Saved for Love", "Transportation", "Education", "Traveling" , 
+                    "Home Deposit", "Medicine", "Saved For Love", "Transportation", "Education", "Traveling" , 
                     "Fun/Tickets", "Clothing", "Liquor", "Others", "Car"]
 
 # travel expense

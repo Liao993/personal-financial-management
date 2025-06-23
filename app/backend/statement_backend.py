@@ -10,6 +10,13 @@ def fetch_statement(inputed_query: str) -> pd.DataFrame:
     if conn:
         cursor = conn.cursor()
         try:
+            # --- Added: Check for INSERT or DELETE queries ---
+            lower_query = inputed_query.strip().lower()
+            if lower_query.startswith("insert") or lower_query.startswith("delete"):
+                st.error("Access Denied: You do not have permission to insert or delete items with this user role.")
+                return pd.DataFrame() # Reject execution and return empty DataFrame
+            # --- End Added Check ---
+            
             # Execute the raw SQL query. Removed the empty tuple as it's not for parameterized queries.
             cursor.execute(inputed_query)
             
