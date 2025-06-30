@@ -1,5 +1,6 @@
 import streamlit as st # type: ignore
 import pandas as pd
+import io # Import io for handling byte streams for Excel
 
 from backend.statement_backend import fetch_statement
 from modules.statement_viewer.hint import hint_page
@@ -74,10 +75,25 @@ def statement_page():
             # Store the results so they persist across reruns if needed,
             # though fetch_statement will re-run on each visit to this block.
             st.session_state[RESULT_DF_KEY] = df_results
+
+          
+
+            # CSV Download Button
+            csv_data = df_results.to_csv(index=False).encode('utf-8')
+    
+            st.download_button(
+            label="Download as CSV",
+            data=csv_data,
+            file_name="results.csv",
+            mime="text/csv",
+            help="Download the query results as a CSV file."
+            )
+            # --- End Download Buttons ---
         else:
             st.warning("No data returned or an error occurred during query execution. Check your query and database logs.")
 
         # Button to return to query input
+      
         refresh_button = st.button("Enter New Query / Refresh")
         if refresh_button:
             st.session_state[QUERY_MODE_KEY] = True # Go back to query input
