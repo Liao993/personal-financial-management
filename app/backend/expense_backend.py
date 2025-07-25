@@ -86,3 +86,31 @@ def fetch_annual_expense(year):
             return pd.DataFrame()
         finally:
             cursor.close()
+
+def fetch_last_expense_data():
+    """Fetches the last two expense data from the database."""
+    conn = get_db_connection()
+    if conn:
+        try:
+            cursor = conn.cursor()
+            query = """
+                SELECT date, items, amount, category
+                FROM expense
+                ORDER BY date DESC
+                LIMIT 3;
+            """
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            cols = [col[0] for col in cursor.description]  # Get column names
+            df = pd.DataFrame(rows, columns=cols)
+            return df
+
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving last two expense data: {e}")
+            return pd.DataFrame()
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return pd.DataFrame()

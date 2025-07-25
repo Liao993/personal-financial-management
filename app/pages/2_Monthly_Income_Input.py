@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 from datetime import date
 import time
 from utils.validation import validate_income_data
-from backend.income_backend import insert_income_data
+from backend.income_backend import insert_income_data, fetch_last_income_data
 from modules.income_input.income_form import income_input_form
 from modules.income_input.income_review import review_income_input
 st.set_page_config(page_title="Income Input", page_icon="💰")
@@ -13,6 +13,8 @@ review_data_key = 'review_income_data'
 
 def income_input_page():
     st.markdown("<h1 style='color: #f39c12; text-align: center;'>Please Input Your Income</h1>", unsafe_allow_html=True)
+   
+   
     # form shown or not
     if edit_mode_form not in st.session_state:
         st.session_state[edit_mode_form] = True
@@ -27,6 +29,12 @@ def income_input_page():
     # if it is in edit mode, show the form
     if st.session_state[edit_mode_form]:
        income_input_form(edit_mode_form, review_data_key)
+
+       st.write("---")  # Print out the last income data
+       last_income_data = fetch_last_income_data()
+       if not last_income_data.empty:
+           st.write("Last Income Data:")
+           st.table(last_income_data)
       
     else:
        

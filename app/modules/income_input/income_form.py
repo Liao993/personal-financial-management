@@ -1,5 +1,6 @@
 import streamlit as st # type: ignore
 from datetime import date
+from utils.data import fixed_income_data
 
 def income_input_form(edit_mode_form_key, review_data_key):
 
@@ -7,7 +8,7 @@ def income_input_form(edit_mode_form_key, review_data_key):
 
   with st.form("income_form"):
     income_date = st.date_input("Date", value=date.today())
-    income_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=1717.85)
+    income_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=fixed_income_data)
 
     source_options = ["Gov", "Tax Return", "Other"]
     selected_source = st.selectbox("Source", source_options)

@@ -4,7 +4,7 @@ import time
 from modules.expense_input.components.expense_form import expense_form
 from modules.expense_input.components.review_data import review_data_print_out
 from modules.expense_input.middle_layer.confirmed_data_handling import confirmed_data_handling
-
+from backend.expense_backend import fetch_last_expense_data
 
 st.set_page_config(page_title="Expense Input", page_icon="💸")
 
@@ -13,8 +13,7 @@ data_saved_key = 'data_saved_expense'
 expense_data_key = 'expense_data'
 def expense_input_page():
     st.markdown("<h1 style='color: #2e86c1; text-align: center;'>Please Input Your Expense</h1>", unsafe_allow_html=True)
-
-    
+  
     # Initialize session state variables
     if edit_mode_form not in st.session_state:
         st.session_state[edit_mode_form] = True
@@ -25,7 +24,15 @@ def expense_input_page():
 
     # Show the Form
     if st.session_state[edit_mode_form]:
-       expense_form(edit_mode_form, data_saved_key, expense_data_key)  # Get the review button state
+        expense_form(edit_mode_form, data_saved_key, expense_data_key)  # Get the review button state
+  
+         
+        st.write("---")# Print out the last expense data
+        last_expense_data = fetch_last_expense_data()
+        if not last_expense_data.empty:
+            st.write("Last Expense Data:")
+            st.table(last_expense_data)
+     
 
     #Form Not shown after clicking the review button
     else:

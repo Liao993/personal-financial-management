@@ -70,3 +70,6 @@ TFSA_room = 32500
 RRSP_room = 14729
 
 years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]
+
+#Default value for income amount in the form
+fixed_income_data = 1729.06 
