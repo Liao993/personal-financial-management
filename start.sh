@@ -24,7 +24,7 @@ fi
 echo "--- Starting Docker Compose Project ---"
 # Ensure Docker Compose is up-to-date and running in detached mode
 # --build ensures images are rebuilt if Dockerfile or build context changed
-docker-compose up --build -d
+docker-compose up 
 
 echo "Docker Compose services are starting..."
 
@@ -63,10 +63,10 @@ echo "To stop earlier, simply press Ctrl+C in this terminal window."
 echo "-------------------------------------------------------------------------"
 echo ""
 
-sleep ${TIMEOUT_SECONDS}
+#sleep ${TIMEOUT_SECONDS}
 
-echo "--- Initiating automatic shutdown ---"
-echo "Shutting down Docker Compose services..."
-docker-compose down
+#echo "--- Initiating automatic shutdown ---"
+#echo "Shutting down Docker Compose services..."
+#docker-compose down
 
-echo "Docker Compose has been shut down successfully."
+#echo "Docker Compose has been shut down successfully."
