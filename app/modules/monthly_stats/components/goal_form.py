@@ -1,9 +1,17 @@
 import streamlit as st # type: ignore
 from datetime import date
+from backend.transaction_backend import fetch_last_transaction_data
 
 def financial_goals_form():
+   
+ 
     st.markdown("<h4 style='color: #1f618d; text-align: center;'>Set Your Financial Goals</h4>", unsafe_allow_html=True)
-
+   
+    last_transaction_data = fetch_last_transaction_data()
+    if not last_transaction_data.empty:
+        #get the date and first item of the last transaction data
+        last_transaction_date = last_transaction_data['date'].iloc[0]
+        st.markdown(f"<p color: #f39c12; style='text-align: center;'>Last Transaction: {last_transaction_date}</p>", unsafe_allow_html=True)
     with st.form("financial_goals") as form:
         # First line: Date and RBC Saving
         col1, col2 = st.columns(2)

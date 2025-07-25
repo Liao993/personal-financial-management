@@ -140,3 +140,33 @@ def fetch_all_transaction_data():
     else:
         st.info("Database connection failed, cannot retrieve data.")
         return columns, None  # Return None on connection failure
+
+def fetch_last_transaction_data():
+    """Fetches the last two transaction data from the database."""
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT *
+            FROM transactions
+            ORDER BY date DESC
+            LIMIT 5;
+        """
+        try:
+            cursor.execute(query)
+            columns = [desc[0] for desc in cursor.description]
+            data = cursor.fetchall()
+            if data:
+                df = pd.DataFrame(data, columns=columns)
+                return df
+            else:
+                return pd.DataFrame()  # Return empty DataFrame if no data found
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving last transaction data: {e}")
+            return pd.DataFrame()  # Return empty DataFrame on error
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve last transaction data.")
+        return pd.DataFrame()  # Return empty DataFrame on connection failure

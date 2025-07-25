@@ -2,6 +2,7 @@ import streamlit as st # type: ignore
 from modules.transaction.transaction_form import transaction_form
 from modules.transaction.transaction_review import display_recorded_transactions
 from modules.transaction.transaction_saving import transaction_savings_action
+from backend.transaction_backend import fetch_last_transaction_data
 import time
 
 st.set_page_config(page_title="Transaction", page_icon="💰", layout="wide")
@@ -19,6 +20,13 @@ def transaction_actions_page():
     if st.session_state['show_the_form']:
 
         transaction_form()
+        st.write("---")
+        # Print out the last transaction data
+        last_transaction_data = fetch_last_transaction_data()
+        if not last_transaction_data.empty:
+            st.write("Last Transaction Data:")
+            st.table(last_transaction_data)
+
     else:
         
         data = display_recorded_transactions()
