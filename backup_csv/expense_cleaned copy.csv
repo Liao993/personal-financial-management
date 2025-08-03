@@ -1,0 +1,578 @@
+"date","items","amount","category","traveling_category","trip"
+"2024-01-01","1 Saved for Love","100.00","Saved For Love",NULL,NULL
+"2024-01-02","sobeys","10.77","Grocery",NULL,NULL
+"2024-01-02","sobeys","76.55","Grocery",NULL,NULL
+"2024-01-07","Tim","39.84","Food Outside",NULL,NULL
+"2024-01-08","Sister Envelop","200.00","Gifts",NULL,NULL
+"2024-01-09","sobeys","130.00","Grocery",NULL,NULL
+"2024-01-09","Petro","66.71","Gas",NULL,NULL
+"2024-01-11","superstore","200.00","Grocery",NULL,NULL
+"2024-01-12","Leonhard's cafe","43.00","Food Outside",NULL,NULL
+"2024-01-13","Sindy's birthday","100.00","Gifts",NULL,NULL
+"2024-01-16","Top Fresh Pot","39.46","Grocery",NULL,NULL
+"2024-01-16","sobeys","100.00","Grocery",NULL,NULL
+"2024-01-16","Petro","30.08","Gas",NULL,NULL
+"2024-01-17","rogers","40.25","Cell Phone",NULL,NULL
+"2024-01-20","superstore","28.75","Grocery",NULL,NULL
+"2024-01-23","superstore","10.67","Grocery",NULL,NULL
+"2024-01-23","Petro","72.43","Gas",NULL,NULL
+"2024-01-25","sobeys","1.08","Grocery",NULL,NULL
+"2024-01-25","splendid essence","63.78","Food Outside",NULL,NULL
+"2024-01-25","alambe coffee","3.44","Food Outside",NULL,NULL
+"2024-01-27","Parking Violence","10.00","Others",NULL,NULL
+"2024-01-27","Port for Phil","25.09","Gifts",NULL,NULL
+"2024-01-28","Great Enlightment","20.00","Donation",NULL,NULL
+"2024-01-28","Mac Donald","18.26","Food Outside",NULL,NULL
+"2024-01-28","Great Enlightment","20.00","Donation",NULL,NULL
+"2024-01-29","Petro","60.02","Gas",NULL,NULL
+"2024-01-29","Wire transfer fee","17.00","Others",NULL,NULL
+"2024-01-29","A & W","16.77","Food Outside",NULL,NULL
+"2024-01-30","Tim Lunch","10.34","Food Outside",NULL,NULL
+"2024-01-31","Flight Ticket for Dad' health","172.64","Gifts",NULL,NULL
+"2024-01-31","Superstore ","200.00","Grocery",NULL,NULL
+"2024-01-31","Dishes Sponge ","2.88","Household Goods",NULL,NULL
+"2024-02-01","2 Saved for Love","100.00","Saved For Love",NULL,NULL
+"2024-02-06","Sobeys","17.69","Grocery",NULL,NULL
+"2024-02-08","Hair Cut","26.45","Others",NULL,NULL
+"2024-02-13","Petros","67.34","Gas",NULL,NULL
+"2024-02-13","Tims","12.40","Food Outside",NULL,NULL
+"2024-02-13","Irving","20.18","Gas",NULL,NULL
+"2024-02-14","Hunter's Valentine","82.24","Gifts",NULL,NULL
+"2024-02-16","Rogers","40.25","Cell Phone",NULL,NULL
+"2024-02-17","Petros","45.01","Gas",NULL,NULL
+"2024-02-17","Bridge","50.25","Traveling","Others","Halifax-Feb24"
+"2024-02-17","Thai food","39.77","Traveling","Food","Halifax-Feb24"
+"2024-02-17","IKEA","27.88","Traveling","Food","Halifax-Feb24"
+"2024-02-18","Petros","60.98","Traveling","Gas/Parking","Halifax-Feb24"
+"2024-02-18","Korean BBQ","51.42","Traveling","Food","Halifax-Feb24"
+"2024-02-18","New Asia","22.04","Grocery",NULL,NULL
+"2024-02-18","Breakfast Cafe","11.00","Traveling","Food","Halifax-Feb24"
+"2024-02-18","Fan's","73.10","Traveling","Food","Halifax-Feb24"
+"2024-02-19","BlueNose Breakfast","32.90","Traveling","Food","Halifax-Feb24"
+"2024-02-19","Petros","64.16","Traveling","Gas/Parking","Halifax-Feb24"
+"2024-02-19","Hotel Halifax","130.48","Traveling","Hotel","Halifax-Feb24"
+"2024-02-20","Tim's for lunch","8.96","Food Outside",NULL,NULL
+"2024-02-20","Sobeys","100.00","Grocery",NULL,NULL
+"2024-02-22","Bank Draft","9.95","Others",NULL,NULL
+"2024-02-22","Tim","1.83","Food Outside",NULL,NULL
+"2024-02-23","Superstore","3.07","Grocery",NULL,NULL
+"2024-02-23","Yellow House","13.75","Grocery",NULL,NULL
+"2024-02-24","2-1 Home Deposit","2000.00","Home Deposit",NULL,NULL
+"2024-02-25","Boston Pizza","67.91","Food Outside",NULL,NULL
+"2024-02-25","Tim","3.66","Food Outside",NULL,NULL
+"2024-02-25","Soyaway","13.66","Food Outside",NULL,NULL
+"2024-02-26","Petros","81.78","Gas",NULL,NULL
+"2024-02-26","Canadian Tire","34.48","Household Goods",NULL,NULL
+"2024-02-27","Cinema","11.50","Fun/Tickets",NULL,NULL
+"2024-02-28","Budda ","40.00","Donation",NULL,NULL
+"2024-02-29","PR fee","300.00","Others",NULL,NULL
+"2024-03-01","3 Saved for Love","100.00","Saved For Love",NULL,NULL
+"2024-03-02","Seoul Food","20.29","Food Outside",NULL,NULL
+"2024-03-02","Soyaway","7.76","Food Outside",NULL,NULL
+"2024-03-04","Sobey","8.44","Grocery",NULL,NULL
+"2024-03-04","Tim's","9.98","Food Outside",NULL,NULL
+"2024-03-05","Quiznos","7.99","Food Outside",NULL,NULL
+"2024-03-05","Roger's","40.25","Cell Phone",NULL,NULL
+"2024-03-05","Sobey","79.19","Grocery",NULL,NULL
+"2024-03-10","Tim's with Boss","7.34","Food Outside",NULL,NULL
+"2024-03-10","Petro","78.49","Gas",NULL,NULL
+"2024-03-11","Wine for Seasalt","23.99","Gifts",NULL,NULL
+"2024-03-11","Wine ","23.99","Liquor",NULL,NULL
+"2024-03-11","Sobey","27.30","Grocery",NULL,NULL
+"2024-03-12","Sobey","100.00","Grocery",NULL,NULL
+"2024-03-12","Receiver Cafe","52.05","Food Outside",NULL,NULL
+"2024-03-13","IceWine for Paul","32.99","Gifts",NULL,NULL
+"2024-03-13","Window Screen","74.75","Household Goods",NULL,NULL
+"2024-03-14","3-1 Home Deposit","1000.00","Home Deposit",NULL,NULL
+"2024-03-15","Superstore","53.01","Grocery",NULL,NULL
+"2024-03-15","Food in Incheon","1.90","Food Outside",NULL,NULL
+"2024-03-17","Sobeys","0.99","Grocery",NULL,NULL
+"2024-03-17","Costmetics - Data plus","118.93","Gifts",NULL,NULL
+"2024-03-22","Take Sushi","16.47","Food Outside",NULL,NULL
+"2024-03-23","Mar's Wet food","14.32","Others",NULL,NULL
+"2024-03-23","Google Pixel 7a","230.12","Cell Phone",NULL,NULL
+"2024-03-23","Petro","77.39","Gas",NULL,NULL
+"2024-03-26","3-2 Home Deposit","500.00","Home Deposit",NULL,NULL
+"2024-03-26","Sobeys","34.85","Grocery",NULL,NULL
+"2024-03-27","seafood","25.48","Grocery",NULL,NULL
+"2024-03-27","milk","2.69","Grocery",NULL,NULL
+"2024-03-28","Gebis ","20.00","Donation",NULL,NULL
+"2024-03-28","Gebis ","20.00","Donation",NULL,NULL
+"2024-04-01","4 Saved for Love","50.00","Saved For Love",NULL,NULL
+"2024-04-02","Small Rewards (DB) Clothes","34.98","Gifts",NULL,NULL
+"2024-04-02","Sobeys","150.00","Grocery",NULL,NULL
+"2024-04-02","Eastlink","115.90","Cell Phone",NULL,NULL
+"2024-04-03","Panads Marts","25.26","Grocery",NULL,NULL
+"2024-04-08","4-1 Home Deposit","1500.00","Home Deposit",NULL,NULL
+"2024-04-09","Red Wine","16.80","Liquor",NULL,NULL
+"2024-04-10","Tsuen Fu shr Di","8.72","Gifts",NULL,NULL
+"2024-04-11","Seafood","9.20","Grocery",NULL,NULL
+"2024-04-14","Net","34.05","Gifts",NULL,NULL
+"2024-04-15","Superstore ","15.71","Grocery",NULL,NULL
+"2024-04-15","Superstore","150.00","Grocery",NULL,NULL
+"2024-04-17","Tim's lunch","10.11","Food Outside",NULL,NULL
+"2024-04-17","Graduation Clothes","28.75","Others",NULL,NULL
+"2024-04-18","Famous Fresh","2.00","Food Outside",NULL,NULL
+"2024-04-22","Coursera","16.50","Education",NULL,NULL
+"2024-04-22","Sobeys","0.19","Grocery",NULL,NULL
+"2024-04-24","Driver License","20.00","Others",NULL,NULL
+"2024-04-24","Sobeys","111.40","Grocery",NULL,NULL
+"2024-04-25","Walmart","50.00","Grocery",NULL,NULL
+"2024-04-25","GEBIS","15.00","Donation",NULL,NULL
+"2024-04-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-04-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-04-30","Seafood","42.46","Grocery",NULL,NULL
+"2024-05-01","5 Saved for Love","50.00","Saved For Love",NULL,NULL
+"2024-05-02","Superstore","100.00","Grocery",NULL,NULL
+"2024-05-02","Walmart","30.89","Grocery",NULL,NULL
+"2024-05-03","Petro","83.90","Gas",NULL,NULL
+"2024-05-04","Chatr","46.00","Gifts",NULL,NULL
+"2024-05-07","Dollarama","37.09","Household Goods",NULL,NULL
+"2024-05-07","Take Sushi","18.19","Food Outside",NULL,NULL
+"2024-05-07","Sobeys","2.99","Gas",NULL,NULL
+"2024-05-07","Global","10.47","Grocery",NULL,NULL
+"2024-05-08","Eastlink","41.38","Cell Phone",NULL,NULL
+"2024-05-09","K-BBQ","89.65","Food Outside",NULL,NULL
+"2024-05-10","Superstore","101.02","Grocery",NULL,NULL
+"2024-05-11","Sobeys","26.65","Grocery",NULL,NULL
+"2024-05-13","Walmart","46.82","Grocery",NULL,NULL
+"2024-05-14","Sobeys","33.55","Grocery",NULL,NULL
+"2024-05-15","Boomburger","28.49","Food Outside",NULL,NULL
+"2024-05-18","Global","34.06","Grocery",NULL,NULL
+"2024-05-18","Global","9.21","Grocery",NULL,NULL
+"2024-05-20","Tim","12.85","Food Outside",NULL,NULL
+"2024-05-20","5-1 Home Deposit","1000.00","Home Deposit",NULL,NULL
+"2024-05-20","Gas","30.00","Gas",NULL,NULL
+"2024-05-20","Fish & Chip","50.00","Food Outside",NULL,NULL
+"2024-05-20","Car repair","300.00","Car",NULL,NULL
+"2024-05-21","Garage Throw","5.00","Household Goods",NULL,NULL
+"2024-05-22","Tim","5.34","Food Outside",NULL,NULL
+"2024-05-25","Global","35.62","Grocery",NULL,NULL
+"2024-05-25","Dollarama","4.60","Household Goods",NULL,NULL
+"2024-05-25","Global","17.55","Grocery",NULL,NULL
+"2024-05-25","Soyaway","13.97","Food Outside",NULL,NULL
+"2024-05-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-05-28","Sobeys","29.79","Grocery",NULL,NULL
+"2024-05-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-05-31","HongMall","69.92","Gifts",NULL,NULL
+"2024-06-01","Sobeys","13.69","Grocery",NULL,NULL
+"2024-06-02","Domino's","50.58","Food Outside",NULL,NULL
+"2024-06-02","Petro","81.09","Gas",NULL,NULL
+"2024-06-03","Sindy's Small Reward","20.00","Gifts",NULL,NULL
+"2024-06-05","Sobeys","29.02","Grocery",NULL,NULL
+"2024-06-06","Walmart","16.90","Grocery",NULL,NULL
+"2024-06-07","6 Saved for Love","50.00","Saved For Love",NULL,NULL
+"2024-06-08","Sobeys","50.00","Grocery",NULL,NULL
+"2024-06-08","6-1 Home Deposit","1000.00","Home Deposit",NULL,NULL
+"2024-06-08","Superstore","2.87","Grocery",NULL,NULL
+"2024-06-08","Receiver","3.16","Food Outside",NULL,NULL
+"2024-06-11","Superstore","94.56","Grocery",NULL,NULL
+"2024-06-11","Eastlink","41.38","Cell Phone",NULL,NULL
+"2024-06-12","Petro","34.70","Gas",NULL,NULL
+"2024-06-12","Lobster roll ","34.15","Food Outside",NULL,NULL
+"2024-06-14","Superstore","12.92","Grocery",NULL,NULL
+"2024-06-16","KFC","20.68","Food Outside",NULL,NULL
+"2024-06-18","Sobeys","50.00","Grocery",NULL,NULL
+"2024-06-18","Sobeys","52.77","Grocery",NULL,NULL
+"2024-06-23","Leonhard's","34.75","Food Outside",NULL,NULL
+"2024-06-26","Sobeys","14.55","Grocery",NULL,NULL
+"2024-06-28","Donation","20.00","Donation",NULL,NULL
+"2024-06-28","Small Rewards","40.00","Gifts",NULL,NULL
+"2024-06-28","Donation","20.00","Donation",NULL,NULL
+"2024-06-29","Tim's","17.92","Traveling","Food","Halifax-Jun24"
+"2024-06-29","Japanese Dinner","51.33","Traveling","Food","Halifax-Jun24"
+"2024-06-29","Chun Chun","10.63","Traveling","Food","Halifax-Jun24"
+"2024-06-29","Chinese Grocery","10.32","Grocery",NULL,NULL
+"2024-06-29","Durain","11.00","Traveling","Food","Halifax-Jun24"
+"2024-06-29","Ferry","60.67","Traveling","Public Transportation","Halifax-Jun24"
+"2024-06-29","Petro","50.00","Traveling","Gas/Parking","Halifax-Jun24"
+"2024-06-30","Hot chocolate","10.33","Traveling","Food","Halifax-Jun24"
+"2024-06-30","Fan's","64.88","Traveling","Food","Halifax-Jun24"
+"2024-06-30","Costco","249.93","Grocery",NULL,NULL
+"2024-06-30","Pho Vietnamese","64.91","Traveling","Food","Halifax-Jun24"
+"2024-06-30","Pub's","28.49","Traveling","Food","Halifax-Jun24"
+"2024-06-30","Wine","153.50","Liquor",NULL,NULL
+"2024-06-30","Coffee & breakfast","19.07","Traveling","Food","Halifax-Jun24"
+"2024-07-01","Petro","47.54","Gas",NULL,NULL
+"2024-07-01","Eastlink","41.38","Cell Phone",NULL,NULL
+"2024-07-01","Petro","72.22","Gas",NULL,NULL
+"2024-07-01","Korean Food","53.09","Traveling","Food","Halifax-Jun24"
+"2024-07-02","7 Saved for Love","50.00","Saved For Love",NULL,NULL
+"2024-07-02","Walmart","53.04","Grocery",NULL,NULL
+"2024-07-03","Sobeys","100.00","Grocery",NULL,NULL
+"2024-07-04","Doctor Support","100.00","Gifts",NULL,NULL
+"2024-07-05","Raman near Mall","19.00","Traveling","Food","Toronto-July24"
+"2024-07-05","Bus to Mall & return","8.92","Traveling","Public Transportation","Toronto-July24"
+"2024-07-05","Toronto Inn","258.47","Traveling","Hotel","Toronto-July24"
+"2024-07-05","Thai food dinner","13.14","Traveling","Food","Toronto-July24"
+"2024-07-05","my flight to YYZ ","227.84","Traveling","Flight","Toronto-July24"
+"2024-07-05","water and fruit","2.45","Traveling","Food","Toronto-July24"
+"2024-07-05","train to city","8.13","Traveling","Public Transportation","Toronto-July24"
+"2024-07-05","Chocolate stick","6.78","Traveling","Food","Toronto-July24"
+"2024-07-06","Ice Cream italy near ChinaTown","3.88","Traveling","Food","Toronto-July24"
+"2024-07-06","Subway & Bus 3 times me","9.90","Traveling","Public Transportation","Toronto-July24"
+"2024-07-06","Food in T&T","4.26","Traveling","Food","Toronto-July24"
+"2024-07-06","Dinner Pizza & Pasta","14.28","Traveling","Food","Toronto-July24"
+"2024-07-06","Ferry to Toronto Island","8.30","Traveling","Public Transportation","Toronto-July24"
+"2024-07-06","Food in Superstore","4.16","Traveling","Food","Toronto-July24"
+"2024-07-07","Niagara Boat with Rekash","47.33","Traveling","Tickets","Toronto-July24"
+"2024-07-07","Fast Noodles Superstore","4.00","Traveling","Food","Toronto-July24"
+"2024-07-07","Ice Cream for Rekash","17.13","Traveling","Food","Toronto-July24"
+"2024-07-07","Shawama Chicken Lunch","11.94","Traveling","Food","Toronto-July24"
+"2024-07-08","triain to airport UP","8.13","Traveling","Public Transportation","Toronto-July24"
+"2024-07-08","A & W","12.84","Traveling","Food","Toronto-July24"
+"2024-07-08","my flight back to PEI","272.47","Traveling","Flight","Toronto-July24"
+"2024-07-08","Suway to Union","3.30","Traveling","Public Transportation","Toronto-July24"
+"2024-07-09","7-1 Home Deposit","1000.00","Home Deposit",NULL,NULL
+"2024-07-09","Sobeys","5.53","Grocery",NULL,NULL
+"2024-07-09","Dollarama","11.50","Household Goods",NULL,NULL
+"2024-07-09","beer","4.59","Liquor",NULL,NULL
+"2024-07-09","Ear Plug","6.66","Grocery",NULL,NULL
+"2024-07-10","Vietnamese Donation","250.00","Donation",NULL,NULL
+"2024-07-11","Plastic food Bags","20.22","Grocery",NULL,NULL
+"2024-07-12","Wine","35.06","Liquor",NULL,NULL
+"2024-07-13","Bogside","9.20","Food Outside",NULL,NULL
+"2024-07-13","Famous Papper","57.94","Food Outside",NULL,NULL
+"2024-07-14","Superstore","54.97","Grocery",NULL,NULL
+"2024-07-16","Seafood","50.49","Grocery",NULL,NULL
+"2024-07-16","Lobster","41.22","Grocery",NULL,NULL
+"2024-07-16","Superstore","61.66","Grocery",NULL,NULL
+"2024-07-16","Nofrill","17.92","Grocery",NULL,NULL
+"2024-07-16","Tim","2.52","Food Outside",NULL,NULL
+"2024-07-18","Petro","42.03","Gas",NULL,NULL
+"2024-07-21","Nofrill","3.73","Grocery",NULL,NULL
+"2024-07-24","Sobeys","23.68","Grocery",NULL,NULL
+"2024-07-25","Doctor Support","100.00","Gifts",NULL,NULL
+"2024-07-25","Donaion for Asanna Help","50.00","Donation",NULL,NULL
+"2024-07-26","Alambe","2.47","Food Outside",NULL,NULL
+"2024-07-27","Walmart","12.15","Grocery",NULL,NULL
+"2024-07-27","Superstore","100.00","Grocery",NULL,NULL
+"2024-07-27","Seafood","22.96","Grocery",NULL,NULL
+"2024-07-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-07-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-07-28","Superstore","18.62","Grocery",NULL,NULL
+"2024-07-30","Sobeys","49.86","Grocery",NULL,NULL
+"2024-07-31","Sobeys","27.14","Grocery",NULL,NULL
+"2024-08-01","Eastlink","41.38","Cell Phone",NULL,NULL
+"2024-08-01","8 Saved for Love","68.00","Saved For Love",NULL,NULL
+"2024-08-01","8-1 Home Deposit","1000.00","Home Deposit",NULL,NULL
+"2024-08-01","Global","32.84","Grocery",NULL,NULL
+"2024-08-04","Costco","267.10","Grocery",NULL,NULL
+"2024-08-04","Sandals","70.37","Clothing",NULL,NULL
+"2024-08-07","Sobeys","27.53","Grocery",NULL,NULL
+"2024-08-07","Badminton","40.00","Gifts",NULL,NULL
+"2024-08-07","Badminton","40.00","Others",NULL,NULL
+"2024-08-08","Wine","57.47","Liquor",NULL,NULL
+"2024-08-08","Nofrill","1.00","Grocery",NULL,NULL
+"2024-08-08","Sobeys","8.18","Grocery",NULL,NULL
+"2024-08-08","Pizza","21.07","Food Outside",NULL,NULL
+"2024-08-08","Coffee Grinder","42.72","Gifts",NULL,NULL
+"2024-08-11","Nofrill","4.38","Grocery",NULL,NULL
+"2024-08-11","Cows","25.07","Food Outside",NULL,NULL
+"2024-08-14","Sobeys","8.29","Grocery",NULL,NULL
+"2024-08-15","Medicine Budda Vancouver","100.00","Donation",NULL,NULL
+"2024-08-19","Korean lunch split","50.00","Gifts",NULL,NULL
+"2024-08-20","Meet Noodle","38.72","Traveling","Food","RoadTrip-Aug24"
+"2024-08-20","Ottawa Hotel","97.33","Traveling","Hotel","RoadTrip-Aug24"
+"2024-08-21","Dumpling","44.21","Traveling","Food","RoadTrip-Aug24"
+"2024-08-21","Cafe cream","7.35","Traveling","Food","RoadTrip-Aug24"
+"2024-08-21","2 night hotel in Three River","272.50","Traveling","Hotel","RoadTrip-Aug24"
+"2024-08-22","Cafe","3.50","Traveling","Food","RoadTrip-Aug24"
+"2024-08-22","Pastry Trois-rivere mall","13.16","Traveling","Food","RoadTrip-Aug24"
+"2024-08-22","IGA lunch","12.29","Traveling","Food","RoadTrip-Aug24"
+"2024-08-23","IGA saint-anne","21.63","Traveling","Food","RoadTrip-Aug24"
+"2024-08-23","IGA supper","18.08","Traveling","Food","RoadTrip-Aug24"
+"2024-08-23","Super C Supper and breakfast","28.82","Traveling","Food","RoadTrip-Aug24"
+"2024-08-23","Levis Hostal","127.28","Traveling","Hotel","RoadTrip-Aug24"
+"2024-08-24","Maple Syrup","17.99","Traveling","Gift","RoadTrip-Aug24"
+"2024-08-24","Malaysian Food","38.04","Traveling","Food","RoadTrip-Aug24"
+"2024-08-24","Petro","22.89","Traveling","Gas/Parking","RoadTrip-Aug24"
+"2024-08-27","Sobeys","50.00","Grocery",NULL,NULL
+"2024-08-27","Nofrill","34.82","Grocery",NULL,NULL
+"2024-08-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-08-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-08-30","Sobeys","17.07","Grocery",NULL,NULL
+"2024-08-31","Timmy ","40.04","Food Outside",NULL,NULL
+"2024-09-03","Bus Wallet Deposit","20.00","Transportation",NULL,NULL
+"2024-09-03","Superstore","5.75","Grocery",NULL,NULL
+"2024-09-03","9-1 Home Deposit","200.00","Home Deposit",NULL,NULL
+"2024-09-03","Eastlink","41.38","Cell Phone",NULL,NULL
+"2024-09-03","Bus","20.00","Transportation",NULL,NULL
+"2024-09-04","9 Saved for Love","78.00","Saved For Love",NULL,NULL
+"2024-09-06","Sobey","34.35","Grocery",NULL,NULL
+"2024-09-06","Nofrill","77.25","Grocery",NULL,NULL
+"2024-09-07","9-2 Home Deposit","1300.00","Home Deposit",NULL,NULL
+"2024-09-08","A & W","28.72","Food Outside",NULL,NULL
+"2024-09-11","Mcdonald","21.70","Food Outside",NULL,NULL
+"2024-09-14","Dollarama","2.59","Grocery",NULL,NULL
+"2024-09-15","Petro","44.65","Gas",NULL,NULL
+"2024-09-17","Superstore","130.74","Grocery",NULL,NULL
+"2024-09-20","Leonhard","44.50","Food Outside",NULL,NULL
+"2024-09-21","Superstore","24.26","Grocery",NULL,NULL
+"2024-09-24","Superstore","33.50","Grocery",NULL,NULL
+"2024-09-25","Superstore","5.29","Grocery",NULL,NULL
+"2024-09-25","Leezen","15.98","Grocery",NULL,NULL
+"2024-09-26","Alambe","2.86","Food Outside",NULL,NULL
+"2024-09-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-09-28","Dollarama","1.44","Grocery",NULL,NULL
+"2024-09-28","Sobey","37.18","Grocery",NULL,NULL
+"2024-09-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-09-28","A & W","14.94","Food Outside",NULL,NULL
+"2024-10-01","Eastlink","41.38","Cell Phone",NULL,NULL
+"2024-10-01","Superstore","28.62","Grocery",NULL,NULL
+"2024-10-01","Nofrill","100.47","Grocery",NULL,NULL
+"2024-10-01","Bus Hotspot","20.00","Transportation",NULL,NULL
+"2024-10-03","10-1 Home Deposit","1700.00","Home Deposit",NULL,NULL
+"2024-10-03","Leonhard","30.30","Food Outside",NULL,NULL
+"2024-10-03","10 Saved for Love","88.00","Saved For Love",NULL,NULL
+"2024-10-03","10-2 Home Deposit","300.00","Home Deposit",NULL,NULL
+"2024-10-05","10-3 Home Deposit","200.00","Home Deposit",NULL,NULL
+"2024-10-06","A & W","33.77","Food Outside",NULL,NULL
+"2024-10-07","Farmer's Market","40.00","Grocery",NULL,NULL
+"2024-10-07","Birth Certificate","65.21","Others",NULL,NULL
+"2024-10-08","Sobeys","22.29","Grocery",NULL,NULL
+"2024-10-09","Superstore","4.29","Grocery",NULL,NULL
+"2024-10-10","Tim's","4.59","Food Outside",NULL,NULL
+"2024-10-15","Superstore","95.88","Grocery",NULL,NULL
+"2024-10-15","Superstore","66.40","Grocery",NULL,NULL
+"2024-10-17","Himalaya Curry","41.46","Food Outside",NULL,NULL
+"2024-10-17","Walmart","100.00","Grocery",NULL,NULL
+"2024-10-18","Nofrill","100.00","Grocery",NULL,NULL
+"2024-10-19","Baseball Game","3.40","Fun/Tickets",NULL,NULL
+"2024-10-19","Sobeys","50.00","Grocery",NULL,NULL
+"2024-10-23","Nofrill","48.99","Grocery",NULL,NULL
+"2024-10-24","Greco","12.51","Food Outside",NULL,NULL
+"2024-10-25","Entertainment Event","57.50","Fun/Tickets",NULL,NULL
+"2024-10-28","Nofrill","58.61","Grocery",NULL,NULL
+"2024-10-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-10-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-11-01","Eastlink","41.38","Cell Phone",NULL,NULL
+"2024-11-02","11-1 Home Deposit","1000.00","Home Deposit",NULL,NULL
+"2024-11-02","11 Saved for Love","88.00","Saved For Love",NULL,NULL
+"2024-11-03","Sobeys","50.00","Grocery",NULL,NULL
+"2024-11-04","Pho Vietnam","45.91","Food Outside",NULL,NULL
+"2024-11-04","11-2 Home Deposit","401.37","Home Deposit",NULL,NULL
+"2024-11-05","Pandas","22.90","Grocery",NULL,NULL
+"2024-11-05","Superstore","83.80","Grocery",NULL,NULL
+"2024-11-13","Nofrill","109.16","Grocery",NULL,NULL
+"2024-11-18","Sobeys","4.99","Grocery",NULL,NULL
+"2024-11-19","Nofrill","100.00","Grocery",NULL,NULL
+"2024-11-20","Splcy Chef","46.97","Food Outside",NULL,NULL
+"2024-11-22","Pur & Simple","42.85","Food Outside",NULL,NULL
+"2024-11-23","Saigon Pho","38.05","Food Outside",NULL,NULL
+"2024-11-23","Staple","34.49","Others",NULL,NULL
+"2024-11-26","Receiver","18.11","Food Outside",NULL,NULL
+"2024-11-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-11-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-11-29","Thai Food","45.64","Food Outside",NULL,NULL
+"2024-11-29","Hot Chocolate","4.50","Food Outside",NULL,NULL
+"2024-11-30","Shoppers","4.49","Grocery",NULL,NULL
+"2024-11-30","Hot Chocolate","4.50","Food Outside",NULL,NULL
+"2024-12-02","Superstore","5.84","Grocery",NULL,NULL
+"2024-12-02","12 Saved for Love","100.00","Saved For Love",NULL,NULL
+"2024-12-04","Nofrill","100.00","Grocery",NULL,NULL
+"2024-12-05","Eastlink","41.38","Cell Phone",NULL,NULL
+"2024-12-06","Leonhard","38.50","Food Outside",NULL,NULL
+"2024-12-09","Costco","343.00","Grocery",NULL,NULL
+"2024-12-09","12-1 Home Deposit","226.97","Home Deposit",NULL,NULL
+"2024-12-09","Superstore","4.89","Grocery",NULL,NULL
+"2024-12-09","Global","39.94","Grocery",NULL,NULL
+"2024-12-09","Pandas","46.13","Grocery",NULL,NULL
+"2024-12-11","Saigon Pho","19.31","Food Outside",NULL,NULL
+"2024-12-12","Abbiocco","11.50","Food Outside",NULL,NULL
+"2024-12-13","Dollarama","5.46","Household Goods",NULL,NULL
+"2024-12-13","Take Sushi","35.46","Food Outside",NULL,NULL
+"2024-12-13","Sobeys","10.89","Grocery",NULL,NULL
+"2024-12-14","Nofrill","7.24","Grocery",NULL,NULL
+"2024-12-16","Dollarama","5.00","Household Goods",NULL,NULL
+"2024-12-17","Nofrill","150.00","Grocery",NULL,NULL
+"2024-12-18","Bus Hotspot","10.00","Transportation",NULL,NULL
+"2024-12-19","12-2 Home Deposit","800.00","Home Deposit",NULL,NULL
+"2024-12-20","Petro","53.34","Gas",NULL,NULL
+"2024-12-20","Superstore","50.10","Grocery",NULL,NULL
+"2024-12-23","Take Sushi","50.79","Food Outside",NULL,NULL
+"2024-12-23","Bus Hotspot","2.00","Transportation",NULL,NULL
+"2024-12-23","Walmart","63.65","Grocery",NULL,NULL
+"2024-12-27","12-3 Home Deposit","1100.00","Home Deposit",NULL,NULL
+"2024-12-27","Rock Climbing","22.00","Fun/Tickets",NULL,NULL
+"2024-12-27","Nofrill","40.46","Grocery",NULL,NULL
+"2024-12-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-12-28","GEBIS","20.00","Donation",NULL,NULL
+"2024-12-30","Pandas","27.38","Grocery",NULL,NULL
+"2024-12-30","Atlantic Superstore","91.19","Grocery",NULL,NULL
+"2024-12-31","Take Sushi","33.44","Food Outside",NULL,NULL
+"2025-01-01","1 Saved for Love","0.00","Saved For Love",NULL,NULL
+"2025-01-01","Acupuncture ","20.00","Medicine",NULL,NULL
+"2025-01-01","Red Envelop","720.00","Gifts",NULL,NULL
+"2025-01-04","Petro","42.16","Gas",NULL,NULL
+"2025-01-04","Liquar","26.91","Liquor",NULL,NULL
+"2025-01-04","Dollarama","1.44","Household Goods",NULL,NULL
+"2025-01-08","Nofrill","30.72","Grocery",NULL,NULL
+"2025-01-10","Eastlink","41.38","Cell Phone",NULL,NULL
+"2025-01-11","Superstore","100.00","Grocery",NULL,NULL
+"2025-01-11","Archery","10.00","Fun/Tickets",NULL,NULL
+"2025-01-13","Sindy Birthday","360.00","Gifts",NULL,NULL
+"2025-01-14","Nofrill","100.00","Grocery",NULL,NULL
+"2025-01-16","1-1 Home Deposit","235.00","Home Deposit",NULL,NULL
+"2025-01-16","1-2 Home Deposit","1000.00","Home Deposit",NULL,NULL
+"2025-01-17","my flight to Vancouver","611.23","Traveling","Flight","Vancouver-Jan25"
+"2025-01-18","Acupuncture ","240.00","Medicine",NULL,NULL
+"2025-01-20","Pearl Hot pot","54.89","Traveling","Food","Vancouver-Jan25"
+"2025-01-20","Acupuncture ","140.00","Medicine",NULL,NULL
+"2025-01-20","cash withdraw","140.00","Traveling","Food","Vancouver-Jan25"
+"2025-01-20","happy cafe","47.36","Traveling","Food","Vancouver-Jan25"
+"2025-01-20","pearl castle","38.65","Traveling","Food","Vancouver-Jan25"
+"2025-01-20","Acupuncture ","200.00","Medicine",NULL,NULL
+"2025-01-21","T & T","6.50","Traveling","Food","Vancouver-Jan25"
+"2025-01-21","the one BBQ","43.85","Traveling","Food","Vancouver-Jan25"
+"2025-01-21","Kim marts","20.14","Traveling","Food","Vancouver-Jan25"
+"2025-01-22","Germain bakery","7.44","Traveling","Food","Vancouver-Jan25"
+"2025-01-24","Petro","45.79","Traveling","Gas/Parking","Vancouver-Jan25"
+"2025-01-24","Pink Pearl","82.20","Traveling","Food","Vancouver-Jan25"
+"2025-01-25","donation soba","100.00","Traveling","Others","Vancouver-Jan25"
+"2025-01-26","Katsu","47.50","Traveling","Food","Vancouver-Jan25"
+"2025-01-26","Gohua Taiwanese Food","56.07","Traveling","Gift","Vancouver-Jan25"
+"2025-01-27","black ball","12.45","Traveling","Food","Vancouver-Jan25"
+"2025-01-28","donation","50.00","Traveling","Others","Vancouver-Jan25"
+"2025-01-28","T&T parking","2.00","Traveling","Gas/Parking","Vancouver-Jan25"
+"2025-01-28","GEBIS","20.00","Donation",NULL,NULL
+"2025-01-28","GEBIS","20.00","Donation",NULL,NULL
+"2025-01-28","donation new year","50.00","Traveling","Others","Vancouver-Jan25"
+"2025-01-28","Wenny red envelope","100.00","Traveling","Hotel","Vancouver-Jan25"
+"2025-01-30","Coco","5.95","Traveling","Food","Vancouver-Jan25"
+"2025-01-30","super saved gas","30.00","Traveling","Gas/Parking","Vancouver-Jan25"
+"2025-01-30","unique clothes","61.67","Traveling","Gift","Vancouver-Jan25"
+"2025-01-31","sushi loku","28.85","Traveling","Food","Vancouver-Jan25"
+"2025-02-01","coffee","17.58","Traveling","Gift","Vancouver-Jan25"
+"2025-02-01","Eastlink","41.38","Cell Phone",NULL,NULL
+"2025-02-03","Vietnamese food","41.90","Traveling","Food","Vancouver-Jan25"
+"2025-02-03","lay 3 kitchen","17.00","Traveling","Food","Vancouver-Jan25"
+"2025-02-03","ferry to Victoria","64.00","Traveling","Public Transportation","Vancouver-Jan25"
+"2025-02-03","chevron","66.93","Traveling","Gas/Parking","Vancouver-Jan25"
+"2025-02-04","Japanese tako","6.50","Traveling","Food","Vancouver-Jan25"
+"2025-02-04","Hotel in Victoria","105.80","Traveling","Hotel","Vancouver-Jan25"
+"2025-02-04","fairway market","17.84","Traveling","Food","Vancouver-Jan25"
+"2025-02-04","Thai food lunch","15.29","Traveling","Food","Vancouver-Jan25"
+"2025-02-04","Liquar","13.29","Traveling","Food","Vancouver-Jan25"
+"2025-02-04","thai food dinner","24.95","Traveling","Food","Vancouver-Jan25"
+"2025-02-04","shopper","15.10","Traveling","Others","Vancouver-Jan25"
+"2025-02-05","Chocolates","15.92","Traveling","Food","Vancouver-Jan25"
+"2025-02-05","I Kyu noodles","23.90","Traveling","Food","Vancouver-Jan25"
+"2025-02-05","Discovery coffee","8.60","Traveling","Food","Vancouver-Jan25"
+"2025-02-05","T & T","50.00","Traveling","Food","Vancouver-Jan25"
+"2025-02-05","T & T parking","2.00","Traveling","Food","Vancouver-Jan25"
+"2025-02-06","T & T","12.95","Traveling","Food","Vancouver-Jan25"
+"2025-02-06","Mexican food","29.70","Traveling","Food","Vancouver-Jan25"
+"2025-02-07","LCC coffee","10.17","Traveling","Food","Vancouver-Jan25"
+"2025-02-07","Check in lugguage","80.50","Traveling","Gift","Vancouver-Jan25"
+"2025-02-07","Golden Swan","75.54","Traveling","Food","Vancouver-Jan25"
+"2025-02-07","T & T","26.98","Traveling","Food","Vancouver-Jan25"
+"2025-02-08","coffee in airport","6.50","Traveling","Food","Vancouver-Jan25"
+"2025-02-08","satbuck cup","7.40","Traveling","Gift","Vancouver-Jan25"
+"2025-02-10","Nofrill","47.88","Grocery",NULL,NULL
+"2025-02-11","Superstore","16.71","Grocery",NULL,NULL
+"2025-02-11","DI Account fee","0.37","Others",NULL,NULL
+"2025-02-12","AI Blogger","164.02","Education",NULL,NULL
+"2025-02-13","Nofrill","100.00","Grocery",NULL,NULL
+"2025-02-13","2-2 Home Deposit","189.18","Home Deposit",NULL,NULL
+"2025-02-13","2-1 Home Deposit","1000.00","Home Deposit",NULL,NULL
+"2025-02-14","John Brown","25.60","Food Outside",NULL,NULL
+"2025-02-14","2 Saved for Love","100.00","Saved For Love",NULL,NULL
+"2025-02-15","Walmart","59.29","Grocery",NULL,NULL
+"2025-02-16","Pandas","8.14","Grocery",NULL,NULL
+"2025-02-16","Pony Boat","24.59","Fun/Tickets",NULL,NULL
+"2025-02-18","A & W","24.47","Food Outside",NULL,NULL
+"2025-02-19","Saigon Pho","56.59","Food Outside",NULL,NULL
+"2025-02-24","Bus Hotspot","2.00","Transportation",NULL,NULL
+"2025-02-25","Swift Cost","17.00","Others",NULL,NULL
+"2025-02-25","Boston Pizza","18.75","Food Outside",NULL,NULL
+"2025-02-26","Superstore","43.57","Grocery",NULL,NULL
+"2025-02-26","Wise Opening","30.09","Others",NULL,NULL
+"2025-02-28","GEBIS","20.00","Donation",NULL,NULL
+"2025-02-28","GEBIS","20.00","Donation",NULL,NULL
+"2025-03-01","Eastlink","41.38","Cell Phone",NULL,NULL
+"2025-03-01","Medium","74.08","Education",NULL,NULL
+"2025-03-02","Tim's","12.25","Food Outside",NULL,NULL
+"2025-03-02","Pony Boat","18.40","Fun/Tickets",NULL,NULL
+"2025-03-03","Petro","28.61","Gas",NULL,NULL
+"2025-03-04","Walmart","100.00","Grocery",NULL,NULL
+"2025-03-05","Bus Hotspot","18.00","Transportation",NULL,NULL
+"2025-03-05","3-1 Home Deposit","226.00","Home Deposit",NULL,NULL
+"2025-03-07","Sobeys","3.29","Grocery",NULL,NULL
+"2025-03-08","Nofrill","30.88","Grocery",NULL,NULL
+"2025-03-10","3 Saved for Love","70.00","Saved For Love",NULL,NULL
+"2025-03-10","Nofrill","13.77","Grocery",NULL,NULL
+"2025-03-10","Nofrill","100.00","Grocery",NULL,NULL
+"2025-03-14","Mucho","14.09","Food Outside",NULL,NULL
+"2025-03-19","Mucho","16.04","Food Outside",NULL,NULL
+"2025-03-23","Yumi Sushi","32.13","Food Outside",NULL,NULL
+"2025-03-23","Samuel Coffee","13.40","Food Outside",NULL,NULL
+"2025-03-26","Nofrill","150.00","Grocery",NULL,NULL
+"2025-03-27","Mucho","11.49","Food Outside",NULL,NULL
+"2025-03-28","GEBIS","20.00","Donation",NULL,NULL
+"2025-03-28","GEBIS","20.00","Donation",NULL,NULL
+"2025-03-28","HomeHardWare","1.14","Household Goods",NULL,NULL
+"2025-03-29","Anchery","10.00","Fun/Tickets",NULL,NULL
+"2025-03-30","Latino Workshop","30.00","Fun/Tickets",NULL,NULL
+"2025-03-31","Pizza Pizza","6.90","Food Outside",NULL,NULL
+"2025-04-03","Leonhard","50.50","Food Outside",NULL,NULL
+"2025-04-04","Costco","25.00","Grocery",NULL,NULL
+"2025-04-07","Eastlink","41.38","Cell Phone",NULL,NULL
+"2025-04-07","Cinema","16.09","Fun/Tickets",NULL,NULL
+"2025-04-07","Pandas","14.16","Grocery",NULL,NULL
+"2025-04-07","Superstore","100.00","Grocery",NULL,NULL
+"2025-04-09","Vietnamese Dishes","27.29","Food Outside",NULL,NULL
+"2025-04-09","Mr. Seafood","70.00","Grocery",NULL,NULL
+"2025-04-09","saved for love","60.00","Saved For Love",NULL,NULL
+"2025-04-09","haircut","30.00","Others",NULL,NULL
+"2025-04-09","Cake","20.00","Gifts",NULL,NULL
+"2025-04-10","Petro","42.25","Gas",NULL,NULL
+"2025-04-12","Moncton Parking","2.50","Gifts",NULL,NULL
+"2025-04-12","Guru India Trip","500.00","Donation",NULL,NULL
+"2025-04-12","TS temple Annual","800.00","Donation",NULL,NULL
+"2025-04-12","Tim's","16.76","Food Outside",NULL,NULL
+"2025-04-12","Bridge","50.25","Gifts",NULL,NULL
+"2025-04-12","Costco","568.05","Grocery",NULL,NULL
+"2025-04-13","GEBIS","20.00","Donation",NULL,NULL
+"2025-04-13","saved for love in may","50.00","Saved For Love",NULL,NULL
+"2025-04-13","saved for love in june","50.00","Saved For Love",NULL,NULL
+"2025-04-14","Bus Hotspot","2.00","Transportation",NULL,NULL
+"2025-04-16","Bus Hotspot","18.00","Transportation",NULL,NULL
+"2025-04-21","Nofrill","100.00","Grocery",NULL,NULL
+"2025-04-21","Walmart","25.00","Grocery",NULL,NULL
+"2025-04-23","Dollarama","8.20","Household Goods",NULL,NULL
+"2025-04-23","Gallery","7.19","Food Outside",NULL,NULL
+"2025-04-23","Sobeys","50.00","Grocery",NULL,NULL
+"2025-04-28","GEBIS","20.00","Donation",NULL,NULL
+"2025-04-28","GEBIS","20.00","Donation",NULL,NULL
+"2025-05-02","EASTLINK WIRELESS 888-345-1111 NS","41.38","Cell Phone",NULL,NULL
+"2025-05-05","WAL-MART #3162 CHARLOTTETOWNPE","84.32","Grocery",NULL,NULL
+"2025-05-06","MIKE & ANDREEA'S NF #3 STRATFORD PE","22.04","Grocery",NULL,NULL
+"2025-05-10","MIKE & ANDREEA'S NF #3 STRATFORD PE","100.00","Grocery",NULL,NULL
+"2025-05-14","PETRO-CANADA 14354 STRATFORD PE","44.00","Gas",NULL,NULL
+"2025-05-15","SAIGON PHO VIETNAMESE CHARLOTTETOWNPE","45.75","Food Outside",NULL,NULL
+"2025-05-18","TIM HORTONS #0580 MONTAGUE PE","7.79","Food Outside",NULL,NULL
+"2025-05-20","MIKE & ANDREEA'S NF #3 STRATFORD PE","200.00","Grocery",NULL,NULL
+"2025-05-20","MIKE & ANDREEA'S NF #3 STRATFORD PE","-11.26","Grocery",NULL,NULL
+"2025-05-20","PITA PIT CHARLOTTETOWNPE","15.97","Food Outside",NULL,NULL
+"2025-05-22","Leezen","28.00","Grocery",NULL,NULL
+"2025-05-28","GREAT ENLIGHTENMENT BU MURRAY RIVER PE","20.00","Donation",NULL,NULL
+"2025-05-28","GREAT ENLIGHTENMENT BU MURRAY RIVER PE","20.00","Donation",NULL,NULL
+"2025-05-28","PETRO-CANADA 13923 CHARLOTTETOWNPE","63.80","Gas",NULL,NULL
+"2025-05-29","BOMBAY CUISINE CHARLOTTETOWNPE","25.29","Food Outside",NULL,NULL
+"2025-05-31","A&W CHARLOTTETOWN CHARLOTTETOWNPE","18.39","Food Outside",NULL,NULL
+"2025-06-01","JUNCO MARKET CHARLOTTETOWNPE","22.09","Grocery",NULL,NULL
+"2025-06-04","SOBEYS #621 STRATFORD PE","50.00","Grocery",NULL,NULL
+"2025-06-07","ARCHERY","10.00","Fun/Tickets",NULL,NULL
+"2025-06-08","EASTLINK WIRELESS 888-345-1111 NS","41.38","Cell Phone",NULL,NULL
+"2025-06-12","MUCHO BURRITO - 2301 CHARLOTTETOWNPE","17.54","Food Outside",NULL,NULL
+"2025-06-12","LEONHARD'S CAFE & REST CHARLOTTETOWNPE","37.50","Food Outside",NULL,NULL
+"2025-06-15","Noodle Houses","31.00","Food Outside",NULL,NULL
+"2025-06-16","HTSP-* TRANSIT PEI FREDERICTON NB","18.00","Transportation",NULL,NULL
+"2025-06-17","E-JOY FOOD MART HALIFAX NS","17.35","Grocery",NULL,NULL
+"2025-06-17","BISHOPS CELLAR HALIFAX NS","55.99","Liquor",NULL,NULL
+"2025-06-17","PETRO-CANADA 13923 CHARLOTTETOWNPE","61.73","Gas",NULL,NULL
+"2025-06-17","FOG COMPANY HALIFAX NS","6.84","Food Outside",NULL,NULL
+"2025-06-18","COBEQUID PASS TOLL HIG HALIFAX NS","4.00","Others",NULL,NULL
+"2025-06-18","IKEA HALIFAX DARTMOUTH NS","4.55","Food Outside",NULL,NULL
+"2025-06-18","IKEA HALIFAX DARTMOUTH NS","10.81","Food Outside",NULL,NULL
