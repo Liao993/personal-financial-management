@@ -1,5 +1,5 @@
 import streamlit as st # type: ignore
-from utils.data import expense_category_options, transaction_type_database, usable_fund_categories,traveling_category_options,account_name_list 
+from utils.data import expense_category_options, transaction_type_database, fund_categories,traveling_category_options,account_name_list 
 
 
 def hint_page():
@@ -21,7 +21,7 @@ def hint_page():
         st.info(f"{', '.join(expense_category_options)}")
     with cols[1]:
         st.markdown("<h5 style='color: lightcoral;'>Usable Fund Categories:</h5>", unsafe_allow_html=True)
-        st.info(f"{', '.join(usable_fund_categories)}")
+        st.info(f"{', '.join(fund_categories)}")
       
     cols = st.columns(3)
     with cols[0]:

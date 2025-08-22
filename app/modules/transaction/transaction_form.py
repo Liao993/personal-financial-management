@@ -1,7 +1,7 @@
 import streamlit as st # type: ignore
 from datetime import datetime
 from utils.css import drop_down_list
-from utils.data import account_name_list, usable_fund_categories, transaction_type_list
+from utils.data import account_name_list, fund_categories, transaction_type_list
 from  modules.transaction.transaction_review import record_saving_transaction
 
 def transaction_form():
@@ -28,7 +28,7 @@ def transaction_form():
         key="action_type_form"
     )
     transaction_date = st.date_input("Transaction Date", datetime.now().date())
-    fund_category = st.selectbox("Usable Fund Category", usable_fund_categories)
+    fund_category = st.selectbox("Usable Fund Category", fund_categories)
     account_name = st.selectbox("Account", account_name_list)
     amount = st.number_input("Amount", min_value=0.0)
     source_notes = st.text_input("Notes (Optional)")
