@@ -55,7 +55,7 @@ expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell 
 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
-traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking", "Food", "Tickets", "Others"]
+traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking/Tolls", "Food", "Tickets", "Others"]
 #transaction
 fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
 

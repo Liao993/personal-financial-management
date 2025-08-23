@@ -13,8 +13,10 @@ def pipeline(bank, pdf_file):
     transformed_data = rbc_transformed(extracted_data)
     finished = display_editable_dataframe(transformed_data)
     return finished
-  elif bank == "TD":
-      st.write("TD pipeline")
+  elif bank == "PC":
+    extracted_data = rbc_extracted(pdf_file)
+    transformed_data = rbc_transformed(extracted_data)
+    finished = display_editable_dataframe(transformed_data)
 
 
 
