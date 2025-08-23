@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 import pandas as pd
 
 def Retirement(selected_year, original_data):
-  st.markdown(f"<h5 style='text-align: center; color: #26dec5'>Retirement Saving Status</h5>", unsafe_allow_html=True)
+  st.markdown(f"<h2 style='text-align: center; color: #3dafdd'>Retirement Saving Status</h2>", unsafe_allow_html=True)
 
   retirement_data = original_data[original_data['fund_category'] == 'Retirement Saving'].copy()
   retirement_data['date'] = pd.to_datetime(retirement_data['date'])

@@ -59,7 +59,7 @@ traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift"
 #transaction
 fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
 
-account_name_list = ["RBC Chequing", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP", "RBC TFSA"]
+account_name_list = ["RBC Chequing", "EQ Chequing", "EQ 10D Notice", "EQ 30D Notice", "RBC TFSA" ,"Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP" ]
 
 transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 

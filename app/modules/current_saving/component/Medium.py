@@ -4,7 +4,7 @@ import pandas as pd
 def Medium_Term(selected_year, original_data):
 
 
-  st.markdown(f"<h5 style='text-align: center; color: #3dafdd'>Medium-Term Saving Status</h5>", unsafe_allow_html=True)
+  st.markdown(f"<h2 style='text-align: center; color: #3dafdd'>Medium-Term Saving Status</h2>", unsafe_allow_html=True)
 
   medium_term_data = original_data[original_data['fund_category'] == 'Medium-term Saving'].copy()
   medium_term_data['date'] = pd.to_datetime(medium_term_data['date'])
