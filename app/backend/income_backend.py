@@ -99,7 +99,7 @@ def fetch_last_income_data():
                 SELECT date, amount, source, notes
                 FROM income
                 ORDER BY date DESC
-                LIMIT 3;
+                LIMIT 5;
             """
             cursor.execute(query)
             rows = cursor.fetchall()

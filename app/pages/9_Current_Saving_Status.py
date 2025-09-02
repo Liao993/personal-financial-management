@@ -10,7 +10,8 @@ st.set_page_config(page_title="Current_Status", page_icon="💰", layout="wide")
 
 
 def current_saving_status():
-    st.markdown("<h1 style='color: #ffffff; text-align: center;'>Fund Distribution by Account and Category</h1>", unsafe_allow_html=True)
+    today_date = pd.Timestamp.now().strftime("%Y-%m-%d")
+    st.markdown(f"<h1 style='color: #ffffff; text-align: center;'>Fund Distribution by Account and Category - {today_date} </h1>", unsafe_allow_html=True)
     columns_names , all_data = fetch_all_transaction_data()
     original_data = pd.DataFrame(all_data, columns=columns_names)
 
