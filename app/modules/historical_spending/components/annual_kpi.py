@@ -2,7 +2,7 @@ import streamlit as st #type:ignore
 
 def annual_kpi(expense, year, income, transaction):
     st.markdown(f"<h2 style='text-align: center;'> {year} Spending Overview</h2>", unsafe_allow_html=True)
-    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
     with col1:
         total_income = income['total_income'].sum()
         st.markdown(
@@ -40,6 +40,15 @@ def annual_kpi(expense, year, income, transaction):
             unsafe_allow_html=True,
         )
     with col5:
+      donation_sum = expense[expense["category"] == "Donation"]['amount'].sum()
+      donation_pct = donation_sum / total_income * 100
+      st.markdown(
+            f"<p style='font-size: 22px; color: #8C64C1; text-align: center;'><b>Total Donation</b></p>"
+            f"<p style='font-size: 24px; text-align: center;'><b>${donation_sum:.2f}</b></p>"
+            f"<p style='font-size: 24px; text-align: center;'><b>{donation_pct:.2f}%</b></p>",
+          unsafe_allow_html=True,
+      )
+    with col6:
       grocery_sum = expense[expense["category"] == "Grocery"]['amount'].sum()
       grocery_avg = grocery_sum/12
       grocery_pct = grocery_sum / total_income * 100
@@ -49,7 +58,7 @@ def annual_kpi(expense, year, income, transaction):
             f"<p style='font-size: 24px; text-align: center;'><b>{grocery_pct:.2f}%</b></p>",
           unsafe_allow_html=True,
       )
-    with col6:
+    with col7:
       retire_sum = transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum()
       retire_pct = retire_sum / total_income * 100
       st.markdown(
@@ -58,4 +67,5 @@ def annual_kpi(expense, year, income, transaction):
             f"<p style='font-size: 24px; text-align: center;'><b>{retire_pct:.2f}%</b></p>",
           unsafe_allow_html=True,
       )
+   
 

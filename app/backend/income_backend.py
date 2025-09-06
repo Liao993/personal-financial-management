@@ -1,7 +1,7 @@
 import streamlit as st # type: ignore
 from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 def insert_income_data(validated_data: dict):
     #st.info("Received validated income data in income_backend.py:")
     # Here you would add your logic to interact with the database

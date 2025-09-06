@@ -1,7 +1,7 @@
-import streamlit as st
+import streamlit as st # type: ignore
 from utils.connection import get_db_connection # Assumed to return a connection for a privileged user
-import psycopg2
-import pandas as pd
+import psycopg2 # type: ignore
+import pandas as pd # type: ignore
 from typing import Tuple
 
 # Define session state keys (these should match the frontend's keys)
