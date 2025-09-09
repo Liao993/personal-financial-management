@@ -37,7 +37,9 @@ common_store_directory = {
     "DOMINO'S": 'Food Outside',
     'KFC': 'Food Outside',
     'MRSEAFOOD': 'Grocery',
-    'CROSSINGBRIDGE': 'Traveling'
+    'CROSSINGBRIDGE': 'Traveling',
+    'PROXI': 'Gas',
+    "ESSO": 'Gas',
     
 }
 

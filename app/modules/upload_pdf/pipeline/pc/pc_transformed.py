@@ -1,11 +1,12 @@
 import streamlit as st # type: ignore
-import pandas as pd
-import numpy as np
-from modules.upload_pdf.pipeline.rbc.data_treatment.rbc_text_to_table import text_to_table
-from modules.upload_pdf.pipeline.rbc.data_treatment.rbc_format_date import format_transaction_date
+import pandas as pd # type: ignore
+import numpy as np # type: ignore
+from modules.upload_pdf.pipeline.pc.data_treatment.pc_text_to_table import text_to_table
+from modules.upload_pdf.pipeline.pc.data_treatment.pc_format_date import format_transaction_date
 
 from modules.upload_pdf.middle_layer.common_category import categorize_description_with_common_stores
 from modules.upload_pdf.middle_layer.travel_category import categorize_description_travel
+
 
 from utils.data import common_store_directory, hotel_booking
 
@@ -36,12 +37,13 @@ def categorize_items(df, common_store_directory):
     df['trip'] = None
     return df
 
-def rbc_transformed(extracted_data):
+def pc_transformed(extracted_data):
  
     # Convert the extracted data into a table format
+
     extracted_df = text_to_table(extracted_data)
 
-
+    
     # Format the transaction date
     date_transformed_df = format_transaction_date(extracted_df, date_column='date')
     date_transformed_df['date'] = pd.to_datetime(date_transformed_df['date']).dt.date
@@ -54,3 +56,4 @@ def rbc_transformed(extracted_data):
 
 
     return categorized_df
+    

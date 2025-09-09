@@ -3,6 +3,8 @@ import pandas as pd
 from utils.validation import validate_expense_data
 from backend.expense_backend import insert_expense_data
 from decimal import Decimal
+
+# after verifying the data, load data into the database
 def load_expense_data(updated_dataframe):
     if updated_dataframe is not None:
        # 3. Validate each row and collect valid data
