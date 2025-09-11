@@ -3,24 +3,14 @@ from datetime import datetime
 from utils.css import drop_down_list
 from utils.data import account_name_list, fund_categories, transaction_type_list
 from  modules.transaction.transaction_review import record_saving_transaction
-
+from modules.transaction.transaction_instruction import instruction
 def transaction_form():
     st.subheader("Record New Transaction")
 
     drop_down_list()
 
-    st.markdown(f"<p style='font-size: 20px;'>"
-                "If money balance BETWEEN <b style='color:#e74c3c;'>DIFFERENT FUNDS</b>, "
-                "choose <b style='color:#e74c3c;'>deposit</b>  or  <b style='color:#e74c3c;'>withdraw</b>,", unsafe_allow_html=True)
-    st.markdown(f"<p style='font-size: 20px;'>Example: From Medium-term Saving to Traveling Funds, please make <b style='color:orange'>'TWO'</b> transactions. "
-                " Choose <b style='color:#e74c3c;'>Withdrawal</b> for Medium-term and <b style='color:#e74c3c;'>Deposit</b> for Traveling Funds</p>", unsafe_allow_html=True)
-    st.write("___")
-    st.markdown(f"<p style='font-size: 20px;'>"
-               "if it is the <b style='color:yellow;'>same funds</b> but in different accounts, "
-                "choose <b style='color:yellow;'>transfer between accounts.</b></p>", unsafe_allow_html=True)
-    st.markdown(f"<p style='font-size: 20px;'>Example: Retirement Saving From RBC Chequing  to Questrade TFSA (Retire), please make <b style='color:orange'>'ONE'</b> transaction."
-                " Choose <b style='color:yellow;'>Transfer Between Accounts</b> for Retirement Saving</p>", unsafe_allow_html=True)
-    st.write("___")
+    instruction()
+
     st.markdown(f"<p style='font-size: 24px; color: #16a085;'><b>Please choose the action type and fill the form below:</b></p>", unsafe_allow_html=True)
     action_type = st.radio(
         "",
