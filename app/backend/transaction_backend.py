@@ -150,7 +150,7 @@ def fetch_last_transaction_data():
             SELECT *
             FROM transactions
             ORDER BY date DESC
-            LIMIT 5;
+            LIMIT 10;
         """
         try:
             cursor.execute(query)

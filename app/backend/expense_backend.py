@@ -97,7 +97,7 @@ def fetch_last_expense_data():
                 SELECT date, items, amount, category
                 FROM expense
                 ORDER BY date DESC
-                LIMIT 5;
+                LIMIT 10;
             """
             cursor.execute(query)
             rows = cursor.fetchall()

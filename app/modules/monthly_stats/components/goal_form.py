@@ -16,29 +16,30 @@ def financial_goals_form():
         # First line: Date and RBC Saving
         col1, col2 = st.columns(2)
         with col1:
-            goal_date = st.date_input("Date", value=date.today())
+            goal_date = st.date_input("Date (Please select the last day of the month you want to note)", value=date.today())
         with col2:
             rbc_saving = st.number_input("RBC Saving", min_value=0.0, value=100.0, format="%.2f")
 
-        # Second line: Saving Goal and Retirement Percentage
-        col3, col4 = st.columns(2)
+        # Second line: Saving Goal and Retirement Percentage & Current Unnoted Amount in 10 days notice
+        col3, col4, col5 = st.columns(3)
         with col3:
             saving_goal = st.number_input("Saving Goal", min_value=0.0, value=1000.00, format="%.2f")
         with col4:
             retirement_percentage_options = [100, 80, 70, 60, 50, 30, 20]
             retirement_percentage = st.selectbox("Retirement Percentage (%)", retirement_percentage_options, index=1) # Default to 80
-
-        # Third line: Traveling Fund Max and Min
-        col5, col6 = st.columns(2)
         with col5:
-            travel_fund_max = st.number_input("Traveling Fund Max", min_value=0.0, value=400.00, format="%.2f")
+            unnoted_amount_in_10_days_notice = st.number_input("Current Amount in 10 days notice", min_value=0.0, value=0.00, format="%.2f")
+        # Third line: Traveling Fund Max and Min
+        col6, col7 = st.columns(2)
         with col6:
+            travel_fund_max = st.number_input("Traveling Fund Max", min_value=0.0, value=400.00, format="%.2f")
+        with col7:
             travel_fund_min = st.number_input("Traveling Fund Min", min_value=0.0, value=200.00, format="%.2f")
 
-        col7, col8 = st.columns(2)
-        with col7:
-            submit_button = st.form_submit_button("Save Financial Goals")
+        col8, col9 = st.columns(2)
         with col8:
+            submit_button = st.form_submit_button("Save Financial Goals")
+        with col9:
             form_data = {}
             if submit_button:
                 form_data['goal_date'] = goal_date
@@ -47,6 +48,7 @@ def financial_goals_form():
                 form_data['retirement_percentage'] = retirement_percentage / 100.0  # Store as a decimal
                 form_data['travel_fund_max'] = travel_fund_max
                 form_data['travel_fund_min'] = travel_fund_min
+                form_data['unnoted_amount_in_10_days_notice'] = unnoted_amount_in_10_days_notice
                 st.success("Financial goals saved!")
 
         return form_data
