@@ -13,7 +13,7 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
       drop_down_list()
       expense_date = st.date_input("Date", value=date.today())
       expense_common_items = st.selectbox("Items", common_store_list, key="common_item_select")
-      expense_items = st.text_input("Items (if not in common store list)", key="custom_item_input")
+      expense_items = st.text_input("Items (if not in common store list), such as GREAT ENLIGHTENMENT BU MURRAY RIVER PE", key="custom_item_input")
       expense_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=100.00)
       expense_category = st.selectbox("Category", expense_category_options, index=1)
       traveling = st.selectbox("Traveling Category", [None] + traveling_category_options)

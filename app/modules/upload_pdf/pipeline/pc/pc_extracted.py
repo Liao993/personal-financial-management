@@ -6,7 +6,6 @@ import re
 #This page is used to extract the text from the PDF file
 def pc_extracted(pdf_files):
     all_relevant_lines = {}
-    #months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 
     if pdf_files:
         for pdf_file_obj in pdf_files:

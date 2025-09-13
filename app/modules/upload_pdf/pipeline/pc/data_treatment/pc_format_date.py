@@ -16,17 +16,26 @@ def format_transaction_date(df, date_column, date_format='%b%d'):
         return df
 
     try:
+        # Define the specific date format
+        date_format = '%d/%m'  
+        
         # Combine the date string with the year
-        df[date_column + '_with_year'] = df[date_column].astype(str) + ',' + df["year"].astype(str)
+        df[date_column + '_with_year'] = df[date_column].astype(str) + ' ' + df["year"].astype(str)
+        
         # Create a format string that includes the year
-        full_date_format = f'{date_format},%Y'
+        full_date_format = f'{date_format} %Y'
+        
+        # Convert the combined string to datetime
         df[date_column] = pd.to_datetime(
             df[date_column + '_with_year'], format=full_date_format, errors='coerce'
-        ).dt.strftime('%Y-%m-%d') 
-        df = df.drop(columns=["year"])  # Remove the Year column if not needed
-        df = df.drop(columns=[date_column + '_with_year'])  # Remove the temporary column
-    except ValueError:
+        ).dt.strftime('%Y-%m-%d')
+        
+        # Clean up temporary columns
+        df = df.drop(columns=["year"])
+        df = df.drop(columns=[date_column + '_with_year'])
+        
+    except ValueError as e:
         st.warning(
-            f"Could not automatically convert all values in '{date_column}' to dates using 'Year' column and format '{full_date_format}'. Please edit manually."
+            f"Could not automatically convert all values in '{date_column}' to dates using 'Year' column and format '{full_date_format}'. Please edit manually. Error: {e}"
         )
     return df

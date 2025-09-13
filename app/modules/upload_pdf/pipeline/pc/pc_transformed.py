@@ -42,7 +42,7 @@ def pc_transformed(extracted_data):
     # Convert the extracted data into a table format
 
     extracted_df = text_to_table(extracted_data)
-
+    #st.info(extracted_df)
     
     # Format the transaction date
     date_transformed_df = format_transaction_date(extracted_df, date_column='date')
