@@ -1,7 +1,7 @@
 import streamlit as st #type:ignore
 
 def annual_kpi(expense, year, income, transaction):
-    st.markdown(f"<h2 style='text-align: center;'> {year} Spending Overview</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='text-align: center;'> {year} Personal Annual Spending Overview</h2>", unsafe_allow_html=True)
     col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
     with col1:
         total_income = income['total_income'].sum()
@@ -13,7 +13,10 @@ def annual_kpi(expense, year, income, transaction):
         )
        
     with col2:
-        total_spending = expense['amount'].sum()
+        total_expense = expense['amount'].sum()
+        house_sum = transaction[transaction['fund_category'] == 'House']['total_amount'].sum()
+        # total_spending = total_expense + house expense
+        total_spending = total_expense + house_sum
         spending_pct = int(total_spending) / int(total_income) * 100
         st.markdown(
             f"<p style='font-size: 22px; color: red; text-align: center;'><b>Total Spending</b></p>"
@@ -31,10 +34,10 @@ def annual_kpi(expense, year, income, transaction):
             unsafe_allow_html=True,
         )
     with col4:
-        house_sum = expense[expense["summary_category"] == "House"]['amount'].sum()
+        house_sum = transaction[transaction['fund_category'] == 'House']['total_amount'].sum()
         house_pct = house_sum/total_income * 100
         st.markdown(
-            f"<p style='font-size: 22px; color: #16a085; text-align: center;'><b>Annual House</b></p>"
+            f"<p style='font-size: 22px; color: #16a085; text-align: center;'><b>Total House</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>${house_sum:.2f}</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>{house_pct:.2f}%</b></p>",
             unsafe_allow_html=True,

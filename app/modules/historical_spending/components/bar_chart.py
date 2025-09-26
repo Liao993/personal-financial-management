@@ -3,12 +3,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def create_summary_bar_chart(data):
+def create_summary_bar_chart(expense, transaction):
     st.markdown("<h3 style='text-align: center; color: #5dade2;'>Expense Distribution by Summary Category</h3>", unsafe_allow_html=True)
 
     # Group data by 'summary_category' and calculate the sum of 'amount'
-    summary_data = data.groupby('summary_category')['amount'].sum().reset_index()
-
+    summary_data = expense.groupby('summary_category')['amount'].sum().reset_index()
+    # Add House Expense from transaction data
+    house_sum = transaction[transaction['fund_category'] == 'House']['total_amount'].sum()
+    house_data = {'summary_category': 'House', 'amount': house_sum}
+    summary_data = pd.concat([summary_data, pd.DataFrame(house_data, index=[0])], ignore_index=True)
+    
     # Calculate total amount for percentage calculations
     total_amount = summary_data['amount'].sum()
     summary_data['percentage'] = (summary_data['amount'] / total_amount) * 100

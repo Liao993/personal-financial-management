@@ -31,7 +31,7 @@ def historical_spending():
             annual_kpi(all_fetched_expense, selected_year, all_fetched_income, all_fetched_transaction)
             col1, col2 = st.columns(2)
             with col1:
-                create_summary_bar_chart(all_fetched_expense)
+                create_summary_bar_chart(all_fetched_expense, all_fetched_transaction)
             with col2:
                 create_expense_line_chart(all_fetched_expense, all_fetched_income)
             

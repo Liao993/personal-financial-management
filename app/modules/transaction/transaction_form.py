@@ -22,6 +22,7 @@ def transaction_form():
     account_name = st.selectbox("Account", account_name_list)
     amount = st.number_input("Amount", min_value=0.0)
     source_notes = st.text_input("Notes (Optional)")
+   
 
     transfer_to_account = None
 

@@ -1,7 +1,7 @@
 import streamlit as st  # type: ignore
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd # type: ignore
+import matplotlib.pyplot as plt # type: ignore
+import seaborn as sns # type: ignore
 
 def create_expense_line_chart(expense, income):
     
@@ -14,7 +14,7 @@ def create_expense_line_chart(expense, income):
     expense['month'] = expense['date'].dt.month
 
     # Filter for the specified categories
-    categories_of_interest = ['Grocery', 'Food Outside', 'Home Deposit', 'Donation']
+    categories_of_interest = ['Grocery', 'Food Outside', 'Donation', 'Gas', "Gifts"]
     expense['major_category'] = expense['category'].apply(lambda x: x if x in categories_of_interest else 'Others')
 
     # Group data
@@ -23,10 +23,10 @@ def create_expense_line_chart(expense, income):
         .sum()
         .rename(columns={'amount': 'total_amount'})
     )
-   
+    
     # Create full month-category grid
     all_months = pd.Series(range(1, 13), name='month')
-    all_categories = pd.Series(expense['major_category'].unique(), name='major_category')
+    all_categories = pd.Series(grouped['major_category'].unique(), name='major_category')
     full_grid = pd.merge(all_months.to_frame(), all_categories.to_frame(), how='cross')
 
     # Join grouped data with full grid
@@ -48,11 +48,12 @@ def create_expense_line_chart(expense, income):
     monthly_income = merged_df['total_income'].mean()
     # Define colors
     category_colors = {
-        'Grocery': 'orange',
+        'Grocery': '#FFA500',
         'Food Outside': '#5dade2',
-        'Home Deposit': '#16a085',
-        'Donation': 'red',
-        'Others': 'lightgray'
+        'Gas': "#CA39C8",
+        'Donation': "#e62922",
+        'Others': "#592F83",
+        'Gifts': "#3A6A3A"
     }
     palette = {cat: category_colors.get(cat, 'gray') for cat in all_categories}
 
@@ -72,14 +73,14 @@ def create_expense_line_chart(expense, income):
 
     plt.title(f'Avg. Monthly Income: ${monthly_income:.2f}', loc='right', fontsize=20)
     plt.xlabel('Month', fontsize=18)
-    plt.ylabel('Percentage of Earning(Income)', fontsize=22)
+    plt.ylabel('Percentage of Earning (Income)', fontsize=22)
     plt.xticks(
         ticks=range(1, 13),
         labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         fontsize=14
     )
-    plt.yticks(ticks=range(0, 70, 5), fontsize=14)
+    plt.yticks(ticks=range(0, 32, 2), fontsize=14)
     plt.grid(axis='y')
     plt.tight_layout()
 
@@ -87,7 +88,7 @@ def create_expense_line_chart(expense, income):
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
-    plt.ylim(0, 60)
+    plt.ylim(0, 30)
     plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
 
