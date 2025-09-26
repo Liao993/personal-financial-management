@@ -1,11 +1,14 @@
 import streamlit as st # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 import plotly.graph_objects as go # type: ignore
 
-def create_expense_pie_chart(total_expense, total_saving, travel_saving):
+def create_expense_pie_chart(monthly_expense, total_saving, travel_saving, home_deposit_amount):
     st.markdown("<h3 style='text-align: center;'>Expense vs. Saving Distribution</h3>", unsafe_allow_html=True)
-    labels = ['Total Expense', 'Total Saving', "Total Travel Saving"]
+    st.markdown("<h5 style='text-align: center;'>Actual Saving = Medium + Retirement</h5>", unsafe_allow_html=True)
+    labels = ['Total Expense', 'Total Actual Saving', "Total Travel Saving"]
     actual_saving = total_saving - travel_saving
+    #Add Home Deposit
+    total_expense = monthly_expense + home_deposit_amount
     values = [total_expense, actual_saving, travel_saving]
     colors = ['#f44336', '#4caf50', "#a879e0"]
 
@@ -25,3 +28,4 @@ def create_expense_pie_chart(total_expense, total_saving, travel_saving):
         margin=dict(t=10) # Reduce top margin of the chart (adjust as needed)
     )
     st.plotly_chart(fig, use_container_width=True)
+   

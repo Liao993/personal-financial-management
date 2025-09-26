@@ -6,13 +6,13 @@ def hint_page():
     cols = st.columns(3)
     with cols[0]:
         st.markdown("<h5 style='color: lightcoral;'>expense tables or dbt_budget.intermediate_expenses_with_summary</h5>", unsafe_allow_html=True)
-        st.info("date, amount, items, catgory, traveling_category, trip")
+        st.info("id, date, amount, items, catgory, traveling_category, trip")
     with cols[1]:
         st.markdown("<h5 style='color: lightcoral;'>income tables</h5>", unsafe_allow_html=True)
-        st.info("date, amount, source, regular, notes")  
+        st.info("id, date, amount, source, regular, notes")  
     with cols[2]:
         st.markdown("<h5 style='color: lightcoral;'>transactions tables</h5>", unsafe_allow_html=True)
-        st.info("date, account_name, transaction_type, amount, fund_category, source_notes, transfer_to_account")
+        st.info("transaction_id, date, account_name, transaction_type, amount, fund_category, source_notes, transfer_to_account")
 
     st.write("___")
     cols = st.columns(2)

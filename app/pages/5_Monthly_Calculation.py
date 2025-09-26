@@ -26,7 +26,7 @@ def monthly_stats_page():
         # calculate the monthly spending and saving if I got the financial goals
         goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, \
         monthly_expense_daily_data, monthly_income, monthly_expense, \
-            unnoted_amount_in_EQ, unnoted_amount_in_RBC = expense_and_saving_calculation(
+            unnoted_amount_in_EQ, unnoted_amount_in_RBC, home_deposit_amount = expense_and_saving_calculation(
             financial_goals)
 
         # Store calculated values in session state
@@ -38,6 +38,7 @@ def monthly_stats_page():
         st.session_state['rbc_saving'] = rbc_saving
         st.session_state['unnoted_amount_in_EQ'] = unnoted_amount_in_EQ
         st.session_state['unnoted_amount_in_RBC'] = unnoted_amount_in_RBC
+        st.session_state['home_deposit'] = home_deposit_amount
 
         # Display the spending and saving results
         st.write("---")
@@ -50,14 +51,14 @@ def monthly_stats_page():
 
         with left_col:
             # Display the spending table and Save the Results button
-            display_spending_table(monthly_expense_daily_data, monthly_income)
+            display_spending_table(monthly_expense_daily_data, monthly_income, home_deposit_amount)
             st.write(" ")
             st.write(" ")
             if st.button("Save Your Results", on_click=monthly_savings_action):
                 pass
 
         with right_col:
-            create_expense_pie_chart(monthly_expense, total_saving, travel_saving)
+            create_expense_pie_chart(monthly_expense, total_saving, travel_saving, home_deposit_amount)
 
   
 

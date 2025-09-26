@@ -1,5 +1,5 @@
 import streamlit as st # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 
 def display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, unnoted_amount_in_EQ, unnoted_amount_in_RBC):
     """Displays the saving KPIs with custom styling."""

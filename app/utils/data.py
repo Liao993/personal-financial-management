@@ -59,9 +59,9 @@ expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell 
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
 traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking/Tolls", "Food", "Tickets", "Others"]
 #transaction
-fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
+fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "House", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
 
-account_name_list = ["RBC Chequing", "EQ Chequing", "EQ 10D Notice", "EQ 30D Notice", "RBC TFSA", "EQ TFSA", "Questrade TFSA (Travel)", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP" ]
+account_name_list = ["RBC Chequing", "EQ Chequing", "EQ 10D Notice", "EQ 30D Notice", "TD House", "RBC TFSA", "EQ TFSA", "Questrade TFSA (Travel)", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP" ]
 
 transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 

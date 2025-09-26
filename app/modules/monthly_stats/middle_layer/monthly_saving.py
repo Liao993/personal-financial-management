@@ -1,13 +1,13 @@
 from datetime import datetime
 import streamlit as st # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 import time
 from backend.transaction_backend import insert_transaction_data  # Assuming you have this function
 from models.transaction_models import Transaction  # Import your Pydantic model
 from backend.transaction_backend import fetch_transaction_deposit_check
 
 # Function to handle the data and insert it into the database
-def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving):
+def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving, home_deposit):
     transactions_to_insert = [
         Transaction(
             date=goal_datetime,
@@ -41,6 +41,14 @@ def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, re
             fund_category="Direct Investing",
             source_notes=source_notes,
         ),
+         Transaction(
+            date=goal_datetime,
+            account_name="TD House",
+            transaction_type="Deposit",
+            amount=home_deposit,
+            fund_category="House",
+            source_notes=source_notes,
+        )
     ]
     
   
@@ -75,9 +83,11 @@ def monthly_savings_action():
     retirement_saving = st.session_state.get('retirement_saving')
     medium_term_saving = st.session_state.get('medium_term_saving')
     rbc_saving = st.session_state.get('rbc_saving')
+    home_deposit = st.session_state.get('home_deposit')
+  
 
     
-    status = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+    status = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving, home_deposit)
      
     if status:
         st.success("Data is successfully saved !")

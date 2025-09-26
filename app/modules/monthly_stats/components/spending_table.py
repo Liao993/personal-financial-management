@@ -1,11 +1,15 @@
 import streamlit as st # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 
-def display_spending_table(monthly_expense_daily_data, monthly_income):
+def display_spending_table(monthly_expense_daily_data, monthly_income, home_deposit_amount):
     # Expense by Summary Category
     spending_by_summary = monthly_expense_daily_data.groupby('summary_category')['amount'].sum().reset_index()
     spending_by_summary.rename(columns={'summary_category': 'Summary Category', 'amount': 'Amount'}, inplace=True)
     spending_by_summary['Amount'] = spending_by_summary['Amount'].astype(float)
+
+    #Add Home Deposit
+    home_deposit = {'Summary Category': 'Home Deposit', 'Amount': home_deposit_amount}
+    spending_by_summary = pd.concat([spending_by_summary, pd.DataFrame(home_deposit, index=[0])], ignore_index=True)
 
     # Calculate Total Expense
     total_expense = spending_by_summary['Amount'].sum()

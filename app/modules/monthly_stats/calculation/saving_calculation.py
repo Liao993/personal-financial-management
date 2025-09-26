@@ -16,6 +16,7 @@ def expense_and_saving_calculation(financial_goals):
     retirement_saving_pct = financial_goals.get('retirement_percentage', 1.0)
     medium_term_amount = financial_goals.get('medium_term_amount', 0.0)
     unnoted_amount_in_10_days_notice = financial_goals.get('unnoted_amount_in_10_days_notice', 0.0)
+    home_deposit_amount = financial_goals.get('home_deposit', 0.0)
 
     if goal_date:
         # Get the Monthly Income
@@ -25,11 +26,11 @@ def expense_and_saving_calculation(financial_goals):
 
         if not expense_data_with_summary.empty:
           # Not Include traveling spending (using summary_category if appropriate)
-            monthly_expense_daily_data = expense_data_with_summary[expense_data_with_summary['category'] != 'Traveling'] # You might want to adjust this based on your summary categories
+            monthly_expense_daily_data = expense_data_with_summary[expense_data_with_summary['category'] != 'Traveling'] 
             monthly_expense = monthly_expense_daily_data['amount'].astype(float).sum()
         
             #Total Saving Calculation
-            total_saving = monthly_income - monthly_expense
+            total_saving = monthly_income - monthly_expense - home_deposit_amount
 
             # Calculate more detailed saving breakdown
             travel_saving, retirement_saving, medium_term_saving = savings_formula(
@@ -44,4 +45,4 @@ def expense_and_saving_calculation(financial_goals):
     else:
       st.warning("Please select a goal date to calculate monthly statistics.")
 
-    return goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, monthly_expense_daily_data, monthly_income, monthly_expense, unnoted_amount_in_EQ, unnoted_amount_in_RBC
+    return goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, monthly_expense_daily_data, monthly_income, monthly_expense, unnoted_amount_in_EQ, unnoted_amount_in_RBC, home_deposit_amount
