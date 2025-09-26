@@ -16,7 +16,8 @@ def savings_formula(total_saving,
                       saving_goal, 
                       min_travel_saving, 
                       rbc_saving, 
-                      retirement_saving_pct):
+                      retirement_saving_pct, 
+                      medium_term_amount):
    
 
     # Travel Saving
@@ -29,11 +30,14 @@ def savings_formula(total_saving,
 
     # Remaining after fixed RBC and travel fund savings
     remaining = total_saving - travel_saving - rbc_saving
+    if medium_term_amount > 0:
+        medium_term_saving = medium_term_amount
+        retirement_saving = remaining - medium_term_saving
+    else:
+        # Retirement Saving
+        retirement_saving = round(remaining * retirement_saving_pct, 2)
 
-    # Retirement Saving
-    retirement_saving = round(remaining * retirement_saving_pct, 2)
-
-    # Medium-term Saving
-    medium_term_saving = round(remaining * (1 - retirement_saving_pct), 2)
+        # Medium-term Saving
+        medium_term_saving = round(remaining * (1 - retirement_saving_pct), 2)
 
     return travel_saving, retirement_saving, medium_term_saving

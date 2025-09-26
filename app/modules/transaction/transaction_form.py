@@ -39,7 +39,7 @@ def transaction_form():
 
     
     elif action_type == "Transfer Between Accounts":
-        transfer_to_account = st.selectbox("Transfer To Account (Different Accounts)", account_name_list, index=1) # Default to a different account
+        transfer_to_account = st.selectbox("Transfer To Account (Different Accounts)", account_name_list, index=2) # Default to a different account
         if st.button("Record Transfer"):
             # For a transfer, we'll record two transactions: one out, one in
             record_saving_transaction(transaction_date, account_name, "Transfer Out", -amount, fund_category, source_notes=f"Transfer to {transfer_to_account} {source_notes}", transfer_to_account=transfer_to_account)

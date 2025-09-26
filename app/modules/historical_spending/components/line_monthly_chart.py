@@ -1,11 +1,11 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import streamlit as st
+import pandas as pd # type: ignore
+import matplotlib.pyplot as plt # type: ignore
+import seaborn as sns # type: ignore
+import streamlit as st # type: ignore
 
-def create_monthly_line_chart(expense, income, transaction):
+def create_monthly_saving_spending_distribution_line_chart(expense, income, transaction):
     st.write("")
-    st.markdown(f"<h3 style='text-align: center;'>Percentage of Spending and Saving Balance by Month</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center;'>Percentage of Spending and Saving Balance by Month (100% in total)</h3>", unsafe_allow_html=True)
    # Extract the month from the 'date' column
     expense['date'] = pd.to_datetime(expense['date'])
     expense['month'] = expense['date'].dt.month
@@ -15,15 +15,15 @@ def create_monthly_line_chart(expense, income, transaction):
     total_monthly_spending['category'] = "Total Spending"
 
     # Get Home Spending data
-    monthly_home = expense[expense['summary_category'] == "House"].groupby('month', as_index=False)['amount'].sum().rename(columns={'amount': 'total_amount'})
-    monthly_home['category'] = 'House'
+    #monthly_home = expense[expense['summary_category'] == "House"].groupby('month', as_index=False)['amount'].sum().rename(columns={'amount': 'total_amount'})
+    #monthly_home['category'] = 'House'
 
     # Transaction Category
     transaction.rename(columns={'fund_category' : "category"}, inplace=True)
-    transaction_filtered = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving'])]
+    transaction_filtered = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', "Traveling Funds"])]
 
     # Concatenate the dataframes
-    data = pd.concat([total_monthly_spending, monthly_home, transaction_filtered], ignore_index=True)
+    data = pd.concat([total_monthly_spending,  transaction_filtered], ignore_index=True)
 
     merged_df = pd.merge(data, income, on='month', how='left')
     merged_df['total_income'].fillna(0, inplace=True)
@@ -39,7 +39,7 @@ def create_monthly_line_chart(expense, income, transaction):
     # Define colors
     category_colors = {
         'Total Spending': 'red',
-        'House': '#16a085',
+        'Traveling Funds': "#6e3181",
         'Retirement Saving': '#1AA7EC',
         'Medium-term Saving': '#f39c12' #orange
     }
@@ -78,3 +78,4 @@ def create_monthly_line_chart(expense, income, transaction):
     plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
 
+    

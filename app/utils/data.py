@@ -52,7 +52,7 @@ common_store_list = ['Not Common Store', 'Sobeys', 'Leonhard', 'Superstore', 'Am
 daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT']
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
-                    "Home Deposit", "Medicine", "Saved For Love", "Transportation", "Education", "Traveling" , 
+                    "Home Deposit", "Medicine", "Exercise", "Saved For Love", "Transportation", "Education", "Traveling" , 
                     "Fun/Tickets", "Clothing", "Liquor", "Others", "Car"]
 
 # travel expense
@@ -74,4 +74,5 @@ RRSP_room = 14729
 years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]
 
 #Default value for income amount in the form
-fixed_income_data = 1729.06 
+fixed_income_data = 1787.28 
+unoted_amount_in_EQ = 2300.00

@@ -14,6 +14,7 @@ def expense_and_saving_calculation(financial_goals):
     min_travel_saving = financial_goals.get('travel_fund_min', 0.0)
     rbc_saving = financial_goals.get('rbc_saving', 100.0)
     retirement_saving_pct = financial_goals.get('retirement_percentage', 1.0)
+    medium_term_amount = financial_goals.get('medium_term_amount', 0.0)
     unnoted_amount_in_10_days_notice = financial_goals.get('unnoted_amount_in_10_days_notice', 0.0)
 
     if goal_date:
@@ -32,7 +33,7 @@ def expense_and_saving_calculation(financial_goals):
 
             # Calculate more detailed saving breakdown
             travel_saving, retirement_saving, medium_term_saving = savings_formula(
-              total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct
+              total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct, medium_term_amount
             )
 
             # Calculate unnoted amount 
