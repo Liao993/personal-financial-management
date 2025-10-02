@@ -4,8 +4,7 @@ import seaborn as sns # type: ignore
 import streamlit as st # type: ignore
 
 def create_monthly_saving_spending_distribution_line_chart(expense, income, transaction):
-    st.write("")
-    st.markdown(f"<h3 style='text-align: center;'>Percentage of Spending and Saving Balance by Month (100% in total)</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #f1c40f;'>Percentage of Spending and Saving Balance by Month</h3>", unsafe_allow_html=True)
    # Extract the month from the 'date' column
     expense['date'] = pd.to_datetime(expense['date'])
     expense['month'] = expense['date'].dt.month
@@ -46,7 +45,7 @@ def create_monthly_saving_spending_distribution_line_chart(expense, income, tran
     palette = {cat: category_colors.get(cat, 'gray') for cat in all_categories}
 
     # Plot
-    plt.figure(figsize=(20, 8))
+    plt.figure(figsize=(10, 8))
     ax = sns.lineplot(
         data=merged_df,
         x='month',
@@ -66,7 +65,7 @@ def create_monthly_saving_spending_distribution_line_chart(expense, income, tran
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         fontsize=14
     )
-    plt.yticks(ticks=range(0, 110, 10), fontsize=14)
+    plt.yticks(ticks=range(0, int(merged_df['percentage'].max() + 5), 5), fontsize=14)
     plt.grid(axis='y')
     plt.tight_layout()
 
@@ -74,7 +73,7 @@ def create_monthly_saving_spending_distribution_line_chart(expense, income, tran
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
-    plt.ylim(0, 100)
+
     plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
 

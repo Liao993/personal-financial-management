@@ -7,7 +7,7 @@ def create_expense_line_chart(expense, income):
     
    
 
-    st.markdown(f"<h3 style='text-align: center; color: #e67e22;'>Percentage of Monthly Expense by Category </h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #16a085;'>Percentage of Monthly Expense by Category </h3>", unsafe_allow_html=True)
     
     # Extract the month from the 'date' column
     expense['date'] = pd.to_datetime(expense['date'])
@@ -43,9 +43,10 @@ def create_expense_line_chart(expense, income):
         lambda row: (row['total_amount'] / row['total_income']) * 100 if row['total_income'] != 0 else 0,
         axis=1
     )
+  
     #Monthly Income
-    # Calculate monthly income
-    monthly_income = merged_df['total_income'].mean()
+
+    monthly_income = merged_df[merged_df['total_income'] !=0]['total_income'].mean()
     # Define colors
     category_colors = {
         'Grocery': '#FFA500',
@@ -80,7 +81,7 @@ def create_expense_line_chart(expense, income):
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         fontsize=14
     )
-    plt.yticks(ticks=range(0, 32, 2), fontsize=14)
+    plt.yticks(ticks=range(0, int(max(merged_df['percentage']))+2, 2), fontsize=14)
     plt.grid(axis='y')
     plt.tight_layout()
 
@@ -88,7 +89,6 @@ def create_expense_line_chart(expense, income):
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
-    plt.ylim(0, 30)
     plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
 
