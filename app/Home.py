@@ -3,8 +3,48 @@ import streamlit as st # type: ignore
 def main():
 
   st.title("Welcome to the Home Page")
+
   st.markdown("""
-  <p style='font-size: 20px; color: #5dade2;'>
+  <p style='font-size: 24px; color: #5dade2;'>
+    Bookeeping Actual Money Usage Insturctions.
+  </p>
+  <table>
+  <thead>
+  <tr>
+    <th>Money Category</th>
+    <th>Bookkeeping / Note</th>
+    <th>Actual Payment Source</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>Earning</td>
+    <td>Noted as Income.</td>
+    <td>Calculated through monthly calculations</td>
+  </tr>
+  <tr>
+    <td>House Expense</td>
+    <td>Noted in the Excel (not this application).</td>
+    <td>TD</td>
+  </tr>
+  <tr>
+    <td>Traveling Spending</td>
+    <td>Noted as a withdrawal from Traveling Funds.</td>
+    <td>RBC Chequing or EQ Notice Account</td>
+  </tr>
+  <tr>
+    <td>Monthly Expenses</td>
+    <td>Calculated monthly. Unnoted spending is noted as the spending of the next month.</td>
+    <td>RBC Chequing</td>
+  </tr>
+  <tr>
+    <td>Spending from Medium-term Saving</td>
+    <td>Noted as a withdrawal from Medium-term Saving Funds.</td>
+    <td>RBC Chequing or EQ Notice Account</td>
+  </tr>
+  </tbody>
+  </table>
+  <p style='font-size: 24px; color: #5dade2;'>
   Here you can navigate to different sections of the app to manage your finances effectively.
   </p>
   <ul style='font-size: 18px; color: #f1c40f;'>
@@ -19,9 +59,8 @@ def main():
     <li><a href="/Statement_Viewer" style='color: #2980b9;'>View Your Detail Earning, Spending, and Saving</a> - Get a detailed view of your financial activities.</li>
 
   </ul>
-  <p style='font-size: 18px;'>
-  You can use the navigation menu on the left to access these sections as well. If you have any questions or need assistance, feel free to reach out through the contact page.
-  </p>
+ 
+
  
   """, unsafe_allow_html=True)
 

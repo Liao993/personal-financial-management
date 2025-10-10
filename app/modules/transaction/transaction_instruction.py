@@ -27,5 +27,6 @@ def instruction():
 
     st.markdown(f"<p style='font-size: 20px;'>Other Transaction Instructions: </p>", unsafe_allow_html=True)
     st.markdown(f"<p style='font-size: 20px;'>When All Traveling Amounts are bookkept, please move the amount out from 10 days or 30 days to Chequing. Otherwise, the amount in RBC chequing will not be enough.</p>", unsafe_allow_html=True)
-    st.markdown(f"<p style='font-size: 20px;'>All Credit Card Payments should be transfered out from RBC Chequing. Therefore, no transaction bookingkeeping involved.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 20px;'>All Credit Card Payments should be transfered out from RBC Chequing or TD account (for house payment). Therefore, No transaction bookingkeeping involved.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 20px;'>If I over-deposit the money into notice account, just need to move the extra deposit in that month, NOT the amount the credit card statements. No transaction bookingkeeping involved.</p>", unsafe_allow_html=True)
     st.write("___")

@@ -1,5 +1,5 @@
 import streamlit as st # type: ignore
-import pandas as pd
+import pandas as pd # type: ignore
 from utils.data import fund_categories, account_name_list
 from utils.css import apply_pivot_table_style
 
