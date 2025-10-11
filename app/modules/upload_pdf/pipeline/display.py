@@ -34,7 +34,7 @@ def display_editable_dataframe(dataframe):
         st.write("Please input your trip below!")
         single_trip = st.checkbox("Single Trip", value=True)
         trip_input = st.text_input("Trip-Year-Month (e.g., Vancouver-24-01)")
-        st.warning("Please exclude house related expenses!")
+        st.warning("Please Exclude House Related Expenses!")
         edited_df = st.data_editor(
             st.session_state[review_data],
             column_config={
@@ -81,9 +81,12 @@ def display_editable_dataframe(dataframe):
         if not st.session_state.get(data_saved_key, False):
             st.info("View your information again before saving.")
             reviewed_data = st.session_state[review_data]
-            st.table(reviewed_data)  # Use st.session_state['edited_df'] here
+            st.table(reviewed_data)  
+            
+            
+         
             #Confirm and Edit buttons
-            col1, col2, col3, col4 = st.columns(4)
+            col1, col2 = st.columns(2)
             with col1:
                 confirm_button = st.button("Save your information")
             with col2:

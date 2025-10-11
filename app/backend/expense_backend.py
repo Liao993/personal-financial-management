@@ -38,7 +38,7 @@ def fetch_monthly_expenses_with_summary(year, month):
         query = """
         SELECT date, amount, category, summary_category
         FROM dbt_budget.intermediate_expenses_with_summary
-        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s;
+        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND category != 'House';
         """
         try:
             cursor.execute(query, (year, month))
@@ -69,7 +69,7 @@ def fetch_annual_expense(year):
                 query = """
                     SELECT date, amount, category, summary_category
                     FROM dbt_budget.intermediate_expenses_with_summary
-                    WHERE EXTRACT(YEAR FROM date) = %s AND category != 'Traveling'
+                    WHERE EXTRACT(YEAR FROM date) = %s AND category != 'Traveling' AND category != 'House';
                 """
                 cursor.execute(query, (year,))
             else:

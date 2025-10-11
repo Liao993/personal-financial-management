@@ -3,7 +3,7 @@
 SELECT
     *,
     CASE
-        WHEN category = 'Home Deposit' THEN 'House'
+        WHEN category = 'House' THEN 'House'
         WHEN category = 'Saved for Love' THEN 'Saved for Love'
         WHEN category IN ('Donation', 'Gifts') THEN 'Donation and Gifts'
         WHEN category = 'Education' THEN 'Education'
