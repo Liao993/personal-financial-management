@@ -10,7 +10,7 @@ from modules.upload_pdf.pipeline.display import display_editable_dataframe
 def pipeline(bank, pdf_file):
 
 
-
+  
   if bank == "RBC":
     extracted_data = rbc_extracted(pdf_file)
     transformed_data = rbc_transformed(extracted_data)

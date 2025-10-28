@@ -6,7 +6,7 @@ def main():
 
   st.markdown("""
   <p style='font-size: 24px; color: #5dade2;'>
-    Bookeeping Actual Money Usage Insturctions.
+    Bookeeping and Actual Money Usage Insturctions.
   </p>
   <table>
   <thead>
@@ -44,6 +44,7 @@ def main():
   </tr>
   </tbody>
   </table>
+ 
   <p style='font-size: 24px; color: #5dade2;'>
   Here you can navigate to different sections of the app to manage your finances effectively.
   </p>
@@ -63,6 +64,8 @@ def main():
 
  
   """, unsafe_allow_html=True)
+
+
 
 
 if __name__ == "__main__":

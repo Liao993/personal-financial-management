@@ -12,6 +12,7 @@ review_data = 'review_expense_data'
 
 
 def display_editable_dataframe(dataframe):
+    
    
     if edit_mode_form not in st.session_state:
         st.session_state[edit_mode_form] = True
@@ -81,9 +82,15 @@ def display_editable_dataframe(dataframe):
         if not st.session_state.get(data_saved_key, False):
             st.info("View your information again before saving.")
             reviewed_data = st.session_state[review_data]
+            
             st.table(reviewed_data)  
             
-            
+            st.write("---")
+            st.markdown("Monthly Summary")
+            dataframe['month'] = pd.to_datetime(dataframe['date']).dt.month
+            dataframe['amount'] = dataframe['amount'].astype(float)
+            st.table(dataframe.groupby('month')['amount'].sum().round(2))
+           
          
             #Confirm and Edit buttons
             col1, col2 = st.columns(2)

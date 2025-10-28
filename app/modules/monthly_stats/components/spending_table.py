@@ -15,7 +15,7 @@ def display_spending_table(monthly_expense_daily_data, monthly_income, home_depo
     total_expense = spending_by_summary['Amount'].sum()
 
     st.markdown(f"<h3 style='text-align: center;'>Spending Breakdown - Total Expense: <span style='color: #8B0000; font-size: 28px; font-weight: bold;'>${total_expense:.2f}</span></h3>", unsafe_allow_html=True)
-    st.write("")
+    st.write("Total Income: $" + str(monthly_income))
     if monthly_income > 0:
         spending_by_summary['Percentage (of Income)'] = (spending_by_summary['Amount'] / monthly_income) * 100
         spending_by_summary['Percentage (of Income)'] = spending_by_summary['Percentage (of Income)'].map('{:.2f}%'.format)

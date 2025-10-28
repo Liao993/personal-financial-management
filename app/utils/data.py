@@ -75,4 +75,4 @@ years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034,
 
 #Default value for income amount in the form
 fixed_income_data = 1787.28 
-unoted_amount_in_EQ = 2300.00
+unoted_amount_in_EQ = 1700.00
