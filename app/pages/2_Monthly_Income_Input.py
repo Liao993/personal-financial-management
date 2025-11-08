@@ -5,9 +5,10 @@ from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data, fetch_last_income_data
 from modules.income_input.income_form import income_input_form
 from modules.income_input.income_review import review_income_input
+from modules.income_input.income_transaction_info import record_deposit_for_review
 
 # used for cashflow deposit
-from modules.cashflow_unbooked.transaction_review import display_recorded_transactions_income_page, record_saving_transaction
+from modules.cashflow_unbooked.transaction_review import display_recorded_transactions_income_page
 from modules.cashflow_unbooked.transaction_saving import transaction_savings_action
 
 st.set_page_config(page_title="Income Input", page_icon="💰")
@@ -53,16 +54,9 @@ def income_input_page():
             
             # Show input information for review
             reviewed_data = review_income_input(review_data_key)
-
-            # catch information for cashflow bookeeping
-            transaction_date = reviewed_data['date']
-            account_name = "RBC Chequing"
-            transaction_type = "Deposit"
-            amount = reviewed_data['amount']
-            purpose = "Income"
-            source_notes = None
+            # Record deposit transaction for review
             if not st.session_state['recorded_transactions']:
-                record_saving_transaction(transaction_date, account_name, transaction_type, amount, purpose, source_notes)
+                record_deposit_for_review(reviewed_data)
             cashflow_reviewed_data = display_recorded_transactions_income_page()
             #Confirm and Edit buttons
             col1, col2 = st.columns(2)

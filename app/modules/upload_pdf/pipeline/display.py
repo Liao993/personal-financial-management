@@ -4,7 +4,7 @@ import time
 import numpy as np
 from utils.data import expense_category_options as category_list, traveling_category_options
 from modules.upload_pdf.pipeline.load import load_expense_data
-
+from modules.upload_pdf.component.monthly_summary import monthly_summary
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
 review_data = 'review_expense_data'
@@ -81,15 +81,11 @@ def display_editable_dataframe(dataframe):
     else:
         if not st.session_state.get(data_saved_key, False):
             st.info("View your information again before saving.")
-            reviewed_data = st.session_state[review_data]
+            reviewed_data_dict = st.session_state[review_data]
             
-            st.table(reviewed_data)  
+            st.table(reviewed_data_dict)  
             
-            st.write("---")
-            st.markdown("Monthly Summary")
-            dataframe['month'] = pd.to_datetime(dataframe['date']).dt.month
-            dataframe['amount'] = dataframe['amount'].astype(float)
-            st.table(dataframe.groupby('month')['amount'].sum().round(2))
+            monthly_summary(reviewed_data_dict)
            
          
             #Confirm and Edit buttons
@@ -101,7 +97,7 @@ def display_editable_dataframe(dataframe):
             
             #Validate Data and Save Data after clicking confirm button
             if confirm_button:
-                data_to_saved = reviewed_data
+                data_to_saved = reviewed_data_dict
                 st.info("Saving your information...")
                 if load_expense_data(data_to_saved):
                     st.session_state[data_saved_key] = True
