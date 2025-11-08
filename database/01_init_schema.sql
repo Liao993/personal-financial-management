@@ -31,22 +31,18 @@ CREATE TABLE IF NOT EXISTS transactions (
     source_notes TEXT,
     transfer_to_account VARCHAR(255)
 );
-/*
--- Example: Insert some sample income data
-INSERT INTO income (date, amount, source, notes) VALUES
-    ('2025-04-15', 1000.00, 'Part-time Job', 'Payment for April work'),
-    ('2025-04-16', 50.00, 'Online Sale', NULL),
-    ('2025-04-17', 25.00, 'Rebate', 'Cashback from purchase'),
-    ('2025-04-18', 2000.00, 'Main Job', NULL),
-    ('2025-04-19', 10.00, 'Gift', 'From a friend');
 
-INSERT INTO expense (date, items, amount, category) VALUES
-    ('2099-01-15', 'Walmart', 12500.00, 'Grocery'),
-    ('2099-02-01', 'Anchery', 11500.00, 'Entertainment'),
-    ('2099-02-28', 'Home', 13000.00, 'Rent'),
-    ('2099-03-05', 'Water', 5100.00, 'Utilities');
-*/
-
+-- New table for tracking internal money movement before formal booking
+CREATE TABLE IF NOT EXISTS cash_movements (
+    id SERIAL PRIMARY KEY,
+    date DATE NOT NULL,
+    account_name VARCHAR(255) NOT NULL, -- Account the money is moving *from* (e.g., Checking, Savings)
+    transaction_type VARCHAR(255) NOT NULL, -- 'Deposit', 'Withdrawal', 'Internal_Transfer'
+    amount NUMERIC(10, 2) NOT NULL,
+    payment_purpose VARCHAR(255), -- Replaces fund_category (e.g., 'Credit Card Payment', 'Savings Goal Funding')
+    transfer_to_account VARCHAR(255), -- Account the money is moving *to* (if it's a transfer)
+    source_notes TEXT -- Any additional notes or context
+);
 
 
    

@@ -7,7 +7,7 @@ def create_expense_line_chart(expense, income):
     
    
 
-    st.markdown(f"<h3 style='text-align: center; color: #16a085;'>Percentage of Monthly Expense by Category </h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #16a085;'>Percentage of Expense of Income by Month by Category </h3>", unsafe_allow_html=True)
     
     # Extract the month from the 'date' column
     expense['date'] = pd.to_datetime(expense['date'])
@@ -91,4 +91,7 @@ def create_expense_line_chart(expense, income):
 
     plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
+
+    st.markdown(f"<h5 style='text-align: center; ;'>The sum of each category above should match the total spending in the right chart.</h5>", unsafe_allow_html=True)
+
 

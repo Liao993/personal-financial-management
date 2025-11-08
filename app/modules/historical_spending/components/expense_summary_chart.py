@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt # type: ignore
 import seaborn as sns # type: ignore
 
 def create_summary_bar_chart(expense):
-    st.markdown("<h3 style='text-align: center; color: #5dade2;'>Expense Distribution by Category</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: #5dade2;'>Annual Expense Distribution by Category</h3>", unsafe_allow_html=True)
 
     # Group data by 'summary_category' and calculate the sum of 'amount'
     summary_data = expense.groupby('category')['amount'].sum().reset_index()
