@@ -15,7 +15,6 @@ def expense_and_saving_calculation(financial_goals):
     rbc_saving = financial_goals.get('rbc_saving', 100.0)
     retirement_saving_pct = financial_goals.get('retirement_percentage', 1.0)
     medium_term_amount = financial_goals.get('medium_term_amount', 0.0)
-    unnoted_amount_in_10_days_notice = financial_goals.get('unnoted_amount_in_10_days_notice', 0.0)
     home_deposit_amount = financial_goals.get('home_deposit', 0.0)
 
     if goal_date:
@@ -37,12 +36,9 @@ def expense_and_saving_calculation(financial_goals):
               total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct, medium_term_amount
             )
 
-            # Calculate unnoted amount 
-            unnoted_amount_in_EQ = round(unnoted_amount_in_10_days_notice, 2)
-            unnoted_amount_in_RBC = round(travel_saving+retirement_saving+medium_term_saving-unnoted_amount_in_EQ, 2)
         else:
           st.warning("No expense data available for the selected month. Please check your records.")
     else:
       st.warning("Please select a goal date to calculate monthly statistics.")
 
-    return goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, monthly_expense_daily_data, monthly_income, monthly_expense, unnoted_amount_in_EQ, unnoted_amount_in_RBC, home_deposit_amount
+    return goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, monthly_expense_daily_data, monthly_income, monthly_expense, home_deposit_amount

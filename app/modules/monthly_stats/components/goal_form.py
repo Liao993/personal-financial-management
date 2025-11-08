@@ -1,7 +1,6 @@
 import streamlit as st # type: ignore
 from datetime import date
 from backend.transaction_backend import fetch_last_transaction_data
-from utils.data import unoted_amount_in_EQ
 def financial_goals_form():
    
  
@@ -14,12 +13,11 @@ def financial_goals_form():
         st.markdown(f"<p color: #f39c12; style='text-align: center;'>Last Transaction: {last_transaction_date}</p>", unsafe_allow_html=True)
     with st.form("financial_goals") as form:
         # First line: Date and RBC Saving
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
         with col1:
             goal_date = st.date_input("Date (Please select the last day of the month you want to note)", value=date.today()) 
+    
         with col2:
-            unnoted_amount_in_10_days_notice = st.number_input("Current Amount in 10 days notice", value=unoted_amount_in_EQ, format="%.2f")
-        with col3:
             home_deposit = st.number_input("Home Deposit this month", value=500.00, format="%.2f")
 
         # Second line: Saving Goal and Retirement Percentage & Current Unnoted Amount in 10 days notice
@@ -53,7 +51,6 @@ def financial_goals_form():
                 form_data['medium_term_amount'] = medium_term_amount
                 form_data['travel_fund_max'] = travel_fund_max
                 form_data['travel_fund_min'] = travel_fund_min
-                form_data['unnoted_amount_in_10_days_notice'] = unnoted_amount_in_10_days_notice
                 form_data['home_deposit'] = home_deposit
                 st.success("Financial goals saved!")
 

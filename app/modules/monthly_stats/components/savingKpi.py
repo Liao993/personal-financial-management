@@ -1,36 +1,10 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
 
-def display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, unnoted_amount_in_EQ, unnoted_amount_in_RBC):
+def display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving):
     """Displays the saving KPIs with custom styling."""
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("<h1 style='text-align: center;'>Saving Overview</h1>", unsafe_allow_html=True)
-    with col2:
-        if unnoted_amount_in_RBC < 0:
-               unnoted_amount_in_EQ = unnoted_amount_in_EQ + unnoted_amount_in_RBC
-               money_should_move_back = abs(unnoted_amount_in_RBC) 
-               unnoted_amount_in_RBC = 0
-        else:
-               money_should_move_back = 0
-
-        col21, col22 = st.columns(2)   
-        with col21:
-            st.markdown(
-                f"<p style='font-size: 24px; color: #0077b6;'>Unoted RBC:  ${unnoted_amount_in_RBC:.2f}</p>",
-                unsafe_allow_html=True,
-                )
-
-        with col22:
-            st.markdown(
-            f"<p style='font-size: 24px; color: #ffb703;'>Unoted EQ: ${unnoted_amount_in_EQ:.2f}</p>",
-            unsafe_allow_html=True,
-            )
-        
-        st.markdown(
-            f"<p style='font-size: 24px; '>Amount to Withdraw from EQ: ${money_should_move_back:.2f}</p>",
-            unsafe_allow_html=True,
-            )
+   
+    st.markdown("<h1 style='text-align: center;'>Saving Overview</h1>", unsafe_allow_html=True)
 
     col1, col2, col3, col4, col5= st.columns(5)
     with col1:
