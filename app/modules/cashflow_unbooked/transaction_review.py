@@ -26,3 +26,11 @@ def display_recorded_transactions():
         return st.session_state['recorded_transactions']
     else:
         st.info("No transactions recorded yet.")
+
+def display_recorded_transactions_income_page():
+    if st.session_state['recorded_transactions']:
+        df = pd.DataFrame(st.session_state['recorded_transactions'])
+        st.dataframe(df)
+        return st.session_state['recorded_transactions']
+    else:
+        st.info("No transactions recorded yet.")

@@ -5,11 +5,17 @@ from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data, fetch_last_income_data
 from modules.income_input.income_form import income_input_form
 from modules.income_input.income_review import review_income_input
+
+# used for cashflow deposit
+from modules.cashflow_unbooked.transaction_review import display_recorded_transactions_income_page, record_saving_transaction
+from modules.cashflow_unbooked.transaction_saving import transaction_savings_action
+
 st.set_page_config(page_title="Income Input", page_icon="💰")
 
 edit_mode_form = 'edit_mode_income'
 data_saved_key = 'data_saved_income'
 review_data_key = 'review_income_data'
+
 
 def income_input_page():
     st.markdown("<h1 style='color: #f39c12; text-align: center;'>Please Input Your Income</h1>", unsafe_allow_html=True)
@@ -24,6 +30,10 @@ def income_input_page():
     # catch review data
     if review_data_key not in st.session_state:
         st.session_state[review_data_key] = {}
+    
+    # initialize deposit transactions
+    if 'recorded_transactions' not in st.session_state:
+        st.session_state['recorded_transactions'] = []
 
 
     # if it is in edit mode, show the form
@@ -44,21 +54,37 @@ def income_input_page():
             # Show input information for review
             reviewed_data = review_income_input(review_data_key)
 
+            # catch information for cashflow bookeeping
+            transaction_date = reviewed_data['date']
+            account_name = "RBC Chequing"
+            transaction_type = "Deposit"
+            amount = reviewed_data['amount']
+            purpose = "Income"
+            source_notes = None
+            if not st.session_state['recorded_transactions']:
+                record_saving_transaction(transaction_date, account_name, transaction_type, amount, purpose, source_notes)
+            cashflow_reviewed_data = display_recorded_transactions_income_page()
             #Confirm and Edit buttons
             col1, col2 = st.columns(2)
             with col1:
                 confirm_button = st.button("Confirm")
+                
             with col2:
                 edit_button = st.button("Edit")
 
             #Validate Data and Save Data after clicking confirm button
             if confirm_button:
                 income_data = reviewed_data
-                #st.info(income_data)
+                cashflow_deposit_data = cashflow_reviewed_data
+                
                 if validate_income_data(income_data):
                     insert_income_data(income_data)
-                    st.session_state[data_saved_key] = True
-                    st.rerun() # Rerun to hide Confirm and Edit buttons
+                    success = transaction_savings_action(cashflow_deposit_data)
+                    if success:
+                        st.session_state[data_saved_key] = True
+                        st.session_state['recorded_transactions'] = []
+                        st.success("Transaction recorded successfully!")
+                        st.rerun() # Rerun to hide Confirm and Edit buttons
                 else:
                     pass
             # Back to form to edit information
