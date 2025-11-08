@@ -4,7 +4,7 @@ import pandas as pd # type: ignore
 
 
 def record_saving_transaction(transaction_date, account_name, action_type, amount, purpose=None, source_notes=None, transfer_to_account=None):
-    st.subheader("Review Recorded Transaction")
+    st.subheader("Review Your Recorded Transaction:")
 
     transaction = {
         "Transaction Date": transaction_date,

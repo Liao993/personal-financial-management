@@ -1,4 +1,4 @@
-from modules.cashflow_unbooked.transaction_form import record_saving_transaction
+from modules.cashflow_unbooked.transaction_review import record_saving_transaction
 
 def record_deposit_for_review(reviewed_data: dict):
     """
