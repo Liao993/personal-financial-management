@@ -8,7 +8,7 @@ class Cashflow(BaseModel):
     account_name: str
     transaction_type: str
     amount: float
-    payment_purpose: Optional[str] = None
+    purpose: Optional[str] = None
     source_notes: Optional[str] = None
     transfer_to_account: Optional[str] = None
 
@@ -37,7 +37,7 @@ class Cashflow(BaseModel):
             raise ValueError(f"Transaction type must be one of: {transaction_type_database}")
         return value
     
-    @validator('payment_purpose', pre=True)
+    @validator('purpose', pre=True)
     def empty_string_to_none_payment_purpose(cls, value):
         return value if value and value.strip() else None
 

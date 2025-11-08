@@ -67,6 +67,9 @@ transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (betw
 
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
+cashflow_transaction_type_list = ["Deposit (Income)", "Withdrawal (Expenses)", "Transfer Between Accounts"]
+cashflow_purpose = ["Income", "Interest Earning Before Bookeeping", "RBC credit card payment", "PC credit card payment", "Debit Card payment", "eTransfer payment", "Cash payment", None]
+
 TFSA_room = 32500
 
 RRSP_room = 14729

@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 from datetime import datetime
 from utils.css import drop_down_list
 from utils.data import account_name_list, fund_categories, transaction_type_list
-from  modules.transaction.transaction_review import record_saving_transaction
+from modules.transaction.transaction_review import record_saving_transaction
 from modules.transaction.transaction_instruction import instruction
 def transaction_form():
     st.subheader("Record New Transaction")
@@ -22,8 +22,6 @@ def transaction_form():
     account_name = st.selectbox("Account", account_name_list)
     amount = st.number_input("Amount", min_value=0.0)
     source_notes = st.text_input("Notes (Optional)")
-   
-
     transfer_to_account = None
 
     if action_type == "Deposit (between funds or savings)":

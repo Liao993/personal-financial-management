@@ -33,13 +33,13 @@ CREATE TABLE IF NOT EXISTS transactions (
 );
 
 -- New table for tracking internal money movement before formal booking
-CREATE TABLE IF NOT EXISTS cash_movements (
+CREATE TABLE IF NOT EXISTS cashflow (
     id SERIAL PRIMARY KEY,
     date DATE NOT NULL,
     account_name VARCHAR(255) NOT NULL, -- Account the money is moving *from* (e.g., Checking, Savings)
     transaction_type VARCHAR(255) NOT NULL, -- 'Deposit', 'Withdrawal', 'Internal_Transfer'
     amount NUMERIC(10, 2) NOT NULL,
-    payment_purpose VARCHAR(255), -- Replaces fund_category (e.g., 'Credit Card Payment', 'Savings Goal Funding')
+    purpose VARCHAR(255), -- Action the money is being used for
     transfer_to_account VARCHAR(255), -- Account the money is moving *to* (if it's a transfer)
     source_notes TEXT -- Any additional notes or context
 );

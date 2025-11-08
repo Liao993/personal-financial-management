@@ -14,7 +14,7 @@ def process_transactions_and_save(transactions):
                 account_name=transaction_data.get('Account Name'),
                 transaction_type=transaction_data.get('Transaction Type'),
                 amount=transaction_data.get('Amount'),
-                payment_purpose=transaction_data.get('Payment Purpose'),
+                purpose=transaction_data.get('Purpose'),
                 source_notes=transaction_data.get('Notes'),
                 transfer_to_account=transaction_data.get('Transfer To Account'),
             )

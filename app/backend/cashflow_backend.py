@@ -13,9 +13,9 @@ def insert_cashflow_data(validated_data: dict):
         success = False
         try:
             query = """
-            INSERT INTO cash_movements (
+            INSERT INTO cashflow (
                date, account_name, transaction_type, amount,
-               payment_purpose, source_notes, transfer_to_account
+               purpose, source_notes, transfer_to_account
             )
             VALUES (%s, %s, %s, %s, %s, %s, %s)
              """
@@ -24,7 +24,7 @@ def insert_cashflow_data(validated_data: dict):
                 validated_data['account_name'],
                 validated_data['transaction_type'],
                 validated_data['amount'],
-                validated_data['payment_purpose'],
+                validated_data['purpose'],
                 validated_data['source_notes'],
                 validated_data['transfer_to_account']
             )
@@ -149,7 +149,7 @@ def fetch_last_cashflow_data():
         cursor = conn.cursor()
         query = """
             SELECT *
-            FROM cash_movements
+            FROM cashflow
             ORDER BY date DESC
             LIMIT 10;
         """
