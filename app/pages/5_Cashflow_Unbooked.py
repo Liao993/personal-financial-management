@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 from modules.cashflow_unbooked.transaction_form import transaction_form
 from modules.cashflow_unbooked.transaction_review import display_recorded_transactions
 from modules.cashflow_unbooked.transaction_saving import transaction_savings_action
-from backend.cashflow_backend import fetch_last_cashflow_data
+from backend.cashflow_backend import fetch_last_cashflow_data, fetch_transaction_data_by_account_by_month
 import time
 
 st.set_page_config(page_title="Transaction", page_icon="💰", layout="wide")
@@ -18,7 +18,12 @@ def unbooked_transaction_actions_page():
         st.session_state['recorded_transactions'] = []
 
     if st.session_state['show_the_form']:
-
+        st.subheader("Unbooked Cashflow Summary")
+        # Print out the last transaction data
+        last_cashflow_summary = fetch_transaction_data_by_account_by_month()
+        if not last_cashflow_summary.empty:
+            st.dataframe(last_cashflow_summary, hide_index=True)
+        st.write("---")
         transaction_form()
         st.write("---")
         # Print out the last transaction data
@@ -26,6 +31,8 @@ def unbooked_transaction_actions_page():
         if not last_cashflow_data.empty:
             st.write("Last Cashflow Data:")
             st.table(last_cashflow_data)
+        
+        
 
     else:
         

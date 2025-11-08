@@ -44,22 +44,29 @@ def insert_cashflow_data(validated_data: dict):
 
 
 
-def fetch_transaction_data_by_month(year):
+def fetch_transaction_data_by_account_by_month():
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
     #search_pattern = "saved from%" AND source_notes LIKE %s
     if conn:
         cursor = conn.cursor()
         query = """
-            SELECT EXTRACT(MONTH FROM date) AS month, fund_category, SUM(amount) AS total_amount
-            FROM transactions
-            WHERE EXTRACT(YEAR FROM date) = %s AND transaction_type = 'Deposit' 
-            GROUP BY EXTRACT(MONTH FROM date), fund_category
+            WITH total_amount_by_month AS (
+                SELECT EXTRACT(MONTH FROM date) AS month, SUM(amount) AS monthly_savings
+                FROM cashflow
+                GROUP BY EXTRACT(MONTH FROM date)
+            )
+            SELECT EXTRACT(MONTH FROM date) AS month, account_name, SUM(amount) AS total_amount, t.monthly_savings
+            FROM cashflow as c JOIN total_amount_by_month as t ON EXTRACT(MONTH FROM date) = t.month
+            WHERE
+                date>= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+                AND date < DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month'
+            GROUP BY EXTRACT(MONTH FROM date), account_name, t.monthly_savings
             ORDER BY month;  -- Order by month for consistency
             """
         try:
-            cursor.execute(query, (year,))
-            columns = ['month', 'fund_category', 'total_amount']  # Define column names
+            cursor.execute(query, ())
+            columns = ['month', 'account_name', 'total_amount', 'monthly_savings']  # Define column names
             data = cursor.fetchall()
             if data:
                 df = pd.DataFrame(data, columns=columns)
@@ -68,7 +75,7 @@ def fetch_transaction_data_by_month(year):
                 return pd.DataFrame(columns=columns) # return empty df
             
         except psycopg2.Error as e:
-            st.error(f"Error retrieving transaction data: {e}")
+            st.error(f"Error retrieving cashflow transaction data: {e}")
             return []
         finally:
             cursor.close()
@@ -77,33 +84,6 @@ def fetch_transaction_data_by_month(year):
         st.info("Database connection failed, cannot retrieve data.")
         return []
 
-
-def fetch_transaction_deposit_check(year, month):
-    # Here you would add your logic to retrieve data from the database
-    conn = get_db_connection()
-    search_pattern = "saved from%"
-    if conn:
-        cursor = conn.cursor()
-        query = """
-        SELECT transaction_id, date, fund_category, amount
-        FROM transactions
-        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit' AND source_notes LIKE %s;
-        """
-        try:
-            cursor.execute(query, (year, month, search_pattern))
-            columns = [desc[0] for desc in cursor.description]
-            df = pd.DataFrame(cursor.fetchall(), columns=columns)
-            return df
-            
-        except psycopg2.Error as e:
-            st.error(f"Error retrieving transaction data: {e}")
-            return []
-        finally:
-            cursor.close()
-            conn.close()
-    else:
-        st.info("Database connection failed, cannot retrieve data.")
-        return []
 
 
 def fetch_all_transaction_data():
