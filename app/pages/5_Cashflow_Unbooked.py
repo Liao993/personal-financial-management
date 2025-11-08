@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 from modules.cashflow_unbooked.transaction_form import transaction_form
 from modules.cashflow_unbooked.transaction_review import display_recorded_transactions
 from modules.cashflow_unbooked.transaction_saving import transaction_savings_action
-from backend.cashflow_backend import fetch_last_transaction_data
+from backend.cashflow_backend import fetch_last_cashflow_data
 import time
 
 st.set_page_config(page_title="Transaction", page_icon="💰", layout="wide")
@@ -22,10 +22,10 @@ def unbooked_transaction_actions_page():
         transaction_form()
         st.write("---")
         # Print out the last transaction data
-        last_transaction_data = fetch_last_transaction_data()
-        if not last_transaction_data.empty:
-            st.write("Last Transaction Data:")
-            st.table(last_transaction_data)
+        last_cashflow_data = fetch_last_cashflow_data()
+        if not last_cashflow_data.empty:
+            st.write("Last Cashflow Data:")
+            st.table(last_cashflow_data)
 
     else:
         

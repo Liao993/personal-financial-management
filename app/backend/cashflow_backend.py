@@ -3,7 +3,7 @@ from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
 import pandas as pd # type: ignore
 
-def insert_transaction_data(validated_data: dict):
+def insert_cashflow_data(validated_data: dict):
     #st.info("Received validated income data in income_backend.py:")
     # Here you would add your logic to interact with the database
     # using the validated_data (e.g., insert into the income table)
@@ -13,9 +13,9 @@ def insert_transaction_data(validated_data: dict):
         success = False
         try:
             query = """
-            INSERT INTO transactions (
+            INSERT INTO cash_movements (
                date, account_name, transaction_type, amount,
-               fund_category, source_notes, transfer_to_account
+               payment_purpose, source_notes, transfer_to_account
             )
             VALUES (%s, %s, %s, %s, %s, %s, %s)
              """
@@ -24,7 +24,7 @@ def insert_transaction_data(validated_data: dict):
                 validated_data['account_name'],
                 validated_data['transaction_type'],
                 validated_data['amount'],
-                validated_data['fund_category'],
+                validated_data['payment_purpose'],
                 validated_data['source_notes'],
                 validated_data['transfer_to_account']
             )
@@ -33,13 +33,13 @@ def insert_transaction_data(validated_data: dict):
             success = True
         except psycopg2.Error as e:
             conn.rollback()
-            st.error(f"Error inserting transaction data: {e}")
+            st.error(f"Error inserting cashflow transaction data: {e}")
         finally:
             cursor.close()
             conn.close()
         return success
     else:
-        st.info("Database connection failed, cannot insert data.")
+        st.info("Database connection failed, cannot insert cashflow data.")
         return False
 
 
@@ -141,14 +141,15 @@ def fetch_all_transaction_data():
         st.info("Database connection failed, cannot retrieve data.")
         return columns, None  # Return None on connection failure
 
-def fetch_last_transaction_data():
+
+def fetch_last_cashflow_data():
     """Fetches the last two transaction data from the database."""
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         query = """
             SELECT *
-            FROM transactions
+            FROM cash_movements
             ORDER BY date DESC
             LIMIT 10;
         """
@@ -162,11 +163,11 @@ def fetch_last_transaction_data():
             else:
                 return pd.DataFrame()  # Return empty DataFrame if no data found
         except psycopg2.Error as e:
-            st.error(f"Error retrieving last transaction data: {e}")
+            st.error(f"Error retrieving last cashflow data: {e}")
             return pd.DataFrame()  # Return empty DataFrame on error
         finally:
             cursor.close()
             conn.close()
     else:
-        st.info("Database connection failed, cannot retrieve last transaction data.")
+        st.info("Database connection failed, cannot retrieve last cashflow data.")
         return pd.DataFrame()  # Return empty DataFrame on connection failure

@@ -3,13 +3,13 @@ import pandas as pd # type: ignore
 
 
 
-def record_saving_transaction(transaction_date, account_name, action_type, amount, fund_category=None, source_notes=None, transfer_to_account=None):
+def record_saving_transaction(transaction_date, account_name, action_type, amount, payment_purpose=None, source_notes=None, transfer_to_account=None):
     st.subheader("Review Recorded Transaction")
 
     transaction = {
         "Transaction Date": transaction_date,
         "Account Name": account_name,
-        "Usable Fund Category": fund_category,
+        "Payment Purpose": payment_purpose,
         "Transaction Type": action_type,
         "Amount": amount,
         "Notes": source_notes,

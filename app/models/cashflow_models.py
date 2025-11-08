@@ -1,14 +1,14 @@
 from datetime import datetime
 from pydantic import BaseModel, validator # type: ignore
 from typing import Optional
-from utils.data import transaction_type_database, account_name_list, fund_categories
+from utils.data import transaction_type_database, account_name_list
 
-class Transaction(BaseModel):
+class Cashflow(BaseModel):
     date: datetime
     account_name: str
     transaction_type: str
     amount: float
-    fund_category: str
+    payment_purpose: Optional[str] = None
     source_notes: Optional[str] = None
     transfer_to_account: Optional[str] = None
 
@@ -37,13 +37,9 @@ class Transaction(BaseModel):
             raise ValueError(f"Transaction type must be one of: {transaction_type_database}")
         return value
     
-    @validator('fund_category')
-    def fund_category_not_empty(cls, value):
-        if not value.strip():
-            raise ValueError('Fund category should not be empty')
-        if value not in fund_categories:
-            raise ValueError(f"Fund category must be one of: {fund_categories}")
-        return value
+    @validator('payment_purpose', pre=True)
+    def empty_string_to_none_payment_purpose(cls, value):
+        return value if value and value.strip() else None
 
     @validator('amount')
     def amount_not_empty(cls, value):
