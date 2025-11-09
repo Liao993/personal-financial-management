@@ -9,7 +9,7 @@ st.set_page_config(page_title="Transaction", page_icon="💰", layout="wide")
 
 
 def unbooked_transaction_actions_page():
-    st.markdown("<h1 style='text-align: center; color: #16a085'>Unbooked Transaction</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #a0c4ff'>Unbooked Transaction</h1>", unsafe_allow_html=True)
 
     if 'show_the_form' not in st.session_state:
         st.session_state['show_the_form'] = True

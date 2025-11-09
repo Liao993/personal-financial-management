@@ -11,7 +11,7 @@ def transaction_form():
 
     instruction()
 
-    st.markdown(f"<p style='font-size: 24px; color: #16a085;'><b>Please choose the action type and fill the form below:</b></p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 24px; color: #a0c4ff;'><b>Please choose the action type and fill the form below:</b></p>", unsafe_allow_html=True)
     action_type = st.radio(
         "",
         cashflow_transaction_type_list,
