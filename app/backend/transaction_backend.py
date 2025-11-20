@@ -45,6 +45,7 @@ def insert_transaction_data(validated_data: dict):
 
 # To get the data for monthly report, and thus I need to exclude the transfer and deposit between account
 def fetch_transaction_data_by_month(year):
+    search_pattern = "saved from%"
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
 
@@ -53,12 +54,12 @@ def fetch_transaction_data_by_month(year):
         query = """
             SELECT EXTRACT(MONTH FROM date) AS month, fund_category, SUM(amount) AS total_amount
             FROM transactions
-            WHERE EXTRACT(YEAR FROM date) = %s AND  transaction_type = 'Deposit' 
+            WHERE EXTRACT(YEAR FROM date) = %s AND  transaction_type = 'Deposit' AND source_notes LIKE %s
             GROUP BY EXTRACT(MONTH FROM date), fund_category
             ORDER BY month;  -- Order by month for consistency
             """
         try:
-            cursor.execute(query, (year,))
+            cursor.execute(query, (year,search_pattern))
             columns = ['month', 'fund_category', 'total_amount']  # Define column names
             data = cursor.fetchall()
             if data:
@@ -77,6 +78,37 @@ def fetch_transaction_data_by_month(year):
         st.info("Database connection failed, cannot retrieve data.")
         return []
 
+def fetch_transaction_data_by_year(year):
+    # Here you would add your logic to retrieve data from the database
+    conn = get_db_connection()
+
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT fund_category, SUM(amount) AS total_amount
+            FROM transactions
+            WHERE EXTRACT(YEAR FROM date) = %s AND  transaction_type = 'Deposit' 
+            GROUP BY fund_category
+            """
+        try:
+            cursor.execute(query, (year,))
+            columns = ['fund_category', 'total_amount']  # Define column names
+            data = cursor.fetchall()
+            if data:
+                df = pd.DataFrame(data, columns=columns)
+                return df
+            else:
+                return pd.DataFrame(columns=columns) # return empty df
+            
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving transaction data: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return []
 
 def fetch_transaction_deposit_check(year, month):
     # Here you would add your logic to retrieve data from the database

@@ -74,8 +74,8 @@ def create_monthly_saving_spending_distribution_line_chart(expense, income, tran
     ax.spines['left'].set_visible(False)
 
 
-    plt.legend(fontsize=20)
+    plt.legend(fontsize=16, ncol=2)
     st.pyplot(plt.gcf(), use_container_width=True)
-    st.markdown(f"<h5 style='text-align: center; ;'>The Total Percentage of All Category should be 98%, Excluded the $100 Direct Investment Each Month</h5>", unsafe_allow_html=True)
+    st.markdown(f"<h5 style='text-align: center; ;'>The Total Percentage of All Category should be around 98%, Excluded the $100 Direct Investment Each Month</h5>", unsafe_allow_html=True)
 
     

@@ -7,14 +7,14 @@ def create_expense_line_chart(expense, income):
     
    
 
-    st.markdown(f"<h3 style='text-align: center; color: #16a085;'>Percentage of Expense of Income by Category by Month</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center; color: #16a085;'>Percentage of Expense by Category by Month</h3>", unsafe_allow_html=True)
     
     # Extract the month from the 'date' column
     expense['date'] = pd.to_datetime(expense['date'])
     expense['month'] = expense['date'].dt.month
 
     # Filter for the specified categories
-    categories_of_interest = ['Grocery', 'Food Outside', 'Donation', 'Gas', "Gifts"]
+    categories_of_interest = ['Grocery', 'Food Outside', 'Donation', 'Gas', "Gifts", 'Education']
     expense['major_category'] = expense['category'].apply(lambda x: x if x in categories_of_interest else 'Others')
 
     # Group data
@@ -45,7 +45,6 @@ def create_expense_line_chart(expense, income):
     )
   
     #Monthly Income
-
     monthly_income = merged_df[merged_df['total_income'] !=0]['total_income'].mean()
     # Define colors
     category_colors = {
@@ -53,8 +52,9 @@ def create_expense_line_chart(expense, income):
         'Food Outside': '#5dade2',
         'Gas': "#CA39C8",
         'Donation': "#e62922",
-        'Others': "#592F83",
-        'Gifts': "#3A6A3A"
+        'Others': "#9B72C3",
+        'Gifts': "#28913F",
+        'Education': "#130fe4"
     }
     palette = {cat: category_colors.get(cat, 'gray') for cat in all_categories}
 
@@ -89,7 +89,11 @@ def create_expense_line_chart(expense, income):
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
-    plt.legend(fontsize=20)
+    plt.legend(
+    fontsize=16,
+    ncol=3
+    )
+
     st.pyplot(plt.gcf(), use_container_width=True)
 
     st.markdown(f"<h5 style='text-align: center; ;'>The sum of each category above should match the total spending in the right chart.</h5>", unsafe_allow_html=True)

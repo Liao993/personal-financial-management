@@ -28,7 +28,7 @@ def create_summary_bar_chart(expense):
   
     plt.ylabel('Category', fontsize=18)
     plt.yticks(fontsize=18)
-    plt.xticks(None)
+    plt.xticks(fontsize=14)
     plt.xlabel(None)
 
     # Add annotations pct and amount

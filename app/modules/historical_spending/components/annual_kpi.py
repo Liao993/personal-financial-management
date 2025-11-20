@@ -1,8 +1,8 @@
 import streamlit as st #type:ignore
 import pandas as pd #type:ignore
-def annual_kpi(expense, year, income, transaction):
+def annual_kpi(year, expense, income, transaction):
     st.markdown(f"<h2 style='text-align: center;'> {year} Personal Annual Spending Overview</h2>", unsafe_allow_html=True)
-    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
     with col1:
         total_income = income['total_income'].sum()
         st.markdown(
@@ -33,17 +33,27 @@ def annual_kpi(expense, year, income, transaction):
             f"<p style='font-size: 24px; text-align: center;'><b>{daily_pct:.2f}%</b></p>",
             unsafe_allow_html=True,
         )
+
     with col4:
         house_sum = transaction[transaction['fund_category'] == 'House']['total_amount'].sum()
         house_pct = house_sum/total_income * 100
         st.markdown(
-            f"<p style='font-size: 22px; color: #16a085; text-align: center;'><b>Total House</b></p>"
+            f"<p style='font-size: 22px; color: #28913F; text-align: center;'><b>Total House</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>${house_sum:.2f}</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>{house_pct:.2f}%</b></p>",
             unsafe_allow_html=True,
         )
-   
     with col5:
+        daily_sum = expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum()
+        daily_pct = daily_sum/total_income * 100
+        st.markdown(
+            f"<p style='font-size: 22px; color: #9B72C3; text-align: center;'><b>Total Offerings</b></p>"
+            f"<p style='font-size: 24px; text-align: center;'><b>${daily_sum:.2f}</b></p>"
+            f"<p style='font-size: 24px; text-align: center;'><b>{daily_pct:.2f}%</b></p>",
+            unsafe_allow_html=True,
+        )
+   
+    with col6:
       grocery_sum = expense[expense["category"] == "Grocery"]['amount'].sum()
       expense['month'] = pd.to_datetime(expense['date']).dt.month
         #get number of unique months
@@ -51,12 +61,12 @@ def annual_kpi(expense, year, income, transaction):
       grocery_avg = grocery_sum / grocery_month
       grocery_pct = grocery_sum / total_income * 100
       st.markdown(
-            f"<p style='font-size: 22px; color: #00ab41; text-align: center;'><b>Avg Monthly Grocery</b></p>"
+            f"<p style='font-size: 22px; color: #ff8fab; text-align: center;'><b>Avg Monthly Grocery</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>${grocery_avg:.2f}</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>{grocery_pct:.2f}%</b></p>",
           unsafe_allow_html=True,
       )
-    with col6:
+    with col7:
       retire_sum = transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum()
       retire_pct = retire_sum / total_income * 100
       st.markdown(
