@@ -30,7 +30,7 @@ def transaction_form():
             st.session_state['show_the_form'] = False # Set session state
             st.rerun()
 
-    elif action_type == "Withdrawal (Expenses)":
+    elif action_type == "Withdrawal (Daily and House Expenses)":
         if st.button("Record Withdrawal"):
             record_saving_transaction(transaction_date, account_name, "Withdrawal", -amount, purpose, source_notes)
             st.session_state['show_the_form'] = False # Set session state

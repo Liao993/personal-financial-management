@@ -9,19 +9,18 @@ def create_monthly_saving_spending_distribution_line_chart(expense, income, tran
     expense['date'] = pd.to_datetime(expense['date'])
     expense['month'] = expense['date'].dt.month
   
-    # Get Total Spending by Month
+    # Get Total Spending by Month (All Categories, include Daily Expenses, Donation, Education, etc..)
     total_monthly_spending = expense.groupby('month', as_index=False)['amount'].sum().rename(columns={'amount': 'total_amount'})
-    total_monthly_spending['category'] = "Total Spending"
+    total_monthly_spending['category'] = "Total Other Spending"
 
-    # Get Home Spending data
-    #monthly_home = expense[expense['summary_category'] == "House"].groupby('month', as_index=False)['amount'].sum().rename(columns={'amount': 'total_amount'})
-    #monthly_home['category'] = 'House'
 
-    # Transaction Category
+    # Transaction Category (Get Three Saving Category and House Deposit)
     transaction.rename(columns={'fund_category' : "category"}, inplace=True)
-    transaction_filtered = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', "Traveling Funds"])]
+    transaction_filtered = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', "Traveling Funds" ,"House"])]
+    # Rename house to "House Spending" 
+    transaction_filtered.loc[transaction_filtered['category'] == 'House', 'category'] = 'House Spending'
 
-    # Concatenate the dataframes
+    # Concatenate the dataframes to get all catgory
     data = pd.concat([total_monthly_spending,  transaction_filtered], ignore_index=True)
 
     merged_df = pd.merge(data, income, on='month', how='left')
@@ -33,14 +32,15 @@ def create_monthly_saving_spending_distribution_line_chart(expense, income, tran
         axis=1
     )
 
-
     all_categories = merged_df['category'].unique()
+    
     # Define colors
     category_colors = {
-        'Total Spending': 'red',
+        'Total Other Spending': 'red',
         'Traveling Funds': "#6e3181",
         'Retirement Saving': '#1AA7EC',
-        'Medium-term Saving': '#f39c12' #orange
+        'Medium-term Saving': '#f39c12', #orange
+        "House Spending": "#16a085"
     }
     palette = {cat: category_colors.get(cat, 'gray') for cat in all_categories}
 
@@ -76,5 +76,6 @@ def create_monthly_saving_spending_distribution_line_chart(expense, income, tran
 
     plt.legend(fontsize=20)
     st.pyplot(plt.gcf(), use_container_width=True)
+    st.markdown(f"<h5 style='text-align: center; ;'>The Total Percentage of All Category should be 98%, Excluded the $100 Direct Investment Each Month</h5>", unsafe_allow_html=True)
 
     

@@ -3,19 +3,32 @@ import streamlit as st # type: ignore
 def main():
   #made it wide
   st.set_page_config(page_title="Home", page_icon="💸", layout='wide')
-  st.title("Welcome to the Home Page")
+
 
   st.markdown("""
-  <p style='font-size: 24px; color: #5dade2;'>
-    Bookeeping and Actual Money Usage Insturctions.
-  </p>
-  <ui style='font-size: 18px;'>
-  <li>Any earning, not matter regular or sudden huge earning, should be recorded with Income Input, and then Distributed with Monthly Calculations.</li>
-  <li>Two ways to record expense, Manual Expense Input and Upload Statement.</li>
-  <li>Record withdrawl in Cashflow Ubooked after recording any expense (Manuall or Statement), and <b style='color:#e74c3c;'>seperated them by month.</b></li>
-  <li>Any Money Transfer to Saving Account before bookkeeping should be recorded in Cashflow Unbooked as transfer between accounts.</li>
-  <li>Record Fund Transaction based on fund categoery after Monthly Calculations to make sure the money is in the right place.</li>
-  <li>If any Money need to withdraw from Saving Account, please record the withdrawl in Cashflow Unbooked, not transfer between accounts.</li>
+  <p style='font-size: 40px; text-align: center; color: #5dade2;'>Personal Finance Management</p>
+  <ui style='font-size: 20px;'>
+  <b style='color:#f1c40f; font-size: 24px;'>Income Rules</b>           
+  <li> Any <b style='color:#e74c3c;'>earning</b>, not matter regular or sudden huge earning, should be recorded with  <b style='color:#5dade2;'>Income Input</b>, and then Distributed with Monthly Calculations.</li>
+  <hr/>           
+  <b style='color:#f1c40f; font-size: 24px;'>Expense Rules</b>  
+  <li>If expense is <b style='color:#e74c3c;'>monthly daily expense</b>, Use Manual Expense Input and Upload Statement.</li>  
+  <li> House expense should be recorded as <b style='color:#5dade2;'>House Deposit in Transaction.</b></li>
+  <hr/>
+  <b style='color:#f1c40f; font-size: 24px;'>Transaction Rules</b> 
+  <li> The <b style='color:#e74c3c;'>Monthly Saving and House </b> should be recorded via Monthly Calculations They will have <b style='color:#e74c3c;'>saved from</b> in sources_notes. and <b style='color:#5dade2;'>Deposit</b> as transaction type.</li>   
+  <li>If the extra money coming in from other sources  <b style='color:#e74c3c;'>(not earning)</b>, such as Parents Support, Just record it as  <b style='color:#5dade2;'>Deposit</b> in trnasaction directly.</li>
+  <li>If expense from savings, such as Travel Funds or Medium-term Saving, Just record it as  <b style='color:#5dade2;'>Withdraw</b> in trnasaction directly.</li>
+  <li>Record <b style='color:#5dade2;'>Transfer Between Accounts</b> after each Monthly Calculations to match the amount in different accounts.</li>   
+  <hr/>
+  <b style='color:#f1c40f; font-size: 24px;'>Cashflow Unbooked Rules: Used for the money before bookkeeping.</b>
+  <li>Mainly Used for <b style='color:#e74c3c;'>Expense Tracking</b>. Not Used for Recording Saving.</li>
+  <li> Record <b style='color:#5dade2;'>Deposit</b> in Cashflow Unbooked for the money <b style='color:#e74c3c;'>NOT</b> have a fund category.</li>                   
+  <li>Record <b style='color:#5dade2;'>Withdrawl</b> in Cashflow Unbooked after recording <b style='color:#e74c3c;'>ANY</b> expense (Manual, Statement and  <b style='color:#e74c3c;'>House</b>), and <b style='color:#e74c3c;'>seperated them by month.</b> No matter RBC or EQ</li>
+  <li>Record <b style='color:#5dade2;'>Withdrawl</b> in Cashflow Unbooked for any <b style='color:#e74c3c;'>unbooked</b> money <b style='color:#e74c3c;'>coming out</b> from EQ saving account.</li>
+  <li>Record <b style='color:#5dade2;'>Transfer between accounts </b> in Cashflow Unbooked for any Money Transfer to Saving Account <b style='color:#e74c3c;'>before</b> bookkeeping.</li>
+  
+  
   </ul>
   """, unsafe_allow_html=True)
 
