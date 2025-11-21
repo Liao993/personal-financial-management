@@ -47,7 +47,7 @@ def main():
     <li><a href="/Upload_Expense" style='color: #2980b9;'>Upload Your Expense Statement</a> - Upload your bank statement without manual input.</li>
     <li><a href="/Cashflow_Unbooked" style='color: #2980b9;'>Trace Cashflow Before Bookkeeping</a> - Money Move in is Earning, Moeny Move out is Expense, based on <b style='color:#e74c3c;'>actual account</b>.</li>
     <li><a href="/Monthly_Calculation" style='color: #2980b9;'>Calculate Monthly Expenses and Savings</a> - Summary of your monthly expenses and savings.</li>
-    <li><a href="/Transaction" style='color: #2980b9;'>Make a Transaction</a> - Money move in and out is based on <b style='color:#e74c3c;'>fund category, not actual account</b>.</li>
+    <li><a href="/Funds_Transaction" style='color: #2980b9;'>Make a Transaction</a> - Money move in and out is based on <b style='color:#e74c3c;'>fund category, not actual account</b>.</li>
     <li><a href="/Historical_Stats" style='color: #2980b9;'>View Historical Statistics</a> - Analyze your financial data over time.</li>
     <li><a href="/Traveling_Spending_Stats" style='color: #2980b9;'>View Traveling Spending Statistics</a> - Analyze your travel-related expenses.</li>
     <li><a href="/Current_Saving_Status" style='color: #2980b9;'>View Current Saving Status</a> - Get an overview of your current savings.</li>

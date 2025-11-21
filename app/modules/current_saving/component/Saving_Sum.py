@@ -31,17 +31,25 @@ def saving_sum(transaction):
     # 2. Calculate the yearly average from the monthly totals
     yearly_avg = summary_pivot.groupby('year')['monthly_all_total'].mean().reset_index()
     yearly_avg = yearly_avg.rename(columns={'monthly_all_total': 'Yearly Average'})
-    yearly_avg = yearly_avg.drop('year_month', axis=1, errors='ignore') # Clean up if it exists
 
     yearly_r_d_avg = summary_pivot.groupby('year')['monthly_r&d_total'].mean().reset_index()
     yearly_r_d_avg = yearly_r_d_avg.rename(columns={'monthly_r&d_total': 'Yearly Average (R+D)'})
-    yearly_r_d_avg = yearly_r_d_avg.drop('year_month', axis=1, errors='ignore') # Clean up if it exists
 
-    # 3. Merge the yearly average back into the main pivot table
+    # 3. Calculate the yearly sum from the monthly totals
+    yearly_sum = summary_pivot.groupby('year')['monthly_all_total'].sum().reset_index()
+    yearly_sum = yearly_sum.rename(columns={'monthly_all_total': 'Yearly Total'})
+   
+    yearly_r_d_sum = summary_pivot.groupby('year')['monthly_r&d_total'].sum().reset_index()
+    yearly_r_d_sum = yearly_r_d_sum.rename(columns={'monthly_r&d_total': 'Yearly Total (R+D)'})
+
+    # 4. Merge the yearly average back into the main pivot table
     final_summary_1 = pd.merge(summary_pivot, yearly_r_d_avg, on='year', how='left')
     final_summary_2 = pd.merge(final_summary_1, yearly_avg, on='year', how='left')
-    # 4. Display the result in Streamlit (dropping the temporary monthly_total column if you wish)
-    final_summary = final_summary_2.drop(columns=['monthly_all_total', 'monthly_r&d_total']) 
+    final_summary_3 = pd.merge(final_summary_2, yearly_r_d_sum, on='year', how='left')
+    final_summary_4 = pd.merge(final_summary_3, yearly_sum, on='year', how='left')
+
+    # 5. Display the result in Streamlit (dropping the temporary monthly_total column if you wish)
+    final_summary = final_summary_4.drop(columns=['monthly_all_total', 'monthly_r&d_total']) 
     final_summary = final_summary.sort_values(by=['year', 'month'], ascending=[False, True])
     st.dataframe(final_summary, hide_index=True)
    

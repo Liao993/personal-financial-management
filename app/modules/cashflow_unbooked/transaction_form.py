@@ -1,7 +1,7 @@
 import streamlit as st # type: ignore
 from datetime import datetime
 from utils.css import drop_down_list
-from utils.data import account_name_list, cashflow_transaction_type_list, cashflow_purpose
+from utils.data import cashflow_account_name_list, cashflow_transaction_type_list, cashflow_purpose
 from modules.cashflow_unbooked.transaction_review import record_saving_transaction
 from modules.cashflow_unbooked.transaction_instruction import instruction
 def transaction_form():
@@ -18,7 +18,7 @@ def transaction_form():
         key="action_type_form"
     )
     transaction_date = st.date_input("Transaction Date", datetime.now().date())
-    account_name = st.selectbox("Account", account_name_list)
+    account_name = st.selectbox("Account", cashflow_account_name_list)
     amount = st.number_input("Amount", min_value=0.0)
     purpose = st.selectbox("Purpose", cashflow_purpose)
     source_notes = st.text_input("Notes (Optional)")
@@ -38,7 +38,7 @@ def transaction_form():
 
     
     elif action_type == "Transfer Between Accounts":
-        transfer_to_account = st.selectbox("Transfer To Account (Different Accounts)", account_name_list, index=2) # Default to a different account
+        transfer_to_account = st.selectbox("Transfer To Account (Different Accounts)", cashflow_account_name_list, index=1) # Default to a different account
         if st.button("Record Transfer"):
             # For a transfer, we'll record two transactions: one out, one in
             record_saving_transaction(transaction_date, account_name, "Transfer Out", -amount, purpose, source_notes=f"Transfer to {transfer_to_account} {source_notes}", transfer_to_account=transfer_to_account)
