@@ -25,7 +25,10 @@ st.set_page_config(
 def statement_page():
     # --- 1. Initialization State Management ---
     init_session_state()
+    
+  
     st.markdown("<h1 style='color: lightcoral; text-align: center;'>Custom SQL Query Viewer</h1>", unsafe_allow_html=True)
+
     # Display last status message if any (from previous DML/DDL operation)
     check_last_status_message()
 

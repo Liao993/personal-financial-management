@@ -17,6 +17,7 @@ def query_input_section():
     Updates session state upon submission.
     """
     st.subheader("Enter your SQL query:")
+    
     st.warning("""
             ⚠️ **Security Alert:** Allowing arbitrary SQL (Insert/Update/Delete) queries directly from user input is a **significant security risk**.
             Use with caution.
