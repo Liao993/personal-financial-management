@@ -22,6 +22,8 @@ def unbooked_transaction_actions_page():
         # Print out the last transaction data
         last_cashflow_summary = fetch_transaction_data_by_account_by_month()
         if not last_cashflow_summary.empty:
+            st.info("The table shows how to move money for expenses payments.")
+            last_cashflow_summary.rename(columns={'total_amount': 'total_amount_left'}, inplace=True)
             st.dataframe(last_cashflow_summary, hide_index=True)
         st.write("---")
         transaction_form()

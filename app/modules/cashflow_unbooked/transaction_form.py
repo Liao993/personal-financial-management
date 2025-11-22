@@ -20,7 +20,7 @@ def transaction_form():
     transaction_date = st.date_input("Transaction Date", datetime.now().date())
     account_name = st.selectbox("Account", cashflow_account_name_list)
     amount = st.number_input("Amount", min_value=0.0)
-    purpose = st.selectbox("Purpose", cashflow_purpose)
+    purpose = st.selectbox("Purpose", [None] + cashflow_purpose)
     source_notes = st.text_input("Notes (Optional)")
     transfer_to_account = None
 

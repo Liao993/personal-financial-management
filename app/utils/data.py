@@ -71,17 +71,18 @@ cashflow_account_name_list = ["RBC Chequing", "EQ 10D Notice", "EQ 30D Notice"]
 
 transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 
+#cashflow
+cashflow_transaction_type_list = ["Deposit (Income)", "Withdrawal (Daily and House Expenses)", "Transfer Between Accounts"]
+cashflow_purpose = ["Income", "Interest Earning Before Bookeeping", "House Expense" ,"RBC credit card payment", "PC credit card payment", "Debit Card payment", "eTransfer payment", "Cash payment"]
+
+# the one used for database for both transactions and cashflow
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
-cashflow_transaction_type_list = ["Deposit (Income)", "Withdrawal (Daily and House Expenses)", "Transfer Between Accounts"]
-cashflow_purpose = ["Income", "Interest Earning Before Bookeeping", "House Expense" ,"RBC credit card payment", "PC credit card payment", "Debit Card payment", "eTransfer payment", "Cash payment", None]
-
+#Change every year
 TFSA_room = 32500
-
 RRSP_room = 14729
 
 years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]
 
 #Default value for income amount in the form
 fixed_income_data = 1787.28 
-unoted_amount_in_EQ = 1700.00

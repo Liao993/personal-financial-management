@@ -1,7 +1,4 @@
 import streamlit as st # type: ignore
-from PIL import Image # type: ignore
-
-instruction_text = "This page is used for tracking the unbooked cashflows, so I will know how much I have in RBC chequing or EQ saving accounts while bookkeeping every month."
 
 
 
