@@ -29,7 +29,7 @@ def text_to_table(extracted_data):
                         date = match.group(1).strip()
                         post_date = match.group(2).strip()
                         items = match.group(3).replace('$', '').strip()  # Remove dollar signs
-                        amount = match.group(4).replace('−', '-').replace('+', '').strip() # Clean up +/- signs
+                        amount = match.group(4).replace('−', '-').replace('+', '').replace(',', '').strip() # Clean up +/-/,signs
 
                         selected_data.append([date, post_date, items, amount, year])
                             #get the year from the first item

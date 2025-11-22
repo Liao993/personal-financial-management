@@ -6,7 +6,7 @@ import numpy as np # type: ignore
 import decimal
 
 def create_monthly_expense_bar_chart(expense):
-    st.markdown("<h3 style='text-align: center; color: orange;'>Monthly Expense</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: orange;'>Monthly Expense (House Deposit Excluded)</h3>", unsafe_allow_html=True)
 
  
     

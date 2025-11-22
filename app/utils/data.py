@@ -48,7 +48,7 @@ common_store_directory = {
 daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT', "LUCKY MOBILE", "PHO VIETNAM"]
 
 #used for expense input
-common_store_list = ['Not Common Store', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
+common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
                      'Dollarama', 'A&W', 'Shoppers Drug Mart', 'Global Grocery', 'Costco', 
                      'Take Sushi', 'Petro', 'Starbucks', 'Irving', 
                      'Hopspot', 'Mike & Andreea', 'Tim Hortons', 'Panda Mart', 'Eastlink', 'Pho Vietnam Rest', 
