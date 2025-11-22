@@ -16,7 +16,7 @@ def quick_viewer_section():
     query_buttons = st.columns(3)        
     with query_buttons[0]:
         if st.button("💰 View All Income", use_container_width=True):
-            execute_predefined_query("SELECT * FROM income ORDER BY date DESC")
+            execute_predefined_query("SELECT *, SUM(amount) OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS year_total FROM income ORDER BY date DESC")
     with query_buttons[1]:
         if st.button("💧 View All Cashflow", use_container_width=True):
             execute_predefined_query("SELECT * FROM cashflow ORDER BY date DESC")

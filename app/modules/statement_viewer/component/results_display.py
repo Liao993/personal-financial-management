@@ -42,7 +42,6 @@ def results_display_section():
     
     # --- Execute and Display SELECT results ---
     else:
-        st.info(f"Working on your query: `{st.session_state[LAST_QUERY_KEY].strip()}`")
         
         # Fetch data. Initial call for non-DML/DDL or to detect DML/DDL.
         df_results, status_msg = fetch_statement(st.session_state[LAST_QUERY_KEY], confirm_action=False)
