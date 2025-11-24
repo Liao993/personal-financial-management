@@ -27,7 +27,7 @@ def statement_page():
     init_session_state()
     
   
-    st.markdown("<h1 style='color: lightcoral; text-align: center;'>Custom SQL Query Viewer</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: orange; text-align: center;'>Custom SQL Query Viewer</h1>", unsafe_allow_html=True)
 
     # Display last status message if any (from previous DML/DDL operation)
     check_last_status_message()

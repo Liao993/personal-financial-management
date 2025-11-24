@@ -2,8 +2,8 @@ from modules.historical_spending.middle_layer.selected_year_form import selected
 from modules.historical_spending.components.annual_kpi import annual_kpi
 from modules.historical_spending.components.annual_expense_category_chart import create_summary_bar_chart
 from modules.historical_spending.components.total_monthly_expenses import create_monthly_expense_bar_chart
-from modules.historical_spending.components.monthly_expense_category_pct_chart import create_expense_line_chart
-from modules.historical_spending.components.all_money_monthly_balance_pct_chart import create_monthly_saving_spending_distribution_line_chart
+from modules.historical_spending.components.pct_monthly_expense import create_expense_line_chart
+from modules.historical_spending.components.pct_saving_spending import create_monthly_saving_spending_distribution_line_chart
 
  
 from backend.expense_backend import fetch_annual_expense
@@ -34,17 +34,20 @@ def historical_spending():
             annual_kpi(selected_year, all_fetched_expense, all_fetched_income, all_fetched_transaction)
             col1, col2 = st.columns(2)
             with col1:
-                # Show All Expense Category Besides House
-                create_summary_bar_chart(all_fetched_expense)
+                 # Show All Monthly Expenses by Amount
+                create_monthly_expense_bar_chart(all_fetched_expense, all_fetched_monthly_transaction)
+                
             with col2:
-                # Show All Monthly Expenses
-                create_monthly_expense_bar_chart(all_fetched_expense)
+                # Show All Monthly Expenses by Percentage
+                create_expense_line_chart(all_fetched_expense, all_fetched_income, all_fetched_monthly_transaction)
                 
             col3, col4 = st.columns(2)
                 
             with col3:
-                create_expense_line_chart(all_fetched_expense, all_fetched_income)
+                # Show All Expense Category Annually 
+                create_summary_bar_chart(all_fetched_expense)
             with col4:
+                #Spending vs Saving Distribution
                 create_monthly_saving_spending_distribution_line_chart(all_fetched_expense, all_fetched_income, all_fetched_monthly_transaction)
 if __name__ == "__main__":
     historical_spending()

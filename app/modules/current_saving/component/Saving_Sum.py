@@ -26,21 +26,21 @@ def saving_sum(transaction):
 
     # 4. Calculate the total for the month 
     summary_pivot['monthly_all_total'] = summary_pivot[['Retirement Saving', 'Medium-term Saving', 'Traveling Funds']].sum(axis=1)
-    summary_pivot['monthly_r&d_total'] = summary_pivot[['Retirement Saving', 'Medium-term Saving']].sum(axis=1)
+    summary_pivot['monthly_r&m_total'] = summary_pivot[['Retirement Saving', 'Medium-term Saving']].sum(axis=1)
 
     # 2. Calculate the yearly average from the monthly totals
     yearly_avg = summary_pivot.groupby('year')['monthly_all_total'].mean().reset_index()
     yearly_avg = yearly_avg.rename(columns={'monthly_all_total': 'Yearly Average'})
 
-    yearly_r_d_avg = summary_pivot.groupby('year')['monthly_r&d_total'].mean().reset_index()
-    yearly_r_d_avg = yearly_r_d_avg.rename(columns={'monthly_r&d_total': 'Yearly Average (R+D)'})
+    yearly_r_d_avg = summary_pivot.groupby('year')['monthly_r&m_total'].mean().reset_index()
+    yearly_r_d_avg = yearly_r_d_avg.rename(columns={'monthly_r&m_total': 'Yearly Average (R+M)'})
 
     # 3. Calculate the yearly sum from the monthly totals
     yearly_sum = summary_pivot.groupby('year')['monthly_all_total'].sum().reset_index()
     yearly_sum = yearly_sum.rename(columns={'monthly_all_total': 'Yearly Total'})
    
-    yearly_r_d_sum = summary_pivot.groupby('year')['monthly_r&d_total'].sum().reset_index()
-    yearly_r_d_sum = yearly_r_d_sum.rename(columns={'monthly_r&d_total': 'Yearly Total (R+D)'})
+    yearly_r_d_sum = summary_pivot.groupby('year')['monthly_r&m_total'].sum().reset_index()
+    yearly_r_d_sum = yearly_r_d_sum.rename(columns={'monthly_r&m_total': 'Yearly Total (R+M)'})
 
     # 4. Merge the yearly average back into the main pivot table
     final_summary_1 = pd.merge(summary_pivot, yearly_r_d_avg, on='year', how='left')
@@ -49,7 +49,7 @@ def saving_sum(transaction):
     final_summary_4 = pd.merge(final_summary_3, yearly_sum, on='year', how='left')
 
     # 5. Display the result in Streamlit (dropping the temporary monthly_total column if you wish)
-    final_summary = final_summary_4.drop(columns=['monthly_all_total', 'monthly_r&d_total']) 
+    final_summary = final_summary_4.drop(columns=['monthly_all_total', 'monthly_r&m_total']) 
     final_summary = final_summary.sort_values(by=['year', 'month'], ascending=[False, True])
     st.dataframe(final_summary, hide_index=True)
    
