@@ -19,7 +19,7 @@ def main():
   <li> The <b style='color:#e74c3c;'>Monthly Saving and House </b> should be recorded via Monthly Calculations They will have <b style='color:#e74c3c;'>saved from</b> in sources_notes. and <b style='color:#5dade2;'>Deposit</b> as transaction type.</li>   
   <li>If the extra money coming in from other sources  <b style='color:#e74c3c;'>(not earning)</b>, such as Parents Support, Just record it as  <b style='color:#5dade2;'>Deposit</b> in trnasaction directly.</li>
   <li>If expense from savings, such as Travel Funds or Medium-term Saving, Just record it as  <b style='color:#5dade2;'>Withdraw</b> in trnasaction directly.</li>
-  <li>Record <b style='color:#5dade2;'>Transfer Between Accounts</b> after each Monthly Calculations to match the amount in different accounts.</li>   
+  <li>Record <b style='color:#5dade2;'>Transfer Between Accounts</b> after each Monthly Calculations to match the amount in different accounts. The amount can be found in cashflow unbooked page.</li>   
   <hr/>
   <b style='color:#f1c40f; font-size: 24px;'>Cashflow Unbooked Rules: Used for the money before bookkeeping.</b>
   <li>Mainly Used for <b style='color:#e74c3c;'>Expense Tracking</b>. Not Used for Recording Saving.</li>

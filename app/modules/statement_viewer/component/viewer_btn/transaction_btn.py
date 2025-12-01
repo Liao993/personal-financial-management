@@ -66,7 +66,7 @@ def transaction_btn():
                                             sum(amount) over (partition by fund_category) AS fund_category_total_amount
                                         FROM transactions 
                                         WHERE transaction_type Like '%Transfer%'
-                                        ORDER BY fund_category, date DESC
+                                        ORDER BY date DESC, fund_category
                                      """)    
     
     st.write("")

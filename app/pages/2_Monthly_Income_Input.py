@@ -11,7 +11,7 @@ from modules.income_input.income_transaction_info import record_deposit_for_revi
 from modules.cashflow_unbooked.transaction_review import display_recorded_transactions_income_page
 from modules.cashflow_unbooked.transaction_saving import transaction_savings_action
 
-st.set_page_config(page_title="Income Input", page_icon="💰")
+st.set_page_config(page_title="Income Input", page_icon="💰", layout='wide')
 
 edit_mode_form = 'edit_mode_income'
 data_saved_key = 'data_saved_income'

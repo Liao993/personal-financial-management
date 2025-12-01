@@ -6,7 +6,7 @@ from modules.expense_input.components.review_data import review_data_print_out
 from modules.expense_input.middle_layer.confirmed_data_handling import confirmed_data_handling
 from backend.expense_backend import fetch_last_expense_data
 
-st.set_page_config(page_title="Expense Input", page_icon="💸")
+st.set_page_config(page_title="Expense Input", page_icon="💸", layout='wide')
 
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
