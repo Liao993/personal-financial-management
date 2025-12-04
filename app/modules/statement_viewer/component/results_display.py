@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 import pandas as pd
 import io 
 
-from modules.statement_viewer.state_management.reset_state_to_query_input_state import reset_state_to_query_input
+from modules.statement_viewer.state_management.reset_to_query_state import reset_to_query_mode
 from modules.statement_viewer.state_management.state_key import LAST_QUERY_KEY, QUERY_MODE_KEY, UPDATE_PENDING_CONFIRMATION_KEY, PENDING_UPDATE_QUERY_KEY, LAST_STATUS_MESSAGE_KEY, HINT_MODE_KEY, RESULT_DF_KEY
 
 # Assuming fetch_statement is available through the app's structure
@@ -15,6 +15,7 @@ def results_display_section():
     # --- Handle DML/DDL query confirmation ---
     if st.session_state[UPDATE_PENDING_CONFIRMATION_KEY]:
         st.warning("A DML/DDL query was detected. Please review and confirm to execute.")
+        #print out the query
         st.code(st.session_state[PENDING_UPDATE_QUERY_KEY], language='sql')
 
         col1, col2 = st.columns(2)
@@ -32,13 +33,17 @@ def results_display_section():
             )
             
             st.session_state[LAST_STATUS_MESSAGE_KEY] = status_msg # Store message
-            reset_state_to_query_input()
-            st.rerun() # Rerun to display the status message
+            if "successful" in st.session_state[LAST_STATUS_MESSAGE_KEY]:
+                st.success(st.session_state[LAST_STATUS_MESSAGE_KEY])          
+                
+            else:
+                st.error(st.session_state[LAST_STATUS_MESSAGE_KEY])
+            
 
         elif cancel_dml_button:
             st.session_state[LAST_STATUS_MESSAGE_KEY] = "DML/DDL query cancelled."
-            reset_state_to_query_input()
-            st.rerun()
+            reset_to_query_mode()
+          
     
     # --- Execute and Display SELECT results ---
     else:

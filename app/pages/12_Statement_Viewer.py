@@ -10,7 +10,6 @@ from modules.statement_viewer.component.quick_viewer_btn import quick_viewer_sec
 from modules.statement_viewer.middle_layer.last_status_message_check import check_last_status_message
 from modules.statement_viewer.state_management.state_key import LAST_QUERY_KEY, QUERY_MODE_KEY, UPDATE_PENDING_CONFIRMATION_KEY, PENDING_UPDATE_QUERY_KEY, LAST_STATUS_MESSAGE_KEY, HINT_MODE_KEY, RESULT_DF_KEY
 
-from modules.statement_viewer.state_management.reset_state_to_query_input_state import reset_state_to_query_input
 from modules.statement_viewer.state_management.reset_to_query_state import reset_to_query_mode
 from modules.statement_viewer.state_management.init_session_state import init_session_state
 # Global setup block (only runs once)

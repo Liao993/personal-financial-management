@@ -40,6 +40,8 @@ def fetch_statement(inputed_query: str, confirm_action: bool = False) -> Tuple[p
         # Determine the type of query based on its starting keyword
         if lower_query.startswith("select"):
             query_type = "SELECT"
+        elif lower_query.startswith("with"):
+            query_type = "SELECT"
         elif lower_query.startswith("update"):
             query_type = "UPDATE"
         elif lower_query.startswith("insert"):
