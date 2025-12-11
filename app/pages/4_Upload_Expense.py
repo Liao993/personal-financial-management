@@ -16,7 +16,7 @@ def upload_expense():
     
 
     if st.session_state['upload_pdf_state']:
-        action_options = ["RBC", "PC"]
+        action_options = ["RBC", "PC", "Scotia_Red"]
         st.session_state['selected_action'] = st.selectbox("Which Bank for your statements?", action_options)
         uploaded_pdf = pdf_upload()
         if uploaded_pdf: 
