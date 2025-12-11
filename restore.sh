@@ -20,7 +20,7 @@ DB_USER="${POSTGRES_USER}" # Using POSTGRES_USER from .env for database operatio
 DB_NAME="${POSTGRES_DB}"   # Using POSTGRES_DB from .env
 
 # List of tables to drop and restore. Ensure backup files match these names.
-TABLES_TO_PROCESS="transactions income expense" # Order might matter for foreign keys if not using CASCADE
+TABLES_TO_PROCESS="transactions income expense cashflow" # Order might matter for foreign keys if not using CASCADE
 
 HOST_BACKUP_DIR="$(dirname "$(realpath "$0")")/backups" # Path to your backups folder
 

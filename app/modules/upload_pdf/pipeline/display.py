@@ -11,7 +11,7 @@ review_data = 'review_expense_data'
 
 
 
-def display_editable_dataframe(dataframe):
+def display_editable_dataframe(dataframe, bank):
     
    
     if edit_mode_form not in st.session_state:
@@ -94,12 +94,11 @@ def display_editable_dataframe(dataframe):
                 confirm_button = st.button("Save your information")
             with col2:
                 edit_button = st.button("Edit your information")
-            
             #Validate Data and Save Data after clicking confirm button
             if confirm_button:
                 data_to_saved = reviewed_data_dict
                 st.info("Saving your information...")
-                if load_expense_data(data_to_saved):
+                if load_expense_data(data_to_saved, bank):
                     st.session_state[data_saved_key] = True
                     st.rerun()
                 else:

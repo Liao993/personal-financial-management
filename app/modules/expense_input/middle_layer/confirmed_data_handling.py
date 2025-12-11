@@ -12,7 +12,7 @@ def confirmed_data_handling(reviewed_data, data_saved_key):
     expense_data = reviewed_data
     if validate_expense_data(expense_data):
         # add source_notes to expense_data
-        expense_data['source_notes'] = "Manual Input"
+        expense_data['source_notes'] = "Manual_Input"
         st.info("Data is saving to database .......")
         time.sleep(3)
         #insert_expense_data(expense_data)

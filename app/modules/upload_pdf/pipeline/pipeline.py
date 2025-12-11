@@ -14,12 +14,12 @@ def pipeline(bank, pdf_file):
   if bank == "RBC":
     extracted_data = rbc_extracted(pdf_file)
     transformed_data = rbc_transformed(extracted_data)
-    finished = display_editable_dataframe(transformed_data)
+    finished = display_editable_dataframe(transformed_data, bank)
     return finished
   elif bank == "PC":
     extracted_data = pc_extracted(pdf_file)
     transformed_data = pc_transformed(extracted_data)
-    finished = display_editable_dataframe(transformed_data)
+    finished = display_editable_dataframe(transformed_data, bank)
 
 
 
