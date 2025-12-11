@@ -1,7 +1,7 @@
 from modules.statement_viewer.state_management.predefined_query_state import execute_predefined_query
 import streamlit as st # type: ignore
 def expense_btn():
-    query_buttons = st.columns(5)
+    query_buttons = st.columns(6)
     
     with query_buttons[0]:
         if st.button("💸 All Expenses", use_container_width=True):
@@ -102,6 +102,24 @@ def expense_btn():
                                      )
                                         Group by  Extract(YEAR FROM date), grocery_store
                                         ORDER BY  Extract(YEAR FROM date) DESC, total_amount_by_store DESC
+                                                                                                                                 
+                                     """)
+    with query_buttons[5]:
+        if st.button("💸 Payment Method Expenses", use_container_width=True):
+            execute_predefined_query("""
+                                    SELECT  
+                                            source_notes as payment_method,
+                                            Extract(YEAR FROM date) AS year,                                            
+                                            Extract(Month FROM date) AS month,
+                                            SUM(amount) AS total_amount_by_payment_method
+                                
+                                        FROM
+                                            expense
+                                        WHERE
+                                            category != 'Traveling' and date>'2025-10-31'
+                                     
+                                        Group by  source_notes, Extract(YEAR FROM date), Extract(Month FROM date)
+                                        ORDER BY  Extract(YEAR FROM date) DESC, Extract(Month FROM date) DESC
                                                                                                                                  
                                      """)
    
