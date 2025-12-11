@@ -2,6 +2,32 @@ import streamlit as st # type: ignore
 from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
 import pandas as pd # type: ignore
+def insert_expense_data_with_source(validated_data: dict):
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        try:
+            query = "INSERT INTO expense (date, items, amount, category, traveling_category, trip, source_notes) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            #  validated_data['traveling_category'] can be None
+            values = (
+                validated_data['date'],
+                validated_data['items'],
+                validated_data['amount'],
+                validated_data['category'],
+                validated_data.get('traveling_category'),  # Use .get() to handle missing key
+                validated_data.get('trip'),  # Use .get() to handle missing key
+                validated_data['source_notes']
+            )
+            cursor.execute(query, values)
+            conn.commit()
+        except psycopg2.Error as e:
+            conn.rollback()
+            st.error(f"Error inserting expense data: {e}")
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot insert data.")
 
 def insert_expense_data(validated_data: dict):
     conn = get_db_connection()

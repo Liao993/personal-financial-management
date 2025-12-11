@@ -44,7 +44,6 @@ def expense_input_page():
                 confirm_button = st.button("Confirm")
             with col2:
                 edit_button = st.button("Edit")
-            
             if confirm_button:
                 confirmed_data_handling(reviewed_data, data_saved_key)
             if edit_button:

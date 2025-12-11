@@ -72,7 +72,7 @@ cashflow_account_name_list = ["RBC Chequing", "EQ 10D Notice", "EQ 30D Notice"]
 transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 
 #cashflow
-cashflow_transaction_type_list = ["Deposit (Income)", "Withdrawal (Daily and House Expenses)", "Transfer Between Accounts"]
+cashflow_transaction_type_list = ["Withdrawal (Daily and House Expenses)", "Transfer Between Accounts"]
 cashflow_purpose = ["Income", "Interest Earning Before Bookeeping", "House Expense" ,"RBC credit card payment", "PC credit card payment", "Debit Card payment", "eTransfer payment", "Cash payment"]
 
 # the one used for database for both transactions and cashflow
