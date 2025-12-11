@@ -20,17 +20,20 @@ def transaction_form():
     transaction_date = st.date_input("Transaction Date", datetime.now().date())
     account_name = st.selectbox("Account", cashflow_account_name_list)
     amount = st.number_input("Amount", min_value=0.0)
-    purpose = st.selectbox("Purpose", [None] + cashflow_purpose)
-    source_notes = st.text_input("Notes (Optional)")
+    
+    
     transfer_to_account = None
-
+    # I removed income for display to avoid confusion
+    """
     if action_type == "Deposit (Income)":
         if st.button("Record Deposit"):
             record_saving_transaction(transaction_date, account_name, "Deposit", amount, purpose, source_notes)
             st.session_state['show_the_form'] = False # Set session state
             st.rerun()
-
-    elif action_type == "Withdrawal (Daily and House Expenses)":
+    """
+    if action_type == "Withdrawal (Daily and House Expenses)":
+        purpose = st.selectbox("Purpose", [None] + cashflow_purpose)
+        source_notes = st.text_input("Notes (Optional)")
         if st.button("Record Withdrawal"):
             record_saving_transaction(transaction_date, account_name, "Withdrawal", -amount, purpose, source_notes)
             st.session_state['show_the_form'] = False # Set session state
@@ -38,6 +41,8 @@ def transaction_form():
 
     
     elif action_type == "Transfer Between Accounts":
+        purpose = st.selectbox("Purpose", "Interest Earning Before Bookeeping")
+        source_notes = st.text_input("Notes (Optional)")
         transfer_to_account = st.selectbox("Transfer To Account (Different Accounts)", cashflow_account_name_list, index=1) # Default to a different account
         if st.button("Record Transfer"):
             # For a transfer, we'll record two transactions: one out, one in
