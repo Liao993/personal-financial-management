@@ -50,6 +50,6 @@ def saving_sum(transaction):
 
     # 5. Display the result in Streamlit (dropping the temporary monthly_total column if you wish)
     final_summary = final_summary_4.drop(columns=['monthly_all_total', 'monthly_r&m_total']) 
-    final_summary = final_summary.sort_values(by=['year', 'month'], ascending=[False, True])
+    final_summary = final_summary.sort_values(by=['year', 'month'], ascending=[False, False])
     st.dataframe(final_summary, hide_index=True)
    

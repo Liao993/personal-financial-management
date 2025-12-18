@@ -131,7 +131,7 @@ def fetch_last_cashflow_data():
             SELECT *
             FROM cashflow
             ORDER BY date DESC
-            LIMIT 10;
+            LIMIT 20;
         """
         try:
             cursor.execute(query)

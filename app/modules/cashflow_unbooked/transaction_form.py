@@ -41,7 +41,7 @@ def transaction_form():
 
     
     elif action_type == "Transfer Between Accounts":
-        purpose = st.selectbox("Purpose", "Interest Earning Before Bookeeping")
+        purpose = st.selectbox("Purpose", ["Interest Earning Before Bookeeping", "Trasfer for Payments"])
         source_notes = st.text_input("Notes (Optional)")
         transfer_to_account = st.selectbox("Transfer To Account (Different Accounts)", cashflow_account_name_list, index=1) # Default to a different account
         if st.button("Record Transfer"):
