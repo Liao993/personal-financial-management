@@ -8,3 +8,4 @@ dbt/profiles.yml
 test/
 historical_data
 backups
+backups_copy

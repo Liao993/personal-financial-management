@@ -56,13 +56,13 @@ def fetch_transaction_data_by_account_by_month():
                 FROM cashflow
                 GROUP BY EXTRACT(MONTH FROM date)
             )
-            SELECT EXTRACT(MONTH FROM date) AS month, account_name, SUM(amount) AS total_amount, t.monthly_savings
+            SELECT  EXTRACT(MONTH FROM date) AS month, account_name, SUM(amount) AS total_amount, t.monthly_savings
             FROM cashflow as c JOIN total_amount_by_month as t ON EXTRACT(MONTH FROM date) = t.month
             WHERE
                 date>= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
-                AND date < DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month'
-            GROUP BY EXTRACT(MONTH FROM date), account_name, t.monthly_savings
-            ORDER BY month;  -- Order by month for consistency
+                AND date <= DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month'
+            GROUP BY EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date), account_name, t.monthly_savings
+            ORDER BY EXTRACT(YEAR FROM date), month;  -- Order by month for consistency
             """
         try:
             cursor.execute(query, ())

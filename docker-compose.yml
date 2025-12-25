@@ -11,8 +11,8 @@ services:
     volumes:
       - ./database/01_init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql
       - postgres_data:/var/lib/postgresql/data
-      - ./historical_data:/csv_data
-      - ./database/02_csv_init_load.sql:/docker-entrypoint-initdb.d/02_csv_init_load.sql
+      #- ./historical_data:/csv_data
+      #- ./database/02_csv_init_load.sql:/docker-entrypoint-initdb.d/02_csv_init_load.sql
 
     networks:
       - budget_network
