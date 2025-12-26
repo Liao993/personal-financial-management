@@ -23,8 +23,6 @@ def create_category_spending_bar_chart(df):
     year = 2000 + int(year_suffix)
     
     total_spending = df['total_spending'].iloc[0] #get the total spending from the first row.
-    amount_i_spent = df['total_I_spent'].iloc[0]
-    
     category_colors = {
 
       'Food': '#e74c3c', #red
@@ -50,7 +48,7 @@ def create_category_spending_bar_chart(df):
 
     # Set the title
     fig.update_layout(
-        title=f"{city} trip in {month_name}, {year} : Total Spendings: ${total_spending:.2f}, and I spent ${amount_i_spent:.2f}",
+        title=f"{city} trip in {month_name}, {year}- Total Trip Spending: ${total_spending:.2f}",
         title_font=dict(size=20),
         xaxis_title="Spending Category",
         xaxis_title_font=dict(size=18),
@@ -60,7 +58,6 @@ def create_category_spending_bar_chart(df):
         xaxis=dict(tickfont=dict(size=15)), # Added x-axis tick label size
         yaxis=dict(tickfont=dict(size=18)) # Added x-axis tick label size
     )
-
     # Display the chart
     st.plotly_chart(fig, use_container_width=True)
 

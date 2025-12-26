@@ -21,12 +21,13 @@ def traveling_stats():
           if st.button("Choose Again", key="choose_again"):
             selected_the_trip()
         else:
-        
           col1, col2 = st.columns(2)
           with col1:
             create_category_spending_bar_chart(all_fetched_expense)
           with col2:
             create_annotated_pie_chart(all_fetched_expense)
+          amount_i_spent = round(all_fetched_expense['total_i_spent'].iloc[0],2)
+          st.info(f"Amount I Spent: ${amount_i_spent}")
     
 
 if __name__ == "__main__":
