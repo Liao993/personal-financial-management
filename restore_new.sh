@@ -33,28 +33,22 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
-# 3. Process Tables
+# --- Step 3: Restore Data (Improved Filter) ---
+echo "Restoring data..."
 for TABLE in ${TABLES_TO_PROCESS}; do
     BACKUP_FILE="${HOST_BACKUP_DIR}/${TABLE}_backup.sql"
     
-    if [ ! -f "${BACKUP_FILE}" ]; then
-        echo "Skipping ${TABLE}: Backup file not found."
-        continue
-    fi
+    if [ ! -f "${BACKUP_FILE}" ]; then continue; fi
 
     echo "Processing table: ${TABLE}..."
 
-    # STEP A: Empty the table without deleting it (KEEPS NEW COLUMNS)
+    # 1. Clear existing data
     docker compose exec -T db psql -U "${DB_USER}" -d "${DB_NAME}" -c "TRUNCATE TABLE \"${TABLE}\" CASCADE;"
 
-    # STEP B: Import data only
-    # We use sed to strip out 'CREATE TABLE' and 'ALTER TABLE' commands 
-    # This prevents the backup from overwriting your new 01_init_schema.sql structure
-    echo "  -> Injecting data from ${BACKUP_FILE}..."
-    sed -e '/^CREATE TABLE/d' -e '/^ALTER TABLE/d' -e '/^DROP TABLE/d' "${BACKUP_FILE}" | \
+    # 2. Import ONLY data lines (COPY and INSERT) and SEQUENCE updates
+    # This filter removes lines starting with CREATE, ALTER, or loose constraints
+    grep -E "^COPY|^INSERT|^SELECT|^SET|\\\." "${BACKUP_FILE}" | \
     docker compose exec -T db psql -U "${DB_USER}" -d "${DB_NAME}"
 
     echo "  -> Done."
 done
-
-echo "--- Restore Complete! ---"

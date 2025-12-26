@@ -20,8 +20,10 @@ CREATE TABLE IF NOT EXISTS expense (
     source_notes VARCHAR(255),
     traveling_category VARCHAR(255),
     trip VARCHAR(255),
-    number_of_travelers INTEGER,
-    paid_for_number_of_travlerers INTEGER
+    amount_for_number_of_travelers INTEGER,
+    paid_for_number_of_travlerers INTEGER,
+    house_category VARCHAR(255)
+    
 );
 
 CREATE TABLE IF NOT EXISTS transactions (
