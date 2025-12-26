@@ -43,6 +43,7 @@ def fetch_trip_expense(trip):
                     traveling_category,
                     SUM(amount) AS category_spending,
                     SUM(SUM(amount)) OVER (PARTITION BY trip) AS total_spending,
+                    SUM(SUM(amount_I_spend)) OVER (PARTITION BY trip) AS total_I_spent,
                     ROUND((SUM(amount)  / SUM(SUM(amount) ) OVER (PARTITION BY trip)  * 100.0), 2) AS percentage
                 FROM
                     dbt_budget.intermediate_expenses_with_summary

@@ -19,7 +19,7 @@ def historical_spending():
 
   
     selected_year = selected_year_choice_form()
-
+    st.info(selected_year)
 
     if selected_year is not None:
         all_fetched_expense = fetch_annual_expense(selected_year)

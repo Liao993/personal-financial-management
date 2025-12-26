@@ -2,6 +2,7 @@
 
 SELECT
     *,
+    (amount / NULLIF(COALESCE(amount_for_number_of_travelers, 1), 0)) * COALESCE(paid_for_number_of_travlerers, 1) AS amount_I_spend,
     CASE
         --WHEN category = 'House' THEN 'House'
         -- for data clean-up purposes

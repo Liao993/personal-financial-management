@@ -21,6 +21,7 @@ def traveling_stats():
           if st.button("Choose Again", key="choose_again"):
             selected_the_trip()
         else:
+        
           col1, col2 = st.columns(2)
           with col1:
             create_category_spending_bar_chart(all_fetched_expense)
