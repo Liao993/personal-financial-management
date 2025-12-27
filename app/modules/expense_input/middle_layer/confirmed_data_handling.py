@@ -1,7 +1,7 @@
 import streamlit as st # type: ignore
 import time
 from utils.validation import validate_expense_data
-from backend.expense_backend import insert_expense_data, insert_expense_data_with_source
+from backend.expense_backend import insert_expense_data_with_source
 from datetime import date
 
 
