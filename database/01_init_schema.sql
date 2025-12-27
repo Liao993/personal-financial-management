@@ -22,7 +22,10 @@ CREATE TABLE IF NOT EXISTS expense (
     trip VARCHAR(255),
     amount_for_number_of_travelers INTEGER,
     paid_for_number_of_travlerers INTEGER,
-    house_category VARCHAR(255)
+    house_category VARCHAR(255),
+
+    -- This line prevents the ETL from creating duplicates
+    CONSTRAINT unique_expense_entry UNIQUE (date, items, amount, source_notes)
     
 );
 
