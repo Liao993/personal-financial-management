@@ -12,9 +12,7 @@ def transformation(df_raw):
     df_clean['category'] = 'House'
     df_clean['house_category'] = df_raw['Category'].astype(str).str[:255]
     
-    # Tie-breaker logic (Google Sheet row number ensures unique identity for identical transactions)
-    df_clean['source_notes'] = ('House_Row_' + (df_raw.index + 2).astype(str))
-
+    df_clean['source_notes'] = 'House_Sheet'
     # Initialize empty columns with correct nullable types to match schema
     df_clean['traveling_category'] = pd.Series([None] * len(df_clean), dtype='string')
     df_clean['trip'] = pd.Series([None] * len(df_clean), dtype='string')
