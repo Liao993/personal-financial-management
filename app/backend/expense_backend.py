@@ -7,19 +7,36 @@ def insert_expense_data_with_source(validated_data: dict):
     if conn:
         cursor = conn.cursor()
         try:
-            query = "INSERT INTO expense (date, items, amount, category, traveling_category, trip, source_notes) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            #  validated_data['traveling_category'] can be None
+            # 1. Update the Query string with new columns
+            query = """
+                INSERT INTO expense (
+                    date, items, amount, category, 
+                    traveling_category, trip, source_notes, 
+                    house_category, 
+                    amount_for_number_of_travelers, 
+                    paid_for_number_of_travlerers
+                ) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            
+            # 2. Map the values (using .get for everything that isn't mandatory)
             values = (
                 validated_data['date'],
                 validated_data['items'],
                 validated_data['amount'],
                 validated_data['category'],
-                validated_data.get('traveling_category'),  # Use .get() to handle missing key
-                validated_data.get('trip'),  # Use .get() to handle missing key
-                validated_data['source_notes']
+                validated_data.get('traveling_category'),
+                validated_data.get('trip'),
+                validated_data.get('source_notes'),
+                validated_data.get('house_category'),
+                validated_data.get('amount_for_number_of_travelers'),
+                validated_data.get('paid_for_number_of_travlerers')
             )
+            
             cursor.execute(query, values)
             conn.commit()
+            st.success("Transaction recorded successfully!")
+            
         except psycopg2.Error as e:
             conn.rollback()
             st.error(f"Error inserting expense data: {e}")
