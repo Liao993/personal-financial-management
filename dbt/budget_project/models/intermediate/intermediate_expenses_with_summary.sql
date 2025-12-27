@@ -13,5 +13,13 @@ SELECT
         WHEN category = 'Traveling' THEN 'Traveling'
         
         ELSE 'Daily Expenses'
-    END AS summary_category
+    END AS summary_category,
+
+    CASE
+        WHEN house_category LIKE '%Mortgage%' THEN 'Mortgage'
+        WHEN house_category IN ('Internet', 'Electricity', 'Insurance', 'Water & Sewage','Oil | Gas | Fossil Fuel', 'Snow Removal') THEN 'Maintenance'
+        WHEN house_category LIKE '%Repairs%' THEN 'Repairs'
+        WHEN house_category LIKE '%TAX%' THEN 'TAX'
+        ELSE 'Other'
+    END AS house_summary_category
 FROM {{ source('public', 'expense') }}
