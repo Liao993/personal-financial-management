@@ -137,7 +137,8 @@ def fetch_house_expesne():
         try:
             cursor = conn.cursor()
             query = """
-                SELECT id, date, items, amount, category, house_category, house_summary_category
+                SELECT id, date, items, amount, category, house_category, house_summary_category, 
+                    EXTRACT(MONTH FROM date) AS month, EXTRACT(YEAR FROM date) AS year
                 FROM dbt_budget.intermediate_expenses_with_summary
                 WHERE category = 'House'
                 ORDER BY date DESC

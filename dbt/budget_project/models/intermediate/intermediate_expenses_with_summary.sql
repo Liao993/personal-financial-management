@@ -16,10 +16,11 @@ SELECT
     END AS summary_category,
 
     CASE
-        WHEN house_category LIKE '%Mortgage%' THEN 'Mortgage'
+        WHEN house_category = 'Mortgage' THEN 'Mortgage'
+        WHEN house_category = 'Extra Mortgage' THEN 'Extra Mortgage'
         WHEN house_category IN ('Internet', 'Electricity', 'Insurance', 'Water & Sewage','Oil | Gas | Fossil Fuel', 'Snow Removal') THEN 'Maintenance'
-        WHEN house_category LIKE '%Repairs%' THEN 'Repairs'
-        WHEN house_category LIKE '%TAX%' THEN 'TAX'
+        WHEN house_category LIKE '%Repair%' THEN 'Repairs'
+        WHEN house_category LIKE '%Tax%' THEN 'Tax'
         ELSE 'Other'
     END AS house_summary_category
 FROM {{ source('public', 'expense') }}
