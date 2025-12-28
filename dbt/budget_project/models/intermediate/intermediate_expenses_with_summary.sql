@@ -18,7 +18,7 @@ SELECT
     CASE
         WHEN house_category = 'Mortgage' THEN 'Mortgage'
         WHEN house_category = 'Extra Mortgage' THEN 'Extra Mortgage'
-        WHEN house_category IN ('Internet', 'Electricity', 'Insurance', 'Water & Sewage','Oil | Gas | Fossil Fuel', 'Snow Removal') THEN 'Maintenance'
+        WHEN house_category IN ('Internet', 'Electricity', 'Insurance', 'Water & Sewage','Oil', 'Snow Removal') THEN 'Regular Expenses'
         WHEN house_category LIKE '%Repair%' THEN 'Repairs'
         WHEN house_category LIKE '%Tax%' THEN 'Tax'
         ELSE 'Other'

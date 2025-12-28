@@ -23,8 +23,7 @@ def create_summary_category_chart(expense):
     final_df = pd.concat([summary_data, pd.DataFrame(total_rows)], ignore_index=True)
     
     # 4. Define Order and Categorical type
-    # Make sure spellings match your database (Maintenance vs Maintainance)
-    custom_order = ['Total Spending', 'Extra Mortgage', 'Mortgage', 'Maintenance', 'Repairs', 'Tax', 'Other']
+    custom_order = ['Total Spending', 'Extra Mortgage', 'Mortgage', 'Regular Expenses', 'Repairs', 'Tax', 'Other']
     final_df['summary_category'] = pd.Categorical(
         final_df['summary_category'], 
         categories=custom_order, 

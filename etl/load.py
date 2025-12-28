@@ -52,7 +52,7 @@ def load_new_house_data(df_clean):
     with engine.begin() as conn:
         #If I want to sync any update in Excel, I need to delete the records first
         # Remove all old 'House' records
-        #conn.execute(text("DELETE FROM expense WHERE category = 'House';"))
+        conn.execute(text("DELETE FROM expense WHERE category = 'House';"))
         result = conn.execute(text(upsert_sql))
         new_rows_count = result.rowcount
         conn.execute(text("DROP TABLE stg_house;"))

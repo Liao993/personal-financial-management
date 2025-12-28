@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt # type: ignore
 import seaborn as sns # type: ignore
 
 def create_category_bar_chart(expense):
-    st.markdown("<h3 style='text-align: center; color: #5dade2;'>AnnualHouse Spending by Category by Year</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: #5dade2;'>Annual House Spending by Category by Year</h3>", unsafe_allow_html=True)
     
     # 1. Filter out "Extra Mortgage"
     expense = expense[expense['house_category'] != 'Extra Mortgage'].copy()
@@ -12,7 +12,7 @@ def create_category_bar_chart(expense):
     # 2. Define specific categories and consolidate others
     selected_categories = [
         'Mortgage', 'Insurance', 'Tax', 'Internet', 'Electricity', 
-        'Water & Sewage', 'Oil | Gas | Fossil Fuel', 'Snow Removal', 'Repair & Maintenance'
+        'Water & Sewage', 'Oil', 'Snow Removal', 'Repair'
     ]
     expense.loc[~expense['house_category'].isin(selected_categories), 'house_category'] = 'Others'  
 
