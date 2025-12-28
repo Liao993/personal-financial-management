@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt # type: ignore
 import seaborn as sns # type: ignore
 
 def create_summary_category_chart(expense):
-    st.markdown("<h3 style='text-align: center; color: #5dade2;'>Annual Expense by Summary Category</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: #5dade2;'>Annual Expense by Summary Category by Year</h3>", unsafe_allow_html=True)
     
     df = expense.copy()
     df.rename(columns={'house_summary_category': 'summary_category'}, inplace=True)
