@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS expense (
     amount NUMERIC(10, 2) NOT NULL,
     category VARCHAR(255) NOT NULL,
     source_notes VARCHAR(255),
+    payment_method VARCHAR(255),
     traveling_category VARCHAR(255),
     trip VARCHAR(255),
     amount_for_number_of_travelers INTEGER,

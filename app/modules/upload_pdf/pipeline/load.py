@@ -1,7 +1,7 @@
 import streamlit as st # type: ignore
 import pandas as pd
 from utils.validation import validate_expense_data
-from backend.expense_backend import insert_expense_data_with_source
+from backend.expense_backend import insert_expense_data
 from decimal import Decimal
 
 # after verifying the data, load data into the database
@@ -11,7 +11,7 @@ def load_expense_data(updated_dataframe, bank):
         valid_expenses = []
         for index, row in updated_dataframe.iterrows():
             expense_data = row.to_dict()
-            expense_data['source_notes'] = bank
+            expense_data['payment_method'] = bank
             validated = validate_expense_data(expense_data)   
 
             if validated:
@@ -20,7 +20,7 @@ def load_expense_data(updated_dataframe, bank):
                 st.error("No valid expenses found in the DataFrame.")
                 return False
         for expense in valid_expenses:
-            insert_expense_data_with_source(expense) #check if the insertion was successful
+            insert_expense_data(expense) #check if the insertion was successful
         st.success(f"Successfully validated and inserted {len(valid_expenses)} expenses.")
         return True
     else:

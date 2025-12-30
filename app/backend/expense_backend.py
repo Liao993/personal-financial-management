@@ -2,7 +2,7 @@ import streamlit as st # type: ignore
 from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
 import pandas as pd # type: ignore
-def insert_expense_data_with_source(validated_data: dict):
+def insert_expense_data(validated_data: dict):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -11,12 +11,12 @@ def insert_expense_data_with_source(validated_data: dict):
             query = """
                 INSERT INTO expense (
                     date, items, amount, category, 
-                    traveling_category, trip, source_notes, 
+                    traveling_category, trip,  payment_method, source_notes, 
                     house_category, 
                     amount_for_number_of_travelers, 
                     paid_for_number_of_travlerers
                 ) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             
             # 2. Map the values (using .get for everything that isn't mandatory)
@@ -27,6 +27,7 @@ def insert_expense_data_with_source(validated_data: dict):
                 validated_data['category'],
                 validated_data.get('traveling_category'),
                 validated_data.get('trip'),
+                validated_data.get('payment_method'),
                 validated_data.get('source_notes'),
                 validated_data.get('house_category'),
                 validated_data.get('amount_for_number_of_travelers'),

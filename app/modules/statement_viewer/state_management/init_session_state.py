@@ -7,7 +7,7 @@ def init_session_state():
     if QUERY_MODE_KEY not in st.session_state:
         st.session_state[QUERY_MODE_KEY] = True 
     if LAST_QUERY_KEY not in st.session_state:
-        st.session_state[LAST_QUERY_KEY] = "SELECT * FROM expense LIMIT 10" 
+        st.session_state[LAST_QUERY_KEY] = "select * from expense order by id desc" 
     if RESULT_DF_KEY not in st.session_state:
         st.session_state[RESULT_DF_KEY] = pd.DataFrame()
     if HINT_MODE_KEY not in st.session_state:

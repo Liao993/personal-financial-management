@@ -12,6 +12,7 @@ class Expense(BaseModel):
     traveling_category: Optional[str] = None 
     trip: Optional[str] = None 
     source_notes: Optional[str] = None
+    payment_method: Optional[str] = None
     house_category: Optional[str] = None
     amount_for_number_of_travelers: Optional[int] = None
     paid_for_number_of_travlerers: Optional[int] = None

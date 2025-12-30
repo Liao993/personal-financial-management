@@ -2,8 +2,8 @@ import pandas as pd
 import streamlit as st # type: ignore
 from datetime import date
 from utils.css import drop_down_list
-from utils.data import expense_category_options, common_store_list, traveling_category_options
-from modules.expense_input.middle_layer.common_items_check import common_items_check
+from utils.data import expense_category_options, common_store_list, traveling_category_options, payment_method
+from modules.expense_input.middle_layer.common_items_combined import common_items_combined
 
 def expense_form(edit_mode_form, data_saved_key, expense_data_key):
 
@@ -17,6 +17,8 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
       expense_items = st.text_input("Items (if not in common store list), such as GREAT ENLIGHTENMENT BU MURRAY RIVER PE", key="custom_item_input")
       expense_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=100.00)
       expense_category = st.selectbox("Category", expense_category_options, index=1)
+      how_paid = st.selectbox("Payment Method", payment_method, index=1)
+      source_notes = st.text_input("Notes (Optional)")
       traveling = st.selectbox("Traveling Category", [None] + traveling_category_options)
       trip_input = st.text_input("Trip-Year-Month (e.g., Vancouver-Jan25)")
       trip = trip_input if trip_input else None
@@ -25,7 +27,7 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
       expense_common_items = st.session_state.get("common_item_select")
       expense_items = st.session_state.get("custom_item_input")
   
-      final_expense_items = common_items_check(expense_common_items, expense_items)
+      final_expense_items = common_items_combined(expense_common_items, expense_items)
 
     
       review_button = st.form_submit_button("Review")
@@ -36,6 +38,8 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
             "amount":  expense_amount,
             "category": expense_category,
             "items": final_expense_items,
+            "payment_method": how_paid,
+            "source_notes": source_notes,
             "traveling_category": traveling,
             "trip" : trip
          }

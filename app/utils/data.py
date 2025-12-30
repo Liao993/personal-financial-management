@@ -1,4 +1,4 @@
-#expense
+# Expense
 common_store_directory = {
     'SOBEYS': 'Grocery',
     "LEONHARD": 'Food Outside',
@@ -44,10 +44,11 @@ common_store_directory = {
     "PHOVIETNAM": 'Food Outside',
     
 }
-#used for catching daily expense from being in traveling category
+
+# Used for catching daily expense from being in traveling category
 daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT', "LUCKY MOBILE", "PHO VIETNAM"]
 
-#used for expense input
+# used for expense input
 common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
                      'Dollarama', 'A&W', 'Shoppers Drug Mart', 'Global Grocery', 'Costco', 
                      'Take Sushi', 'Petro', 'Starbucks', 'Irving', 
@@ -62,8 +63,9 @@ expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
 traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking/Tolls", "Food", "Tickets", "Others"]
+payment_method = ["PC", "Scotia_Red", "RBC", "eTransfer", "Debit Card", "Cash"]
 
-#transaction
+# transaction
 fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "House", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
 
 account_name_list = ["RBC Chequing", "TD House", "EQ 10D Notice", "EQ 30D Notice", "RBC TFSA", "EQ TFSA", "Questrade TFSA (Travel)", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP" ]
@@ -71,18 +73,18 @@ cashflow_account_name_list = ["RBC Chequing", "EQ 10D Notice", "EQ 30D Notice"]
 
 transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 
-#cashflow
+# cashflow
 cashflow_transaction_type_list = ["Withdrawal (Daily and House Expenses)", "Transfer Between Accounts"]
 cashflow_purpose = ["House Expense" ,"RBC credit card payment", "PC credit card payment","Scotia-Red credit card payment", "Debit Card payment", "eTransfer payment", "Cash payment"]
 
 # the one used for database for both transactions and cashflow
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
-#Change every year
+# Change every year
 TFSA_room = 32500
 RRSP_room = 14729
 
 years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]
 
-#Default value for income amount in the form
-fixed_income_data = 1787.28 
+# Default value for income amount in the form
+fixed_income_data = 1787.28
