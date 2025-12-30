@@ -1,15 +1,21 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
 def saving_sum(transaction):
-  # get three summary and group by year and month
+  # get summary of retire, medium and traveling and group by year and month
     transaction.rename(columns={'fund_category' : "category"}, inplace=True)
     transaction_filtered = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', "Traveling Funds"])]
     transaction_filtered = transaction_filtered[transaction_filtered['transaction_type'].isin(['Deposit'])]
     transaction_filtered['month'] = pd.to_datetime(transaction_filtered['date']).dt.month
     transaction_filtered['year'] = pd.to_datetime(transaction_filtered['date']).dt.year
 
-    #redesign dataframe format
+  # to get withdrawl usage for Medium Saving
+    transaction_filtered_medium = transaction[transaction['category'].isin(['Medium-term Saving'])]
+    transaction_filtered_medium = transaction_filtered_medium[transaction_filtered_medium['transaction_type'].isin(['Withdrawal'])]
+    transaction_filtered_medium['month'] = pd.to_datetime(transaction_filtered_medium['date']).dt.month
+    transaction_filtered_medium['year'] = pd.to_datetime(transaction_filtered_medium['date']).dt.year
 
+  # 1. Pivot and redesign dataframe format
+    st.markdown(f"<h3 style='text-align: center; color: #f1c40f;'>Saving Summary (All Deposit)</h3>", unsafe_allow_html=True)
     summary_pivot = transaction_filtered.pivot_table(
     index=['year', 'month'],
     columns='category',
@@ -30,14 +36,14 @@ def saving_sum(transaction):
 
     # 2. Calculate the yearly average from the monthly totals
     yearly_avg = summary_pivot.groupby('year')['monthly_all_total'].mean().reset_index()
-    yearly_avg = yearly_avg.rename(columns={'monthly_all_total': 'Yearly Average'})
+    yearly_avg = yearly_avg.rename(columns={'monthly_all_total': 'Monthly Average (R+M+T)'})
 
     yearly_r_d_avg = summary_pivot.groupby('year')['monthly_r&m_total'].mean().reset_index()
-    yearly_r_d_avg = yearly_r_d_avg.rename(columns={'monthly_r&m_total': 'Yearly Average (R+M)'})
+    yearly_r_d_avg = yearly_r_d_avg.rename(columns={'monthly_r&m_total': 'Monthly Average (R+M)'})
 
     # 3. Calculate the yearly sum from the monthly totals
     yearly_sum = summary_pivot.groupby('year')['monthly_all_total'].sum().reset_index()
-    yearly_sum = yearly_sum.rename(columns={'monthly_all_total': 'Yearly Total'})
+    yearly_sum = yearly_sum.rename(columns={'monthly_all_total': 'Yearly Total (R+M+T)'})
    
     yearly_r_d_sum = summary_pivot.groupby('year')['monthly_r&m_total'].sum().reset_index()
     yearly_r_d_sum = yearly_r_d_sum.rename(columns={'monthly_r&m_total': 'Yearly Total (R+M)'})
@@ -47,9 +53,12 @@ def saving_sum(transaction):
     final_summary_2 = pd.merge(final_summary_1, yearly_avg, on='year', how='left')
     final_summary_3 = pd.merge(final_summary_2, yearly_r_d_sum, on='year', how='left')
     final_summary_4 = pd.merge(final_summary_3, yearly_sum, on='year', how='left')
+    # 5. add Medium Yearly Withdrawl Amount
+    withdrawal_sum = pd.DataFrame(transaction_filtered_medium.groupby('year')['amount'].sum().reset_index().rename(columns={'amount': 'Yearly Medium Withdrawal'}))
+    final_summary_5 = pd.merge(final_summary_4, withdrawal_sum, on='year', how='left')
 
-    # 5. Display the result in Streamlit (dropping the temporary monthly_total column if you wish)
-    final_summary = final_summary_4.drop(columns=['monthly_all_total', 'monthly_r&m_total']) 
+    # 6. Display the result in Streamlit (dropping the temporary monthly_total column if you wish)
+    final_summary = final_summary_5.drop(columns=['monthly_all_total', 'monthly_r&m_total']) 
     final_summary = final_summary.sort_values(by=['year', 'month'], ascending=[False, False])
     st.dataframe(final_summary, hide_index=True)
    

@@ -19,7 +19,7 @@ def annual_kpi(year, expense, income, transaction):
         total_spending = total_expense + house_sum
         spending_pct = int(total_spending) / int(total_income) * 100
         st.markdown(
-            f"<p style='font-size: 22px; color: red; text-align: center;'><b>Total Spending</b></p>"
+            f"<p style='font-size: 22px; color: #e74c3c; text-align: center;'><b>Total Spending</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>${total_spending:.2f}</b></p>"
             f"<p style='font-size: 24px;  text-align: center;'><b>{spending_pct:.2f}%</b></p>",
             unsafe_allow_html=True,
@@ -38,7 +38,7 @@ def annual_kpi(year, expense, income, transaction):
         house_sum = transaction[transaction['fund_category'] == 'House']['total_amount'].sum()
         house_pct = house_sum/total_income * 100
         st.markdown(
-            f"<p style='font-size: 22px; color: #28913F; text-align: center;'><b>Total House</b></p>"
+            f"<p style='font-size: 22px; color: #bce784; text-align: center;'><b>Total House</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>${house_sum:.2f}</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>{house_pct:.2f}%</b></p>",
             unsafe_allow_html=True,
@@ -47,7 +47,7 @@ def annual_kpi(year, expense, income, transaction):
         daily_sum = expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum()
         daily_pct = daily_sum/total_income * 100
         st.markdown(
-            f"<p style='font-size: 22px; color: #9B72C3; text-align: center;'><b>Total Offerings</b></p>"
+            f"<p style='font-size: 22px; color: #989fce; text-align: center;'><b>Total Offerings</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>${daily_sum:.2f}</b></p>"
             f"<p style='font-size: 24px; text-align: center;'><b>{daily_pct:.2f}%</b></p>",
             unsafe_allow_html=True,

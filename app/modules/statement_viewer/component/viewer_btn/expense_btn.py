@@ -4,25 +4,7 @@ def expense_btn():
     query_buttons = st.columns(6)
     
     with query_buttons[0]:
-        if st.button("💸 All Expenses", use_container_width=True):
-            execute_predefined_query("""
-                                          SELECT 
-                                                *,
-                                                -- get donation total
-                                                SUM(CASE 
-                                                        WHEN category = 'Donation' THEN amount 
-                                                        ELSE 0 
-                                                    END) OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS donation_year_total,
-                                                -- get yearly total
-                                                SUM(amount) OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS year_total
-                                            FROM 
-                                                expense 
-                                            ORDER BY 
-                                                date DESC;
-                                     """)
-    
-    with query_buttons[1]:
-        if st.button("💸 All Non-Traveling Expenses", use_container_width=True):
+        if st.button("💸 All Regular Expenses", use_container_width=True):
              execute_predefined_query("""
                                         SELECT 
                                                 id, date, items, amount, category,
@@ -41,20 +23,36 @@ def expense_btn():
                                             FROM 
                                                 expense 
                                             WHERE 
-                                                category != 'Traveling' 
+                                                category != 'Traveling' and category != 'House'
+                                            ORDER BY 
+                                                date DESC;
+                                     """)
+       
+    
+    with query_buttons[1]:
+         if st.button("💸 All House Expenses", use_container_width=True):
+            execute_predefined_query("""
+                                          SELECT 
+                                                id, date, items, amount, category,house_category, house_summary_category,
+                                                -- Get yearly Regular Expenses
+                                                SUM(CASE WHEN house_summary_category = 'Regular Expenses' THEN amount ELSE 0 END) OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS "year_regular_expense",
+                                              
+                                                -- get yearly total
+                                                SUM(CASE WHEN house_category != 'Extra Mortgage' THEN amount ELSE 0 END) OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS "year_total (Excluded Extra Mortgage)"
+                                            FROM 
+                                                dbt_budget.intermediate_expenses_with_summary
+                                            WHERE 
+                                                category = 'House'
                                             ORDER BY 
                                                 date DESC;
                                      """)
     
     with query_buttons[2]:
-        if st.button("💸 Expenses by Category", use_container_width=True):
-            execute_predefined_query("SELECT category, SUM(amount) AS total_amount FROM expense GROUP BY category ORDER BY total_amount DESC")
-   
-    with query_buttons[3]:
-        if st.button("💸 All Traveling Expenses", use_container_width=True):
+         if st.button("💸 All Traveling Expenses", use_container_width=True):
             execute_predefined_query("""
                                      SELECT 
-                                            *, 
+                                            id, date, items, amount, category, trip, traveling_category, 
+                                            amount_for_number_of_travelers, paid_for_number_of_travlerers,
                                             -- Calculate the SUM of 'amount' partitioned by the 'trip' column
                                             SUM(amount) OVER (PARTITION BY trip) AS trip_total
                                             FROM 
@@ -69,6 +67,28 @@ def expense_btn():
                                                 date DESC;
                                                                                 
                                      """)
+   
+    with query_buttons[3]:
+        if st.button("💸 Expenses by Category", use_container_width=True):
+            execute_predefined_query("""
+                                     SELECT category, 
+                                        EXTRACT(YEAR FROM date) AS year,
+                                        SUM(amount) AS total_amount,
+                                        -- Get total spending excluding house
+                                        SUM(SUM(CASE WHEN category != 'House' THEN amount ELSE 0 END))
+                                             OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS "total_yearly_expense (Excluding House)",
+                                        -- Get House spending
+                                        SUM(SUM(CASE WHEN category = 'House' and house_category != 'Extra Mortgage' THEN amount ELSE 0 END))
+                                             OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS "total_yearly_expense (House)",
+                                        -- total spending of the year - exclude extra mortgage
+                                        SUM(SUM(CASE WHEN house_category != 'Extra Mortgage' OR house_category IS NULL THEN amount ELSE 0 END))
+                                            OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS "total_yearly_expense"
+                                     FROM expense 
+                                  
+                                     GROUP BY category, EXTRACT(YEAR FROM date)
+                                    ORDER BY year DESC, total_amount DESC
+                                     """)
+       
     with query_buttons[4]:
         if st.button("💸 Grocery Store Expenses", use_container_width=True):
             execute_predefined_query("""
