@@ -23,8 +23,8 @@ def historical_spending():
     if selected_year is not None:
         all_fetched_expense = fetch_annual_expense(selected_year)
         all_fetched_income = fetch_annual_income_by_month(selected_year)
-        all_fetched_transaction = fetch_transaction_data_by_year(selected_year)
-        all_fetched_monthly_transaction = fetch_transaction_data_by_month(selected_year)
+        all_fetched_transaction = fetch_transaction_data_by_year(selected_year) # Consider all transactions to reflect actual saving
+        all_fetched_monthly_transaction = fetch_transaction_data_by_month(selected_year) # Only consider deposit
         if (len(all_fetched_expense) == 0) | (len(all_fetched_income) == 0):
             st.warning("No Spending or Annual Income in the selected year")
             #if st.button("Choose Again", key="choose_again"):

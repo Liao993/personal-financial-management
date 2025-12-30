@@ -87,7 +87,7 @@ def fetch_transaction_data_by_year(year):
         query = """
             SELECT fund_category, SUM(amount) AS total_amount
             FROM transactions
-            WHERE EXTRACT(YEAR FROM date) = %s AND  transaction_type = 'Deposit' 
+            WHERE EXTRACT(YEAR FROM date) = %s 
             GROUP BY fund_category
             """
         try:
