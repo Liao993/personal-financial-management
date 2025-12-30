@@ -18,7 +18,7 @@ def financial_goals_form():
             goal_date = st.date_input("Date (Please select the last day of the month you want to note)", value=date.today()) 
     
         with col2:
-            home_deposit = st.number_input("Home Deposit this month", value=500.00, format="%.2f")
+            home_deposit = st.number_input("Home Deposit this month", value=0.00, format="%.2f")
 
         # Second line: Saving Goal and Retirement Percentage & Current Unnoted Amount in 10 days notice
         col4, col5, col6 = st.columns(3)

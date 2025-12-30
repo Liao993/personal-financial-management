@@ -7,7 +7,7 @@ def expense_btn():
         if st.button("💸 All Regular Expenses", use_container_width=True):
              execute_predefined_query("""
                                         SELECT 
-                                                id, date, items, amount, category,
+                                                id, date, items, amount, category,source_notes,
                                                 -- get grocery total
                                                 SUM(CASE
                                                         WHEN category = 'Grocery' THEN amount
