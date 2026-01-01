@@ -61,10 +61,12 @@ def expense_btn():
                                                 category = 'Traveling' 
                                             -- Sorting is now done by the extracted year first, then by the trip name, then by date descending
                                             ORDER BY 
+                                                date DESC,
+                                                trip,
                                                 EXTRACT(YEAR FROM date) desc, 
-                                                EXTRACT(MONTH FROM date) desc,
-                                                trip, 
-                                                date DESC;
+                                                EXTRACT(MONTH FROM date) desc
+
+                                                
                                                                                 
                                      """)
    

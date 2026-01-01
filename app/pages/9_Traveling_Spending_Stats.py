@@ -1,8 +1,10 @@
 import streamlit as st # type: ignore
 import pandas as pd
 
-from modules.traveling_stats.components.traveling_pie_chart import create_annotated_pie_chart
-from modules.traveling_stats.components.traveling_bar_chart import create_category_spending_bar_chart
+from modules.traveling_stats.components.total_traveling_pie_chart import create_annotation_pie_chart
+from modules.traveling_stats.components.total_traveling_bar_chart import create_category_spending_bar_chart
+from modules.traveling_stats.components.I_spend_traveling_bar_chart import  create_I_spend_bar_chart
+from modules.traveling_stats.components.I_spend_traveling_pie_chart import create_I_spend_pie_chart
 from modules.traveling_stats.middle_layer.select_trip import selected_the_trip
 from backend.trip_backend import fetch_trip_expense
 st.set_page_config(page_title="Traveling Stats", page_icon="💰", layout="wide")
@@ -21,14 +23,25 @@ def traveling_stats():
           if st.button("Choose Again", key="choose_again"):
             selected_the_trip()
         else:
+          total_spending = all_fetched_expense['total_spending'].iloc[0] #get the total spending from the first row.
+          st.markdown(f"<h3 style='text-align: left; color: #f1c40f;'>Traveling Breakdown - Total Amount: ${total_spending:.2f}</h3>", unsafe_allow_html=True)
           col1, col2 = st.columns(2)
           with col1:
             create_category_spending_bar_chart(all_fetched_expense)
           with col2:
-            create_annotated_pie_chart(all_fetched_expense)
-          amount_i_spent = round(all_fetched_expense['total_i_spent'].iloc[0],2)
-          st.info(f"Amount I Spent: ${amount_i_spent}")
-    
+            create_annotation_pie_chart(all_fetched_expense)
+          st.divider()
+          total_amount_I_spend = all_fetched_expense['total_i_spent'].iloc[0]
+          st.markdown(f"<h3 style='text-align: left; color: #f1c40f;'>Traveling Breakdown - Total Amount I Spent (Taken From Traveling Founds): ${total_amount_I_spend:.2f}</h3>", unsafe_allow_html=True)
+
+          col3, col4 = st.columns(2)
+          with col3:
+            create_I_spend_bar_chart(all_fetched_expense)
+          with col4:
+            create_I_spend_pie_chart(all_fetched_expense)
+          st.divider()
+          amount_spend_by_other = total_spending - total_amount_I_spend
+          st.markdown(f"<h3 style='text-align: left; color: #f1c40f;'>Traveling Breakdown - Total Amount Spent by Other: ${amount_spend_by_other:.2f}</h3>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
   traveling_stats()

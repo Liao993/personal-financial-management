@@ -1,11 +1,11 @@
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+import seaborn as sns # type: ignore
+import matplotlib.pyplot as plt # type: ignore
 import streamlit as st # type: ignore
 import plotly.graph_objects as go # type: ignore
 import numpy as np
 
-def create_annotated_pie_chart(df):
+def create_annotation_pie_chart(df):
     """
     Creates a pie chart from a Pandas DataFrame with columns:
     'traveling_category', 'category_spending', 'total_spending', and 'percentage'.
@@ -20,7 +20,7 @@ def create_annotated_pie_chart(df):
         return
 
     # Check for required columns
-    required_columns = ['traveling_category', 'category_spending', 'total_spending', 'percentage']
+    required_columns = ['traveling_category', 'category_spending', 'total_spending', 'percentage_total']
     if not all(col in df.columns for col in required_columns):
         missing_columns = [col for col in required_columns if col not in df.columns]
         st.error(f"DataFrame is missing the following columns: {', '.join(missing_columns)}")
@@ -62,7 +62,7 @@ def create_annotated_pie_chart(df):
     )
 
     # 3. Display the Chart
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, key='total_pie_chart')
 
 
  
