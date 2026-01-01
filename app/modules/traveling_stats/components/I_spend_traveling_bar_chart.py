@@ -21,7 +21,6 @@ def create_I_spend_bar_chart(df):
     month_name = month_year[:-2]
     year_suffix = month_year[-2:]
     year = 2000 + int(year_suffix)
-    total_spending = df['total_i_spent'].iloc[0] #get the total spending from the first row.
     category_colors = {
 
       'Food': '#1a5276', #navy
@@ -47,7 +46,7 @@ def create_I_spend_bar_chart(df):
 
     # Set the title
     fig.update_layout(
-        title=f"{city} trip in {month_name}, {year}- Amount I spent: ${total_spending:.2f}",
+        title=f"{city} trip in {month_name}, {year}",
         title_font=dict(size=20),
         xaxis_title="Spending Category",
         xaxis_title_font=dict(size=18),

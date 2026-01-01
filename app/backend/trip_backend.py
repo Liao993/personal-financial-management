@@ -45,8 +45,15 @@ def fetch_trip_expense(trip):
                     ROUND(SUM(amount_I_spend),2) AS category_i_spent,
                     SUM(SUM(amount)) OVER (PARTITION BY trip) AS total_spending,
                     ROUND(SUM(SUM(amount_I_spend)) OVER (PARTITION BY trip),2) AS total_i_spent,
-                    ROUND((SUM(amount)  / SUM(SUM(amount) ) OVER (PARTITION BY trip)  * 100.0), 2) AS percentage_total,
-                    ROUND((SUM(amount_I_spend)  / SUM(SUM(amount_I_spend) ) OVER (PARTITION BY trip)  * 100.0), 2) AS percentage_I_spent
+                    -- Percentage of Total (Safe from Division by Zero)
+                    ROUND(
+                        (SUM(amount) / NULLIF(SUM(SUM(amount)) OVER (PARTITION BY trip), 0)) * 100.0, 
+                    2) AS percentage_total,
+                    
+                    -- Percentage I Spent (Safe from Division by Zero)
+                    ROUND(
+                        (SUM(amount_I_spend) / NULLIF(SUM(SUM(amount_I_spend)) OVER (PARTITION BY trip), 0)) * 100.0, 
+                    2) AS percentage_I_spent
                 FROM
                     dbt_budget.intermediate_expenses_with_summary
                 WHERE

@@ -4,7 +4,10 @@
 SELECT
     *,
     {# Calculate amount I spend #}
-    (amount / NULLIF(COALESCE(amount_for_number_of_travelers, 1), 0)) * COALESCE(paid_for_number_of_travlerers, 1) AS amount_I_spend,
+    COALESCE(
+    (amount / NULLIF(amount_for_number_of_travelers, 0)) * paid_for_number_of_travlerers, 
+    0
+    ) AS amount_I_spend,
 
     {# Call the Macro for Summary Category #}
     {{ get_summary_category('category') }} AS summary_category,
