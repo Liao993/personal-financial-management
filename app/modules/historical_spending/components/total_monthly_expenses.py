@@ -23,7 +23,7 @@ def create_monthly_expense_bar_chart(expense, transaction):
             return 'Other'
             
     expense['expense_group'] = expense['category'].apply(categorize_expense)
-
+    
 
     # 1. Aggregate donation and non-donation amounts separately by month
     summary_data = (
@@ -39,7 +39,6 @@ def create_monthly_expense_bar_chart(expense, transaction):
 
     # Convert Decimal to float
     summary_data['amount'] = summary_data['amount'].apply(decimal.Decimal.__float__)
-
     # 3.Pivot so each month has two columns: Donation, Grocery, Others
     pivot_data = summary_data.pivot(index='month', columns='expense_group', values='amount').fillna(0)
 

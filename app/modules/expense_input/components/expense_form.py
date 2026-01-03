@@ -21,8 +21,23 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
       source_notes = st.text_input("Notes (Optional)")
       traveling = st.selectbox("Traveling Category", [None] + traveling_category_options)
       trip_input = st.text_input("Trip-Year-Month (e.g., Vancouver-Jan25)")
-      amount_for_number_of_travelers = st.number_input("Amount of Travelers", min_value=1, value=2, step=1)
-      paid_for_number_of_travlerers = st.number_input("Amount of Travelers I Paid", min_value=0, value=2, step=1)
+      # The widget will return None until a user enters a value
+      amount_for_number_of_travelers = st.number_input(
+         "Amount of Travelers", 
+         min_value=1, 
+         value=None,  # This allows the variable to be None initially
+         placeholder="Type a number...",
+         step=1
+      )
+
+      paid_for_number_of_travlerers = st.number_input(
+         "Amount of Travelers I Paid", 
+         min_value=0, 
+         value=None, 
+         placeholder="Type a number...",
+         step=1
+      )
+    
       trip = trip_input if trip_input else None
 
       #expense items handling
