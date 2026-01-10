@@ -19,6 +19,10 @@ def upload_expense():
         action_options = ["RBC", "PC", "Scotia_Red"]
         st.session_state['selected_action'] = st.selectbox("Which Bank for your statements?", action_options)
         uploaded_pdf = pdf_upload()
+        
+        st.info("8th-10th: PC for majority last month +  5 days this month")
+        st.info("11th-15th: Scotia bank half last month + half this month")
+        st.info("23rd-26th: RBC for 10 day last month + Majority this month")
         if uploaded_pdf: 
             st.session_state['uploaded_pdf_files_list'] = uploaded_pdf
             st.success(f"Uploaded {len(uploaded_pdf)} file(s).")

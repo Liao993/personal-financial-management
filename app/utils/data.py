@@ -63,7 +63,7 @@ expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
 traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking/Tolls", "Food", "Tickets", "Others"]
-payment_method = ["PC", "Scotia_Red", "RBC", "eTransfer", "Debit Card", "Cash"]
+payment_method = ["PC", "Scotia_Red", "RBC", "eTransfer", "Debit Card", "Cash", "Account Deduction"]
 
 # transaction
 fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "House", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
@@ -75,7 +75,7 @@ transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (betw
 
 # cashflow
 cashflow_transaction_type_list = ["Withdrawal (Daily and House Expenses)", "Transfer Between Accounts"]
-cashflow_purpose = ["House Expense" ,"RBC credit card payment", "PC credit card payment","Scotia-Red credit card payment", "Debit Card payment", "eTransfer payment", "Cash payment"]
+cashflow_purpose = ["House Expense" ,"RBC credit card payment", "PC credit card payment","Scotia-Red credit card payment", "Debit Card payment", "eTransfer payment", "Cash payment", "Account deduction"]
 
 # the one used for database for both transactions and cashflow
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
