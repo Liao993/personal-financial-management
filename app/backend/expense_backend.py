@@ -114,7 +114,7 @@ def fetch_last_expense_data():
                 FROM expense
                 Where category != 'House'
                 ORDER BY date DESC
-                LIMIT 10;
+                LIMIT 20;
             """
             cursor.execute(query)
             rows = cursor.fetchall()
