@@ -1,88 +1,116 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
+
 def saving_sum(transaction):
-  # get summary of retire, medium and traveling and group by year and month
-    transaction.rename(columns={'fund_category' : "category"}, inplace=True)
-    transaction_filtered = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', "Traveling Funds"])]
-    transaction_filtered = transaction_filtered[transaction_filtered['transaction_type'].isin(['Deposit'])]
-    transaction_filtered['month'] = pd.to_datetime(transaction_filtered['date']).dt.month
-    transaction_filtered['year'] = pd.to_datetime(transaction_filtered['date']).dt.year
-
-  # to get withdrawl usage for Medium Saving
-    transaction_filtered_medium = transaction[transaction['category'].isin(['Medium-term Saving'])]
-    transaction_filtered_medium = transaction_filtered_medium[transaction_filtered_medium['transaction_type'].isin(['Withdrawal'])]
-    transaction_filtered_medium['month'] = pd.to_datetime(transaction_filtered_medium['date']).dt.month
-    transaction_filtered_medium['year'] = pd.to_datetime(transaction_filtered_medium['date']).dt.year
-
-    # 1. Pivot and redesign dataframe format
-    summary_pivot = transaction_filtered.pivot_table(
-    index=['year', 'month'],
-    columns='category',
-    values='amount',
-    aggfunc='sum'
-    ).reset_index()
-
-    # 2. Rename columns to match your desired format (if needed, assuming c1, c2, c3 exist)
-    summary_pivot.columns.name = None # Remove the 'category' column name from the index
-
-    # 3. Create the calculated subtotal columns
+    transaction.rename(columns={'fund_category' : 'category'}, inplace=True)
     
-    summary_pivot['Monthly (R+M)'] = summary_pivot['Retirement Saving'] + summary_pivot['Medium-term Saving']
-    summary_pivot['Monthly (R+M+T)'] = summary_pivot['Retirement Saving'] + summary_pivot['Medium-term Saving'] + summary_pivot['Traveling Funds']
+    # Ensure amount is numeric for calculations
+    transaction['amount'] = pd.to_numeric(transaction['amount'], errors='coerce').fillna(0)
 
-    # 4. Calculate the total for the month 
-  
-    summary_pivot['monthly_all_total'] = summary_pivot[['Retirement Saving', 'Medium-term Saving', 'Traveling Funds']].sum(axis=1)
-    summary_pivot['monthly_r&m_total'] = summary_pivot[['Retirement Saving', 'Medium-term Saving']].sum(axis=1)
-
-    # 2. Calculate the yearly average from the monthly totals
-    yearly_avg = summary_pivot.groupby('year')['monthly_all_total'].mean().reset_index()
-    yearly_avg = yearly_avg.rename(columns={'monthly_all_total': 'Monthly Average (R+M+T)'})
-
-    yearly_r_d_avg = summary_pivot.groupby('year')['monthly_r&m_total'].mean().reset_index()
-    yearly_r_d_avg = yearly_r_d_avg.rename(columns={'monthly_r&m_total': 'Monthly Average (R+M)'})
-
-    yearly_r_avg = summary_pivot.groupby('year')['Retirement Saving'].mean().reset_index()
-    yearly_r_avg = yearly_r_avg.rename(columns={'Retirement Saving': 'Monthly Average (R)'})  
-
-    yearly_m_avg = summary_pivot.groupby('year')['Medium-term Saving'].mean().reset_index()
-    yearly_m_avg = yearly_m_avg.rename(columns={'Medium-term Saving': 'Monthly Average (M)'})  
-    # 3. Calculate the yearly sum from the monthly totals
-    yearly_sum = summary_pivot.groupby('year')['monthly_all_total'].sum().reset_index()
-    yearly_sum = yearly_sum.rename(columns={'monthly_all_total': 'Yearly Total (R+M+T)'})
-   
-    yearly_r_d_sum = summary_pivot.groupby('year')['monthly_r&m_total'].sum().reset_index()
-    yearly_r_d_sum = yearly_r_d_sum.rename(columns={'monthly_r&m_total': 'Yearly Total (R+M)'})
-
-    yearly_r_sum = summary_pivot.groupby('year')['Retirement Saving'].sum().reset_index()
-    yearly_r_sum = yearly_r_sum.rename(columns={'Retirement Saving': 'Yearly Total (R)'})
-
-    yearly_m_sum = summary_pivot.groupby('year')['Medium-term Saving'].sum().reset_index()
-    yearly_m_sum = yearly_m_sum.rename(columns={'Medium-term Saving': 'Yearly Total (M)'})
+    # --- MONTHLY SUMMARY (DEPOSITS ONLY) ---
+    txn_monthly = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', 'Traveling Funds'])].copy()
+    txn_monthly = txn_monthly[txn_monthly['transaction_type'].isin(['Deposit'])]
+    txn_monthly['month'] = pd.to_datetime(txn_monthly['date']).dt.month
+    txn_monthly['year'] = pd.to_datetime(txn_monthly['date']).dt.year
     
-    # 4. Create separate yearly and monthly DataFrames
-    yearly_summary = pd.merge(yearly_sum, yearly_r_d_sum, on='year', how='outer')
-    yearly_summary = pd.merge(yearly_summary, yearly_r_sum, on='year', how='outer')
-    yearly_summary = pd.merge(yearly_summary, yearly_m_sum, on='year', how='outer')
-    yearly_summary = pd.merge(yearly_summary, yearly_avg, on='year', how='outer')
-    yearly_summary = pd.merge(yearly_summary, yearly_r_d_avg, on='year', how='outer')
-    yearly_summary = pd.merge(yearly_summary, yearly_r_avg, on='year', how='outer')
-    yearly_summary = pd.merge(yearly_summary, yearly_m_avg, on='year', how='outer')
+    if not txn_monthly.empty:
+        summary_pivot = txn_monthly.pivot_table(
+            index=['year', 'month'],
+            columns='category',
+            values='amount',
+            aggfunc='sum'
+        ).reset_index().fillna(0)
+        
+        summary_pivot.columns.name = None # Remove the 'category' index name
+        
+        # Ensure targeted columns exist incase some categories have no deposits
+        for col in ['Retirement Saving', 'Medium-term Saving', 'Traveling Funds']:
+            if col not in summary_pivot.columns:
+                summary_pivot[col] = 0.0
+
+        summary_pivot['Monthly (R+M)'] = summary_pivot['Retirement Saving'] + summary_pivot['Medium-term Saving']
+        summary_pivot['Monthly (R+M+T)'] = summary_pivot['Retirement Saving'] + summary_pivot['Medium-term Saving'] + summary_pivot['Traveling Funds']
+        
+        # Add YTD (Yearly) tracking after sorting chronologically
+        summary_pivot = summary_pivot.sort_values(by=['year', 'month'], ascending=[True, True])
+        summary_pivot['Yearly Retirement Saving (YTD)'] = summary_pivot.groupby('year')['Retirement Saving'].cumsum()
+        summary_pivot['Yearly Medium-term Saving (YTD)'] = summary_pivot.groupby('year')['Medium-term Saving'].cumsum()
+
+        # Sort backwards for display
+        monthly_summary = summary_pivot.sort_values(by=['year', 'month'], ascending=[False, False])
+    else:
+        monthly_summary = pd.DataFrame()
+
+    # --- YEARLY SUMMARY (DEPOSIT, WITHDRAWAL, BALANCE) ---
+    txn_yearly = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', 'Traveling Funds'])].copy()
+    txn_yearly = txn_yearly[txn_yearly['transaction_type'].isin(['Deposit', 'Withdrawal'])]
+    txn_yearly['year'] = pd.to_datetime(txn_yearly['date']).dt.year
+    txn_yearly['month'] = pd.to_datetime(txn_yearly['date']).dt.month
     
-    # 5. add Medium Yearly Withdrawl Amount
-    withdrawal_sum = pd.DataFrame(transaction_filtered_medium.groupby('year')['amount'].sum().reset_index().rename(columns={'amount': 'Yearly Medium Withdrawal'}))
-    yearly_summary = pd.merge(yearly_summary, withdrawal_sum, on='year', how='left')
-    yearly_summary = yearly_summary.sort_values(by=['year'], ascending=[False])
+    final_data = []
+    if not txn_yearly.empty:
+        # Group by unique years, sorting smallest to largest for left-to-right intuitive reading
+        for year in sorted(txn_yearly['year'].unique(), reverse=False):
+            year_df = txn_yearly[txn_yearly['year'] == year]
+            
+            def get_sums(categories):
+                cat_df = year_df[year_df['category'].isin(categories)]
+                deposit = cat_df[cat_df['transaction_type'] == 'Deposit']['amount'].sum()
+                withdrawal = cat_df[cat_df['transaction_type'] == 'Withdrawal']['amount'].sum()
+                balance = deposit + withdrawal
+                return deposit, withdrawal, balance
+                
+            r_dep, r_wth, r_bal = get_sums(['Retirement Saving'])
+            m_dep, m_wth, m_bal = get_sums(['Medium-term Saving'])
+            t_dep, t_wth, t_bal = get_sums(['Traveling Funds'])
+            rm_dep, rm_wth, rm_bal = get_sums(['Retirement Saving', 'Medium-term Saving'])
+            rmt_dep, rmt_wth, rmt_bal = get_sums(['Retirement Saving', 'Medium-term Saving', 'Traveling Funds'])
+            
+            row = {
+                'Year': str(year),
+                
+                'R - Yearly Deposit': float(r_dep),
+                'R - Yearly Withdrawal': float(r_wth),
+                'R - Balance': float(r_bal),
 
-    # Prepare Monthly summary
-    monthly_summary = summary_pivot.drop(columns=['monthly_all_total', 'monthly_r&m_total']) 
-    monthly_summary = monthly_summary.sort_values(by=['year', 'month'], ascending=[False, False])
+                'M - Yearly Deposit': float(m_dep),
+                'M - Yearly Withdrawal': float(m_wth),
+                'M - Balance': float(m_bal),
 
-    # 6. Display the result in Streamlit
-    st.markdown(f"<h3 style='text-align: center; color: #f1c40f;'>Yearly Saving Summary (All Deposit)</h3>", unsafe_allow_html=True)
-    st.dataframe(yearly_summary, hide_index=True)
+                'T - Yearly Deposit': float(t_dep),
+                'T - Yearly Withdrawal': float(t_wth),
+                'T - Balance': float(t_bal),
 
-    st.markdown(f"<h3 style='text-align: center; color: #f1c40f;'>Monthly Saving Summary (All Deposit)</h3>", unsafe_allow_html=True)
-    st.dataframe(monthly_summary, hide_index=True)
-   
-    st.markdown("<p style='color: #f1c40f; font-size: 16px;'>The Number Include All Deposit and Withdrawal, This means the transfer between Fund Category is included, such as amount moved from Medium-term Saving to Retirement Saving or Emergency Fund</p>", unsafe_allow_html=True)
+                '(R+M) - Yearly Deposit': float(rm_dep),
+                '(R+M) - Yearly Withdrawal': float(rm_wth),
+                '(R+M) - Balance': float(rm_bal),
+
+                '(R+M+T) - Yearly Deposit': float(rmt_dep),
+                '(R+M+T) - Yearly Withdrawal': float(rmt_wth),
+                '(R+M+T) - Balance': float(rmt_bal),
+            }
+            final_data.append(row)
+            
+    yearly_summary = pd.DataFrame(final_data)
+    if not yearly_summary.empty:
+        # Transpose dataframe so Years are columns and Metrics are rows
+        yearly_summary.set_index('Year', inplace=True)
+        yearly_summary = yearly_summary.T.reset_index()
+        yearly_summary.rename(columns={'index': 'Metrics'}, inplace=True)
+
+    # --- UI DISPLAY ---
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Yearly Saving Summary</h3>", unsafe_allow_html=True)
+        if not yearly_summary.empty:
+            st.dataframe(yearly_summary, hide_index=True, use_container_width=True)
+        else:
+            st.info("No yearly data available.")
+            
+    with col2:
+        st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Monthly Saving Summary (All Deposit)</h3>", unsafe_allow_html=True)
+        if not monthly_summary.empty:
+            st.dataframe(monthly_summary, hide_index=True, use_container_width=True)
+        else:
+            st.info("No monthly data available.")
