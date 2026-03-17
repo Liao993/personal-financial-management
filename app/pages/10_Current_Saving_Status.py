@@ -11,17 +11,17 @@ st.set_page_config(page_title="Current_Status", page_icon="💰", layout="wide")
 def current_saving_status():
     today_date = pd.Timestamp.now().strftime("%Y-%m-%d")
     st.markdown(f"<h1 style='color: #ffffff; text-align: center;'>Fund Distribution by Account and Category - {today_date} </h1>", unsafe_allow_html=True)
-    columns_names , all_data = fetch_all_transaction_data()
-    original_data = pd.DataFrame(all_data, columns=columns_names)
+    columns_names , all_transaction_data = fetch_all_transaction_data()
+    transaction_data = pd.DataFrame(all_transaction_data, columns=columns_names)
 
-    Account_Sum(original_data)
+    Account_Sum(transaction_data)
 
-    Pivot_Table(original_data)
+    Pivot_Table(transaction_data)
 
 
     st.write("___")
 
-    saving_sum(original_data)
+    saving_sum(transaction_data)
     
 if __name__ == "__main__":
     current_saving_status()

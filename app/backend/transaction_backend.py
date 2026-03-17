@@ -55,7 +55,7 @@ def fetch_transaction_data_by_month(year):
         query = """
             SELECT EXTRACT(MONTH FROM date) AS month, fund_category, SUM(amount) AS total_amount
             FROM transactions
-            WHERE EXTRACT(YEAR FROM date) = %s AND  transaction_type = 'Deposit' AND source_notes LIKE %s
+            WHERE EXTRACT(YEAR FROM date) = %s AND  transaction_type = 'Deposit' AND prepaid = False AND source_notes LIKE %s
             GROUP BY EXTRACT(MONTH FROM date), fund_category
             ORDER BY month;  -- Order by month for consistency
             """
@@ -88,7 +88,7 @@ def fetch_transaction_data_by_year(year):
         query = """
             SELECT fund_category, SUM(amount) AS total_amount
             FROM transactions
-            WHERE EXTRACT(YEAR FROM date) = %s 
+            WHERE EXTRACT(YEAR FROM date) = %s AND prepaid = False
             GROUP BY fund_category
             """
         try:
@@ -119,7 +119,7 @@ def fetch_transaction_deposit_check(year, month):
         query = """
         SELECT transaction_id, date, fund_category, amount
         FROM transactions
-        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit' AND source_notes LIKE %s;
+        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit' AND prepaid = False AND source_notes LIKE %s;
         """
         try:
             cursor.execute(query, (year, month, search_pattern))
@@ -153,6 +153,7 @@ def fetch_all_transaction_data():
         query = """
             SELECT *
             FROM transactions
+            WHERE prepaid = False   
             """
         try:
             cursor.execute(query) #removed the extra parameter

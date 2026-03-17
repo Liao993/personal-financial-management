@@ -14,8 +14,7 @@ def saving_sum(transaction):
     transaction_filtered_medium['month'] = pd.to_datetime(transaction_filtered_medium['date']).dt.month
     transaction_filtered_medium['year'] = pd.to_datetime(transaction_filtered_medium['date']).dt.year
 
-  # 1. Pivot and redesign dataframe format
-    st.markdown(f"<h3 style='text-align: center; color: #f1c40f;'>Saving Summary (All Deposit)</h3>", unsafe_allow_html=True)
+    # 1. Pivot and redesign dataframe format
     summary_pivot = transaction_filtered.pivot_table(
     index=['year', 'month'],
     columns='category',
@@ -61,21 +60,29 @@ def saving_sum(transaction):
     yearly_m_sum = summary_pivot.groupby('year')['Medium-term Saving'].sum().reset_index()
     yearly_m_sum = yearly_m_sum.rename(columns={'Medium-term Saving': 'Yearly Total (M)'})
     
-    # 4. Merge show the 4 sum result first and then the average
-    final_summary_1 = pd.merge(summary_pivot, yearly_sum, on='year', how='left')
-    final_summary_2 = pd.merge(final_summary_1, yearly_r_d_sum, on='year', how='left')
-    final_summary_3 = pd.merge(final_summary_2, yearly_r_sum, on='year', how='left')
-    final_summary_4 = pd.merge(final_summary_3, yearly_m_sum, on='year', how='left')
-    final_summary_5 = pd.merge(final_summary_4, yearly_avg, on='year', how='left')
-    final_summary_6 = pd.merge(final_summary_5, yearly_r_d_avg, on='year', how='left')
-    final_summary_7 = pd.merge(final_summary_6, yearly_r_avg, on='year', how='left')
-    final_summary_8 = pd.merge(final_summary_7, yearly_m_avg, on='year', how='left')
+    # 4. Create separate yearly and monthly DataFrames
+    yearly_summary = pd.merge(yearly_sum, yearly_r_d_sum, on='year', how='outer')
+    yearly_summary = pd.merge(yearly_summary, yearly_r_sum, on='year', how='outer')
+    yearly_summary = pd.merge(yearly_summary, yearly_m_sum, on='year', how='outer')
+    yearly_summary = pd.merge(yearly_summary, yearly_avg, on='year', how='outer')
+    yearly_summary = pd.merge(yearly_summary, yearly_r_d_avg, on='year', how='outer')
+    yearly_summary = pd.merge(yearly_summary, yearly_r_avg, on='year', how='outer')
+    yearly_summary = pd.merge(yearly_summary, yearly_m_avg, on='year', how='outer')
+    
     # 5. add Medium Yearly Withdrawl Amount
     withdrawal_sum = pd.DataFrame(transaction_filtered_medium.groupby('year')['amount'].sum().reset_index().rename(columns={'amount': 'Yearly Medium Withdrawal'}))
-    final_summary_9 = pd.merge(final_summary_8, withdrawal_sum, on='year', how='left')
+    yearly_summary = pd.merge(yearly_summary, withdrawal_sum, on='year', how='left')
+    yearly_summary = yearly_summary.sort_values(by=['year'], ascending=[False])
 
-    # 6. Display the result in Streamlit (dropping the temporary monthly_total column if you wish)
-    final_summary = final_summary_9.drop(columns=['monthly_all_total', 'monthly_r&m_total']) 
-    final_summary = final_summary.sort_values(by=['year', 'month'], ascending=[False, False])
-    st.dataframe(final_summary, hide_index=True)
+    # Prepare Monthly summary
+    monthly_summary = summary_pivot.drop(columns=['monthly_all_total', 'monthly_r&m_total']) 
+    monthly_summary = monthly_summary.sort_values(by=['year', 'month'], ascending=[False, False])
+
+    # 6. Display the result in Streamlit
+    st.markdown(f"<h3 style='text-align: center; color: #f1c40f;'>Yearly Saving Summary (All Deposit)</h3>", unsafe_allow_html=True)
+    st.dataframe(yearly_summary, hide_index=True)
+
+    st.markdown(f"<h3 style='text-align: center; color: #f1c40f;'>Monthly Saving Summary (All Deposit)</h3>", unsafe_allow_html=True)
+    st.dataframe(monthly_summary, hide_index=True)
    
+    st.markdown("<p style='color: #f1c40f; font-size: 16px;'>The Number Include All Deposit and Withdrawal, This means the transfer between Fund Category is included, such as amount moved from Medium-term Saving to Retirement Saving or Emergency Fund</p>", unsafe_allow_html=True)
