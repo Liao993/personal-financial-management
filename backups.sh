@@ -24,7 +24,7 @@ DB_USER="${POSTGRES_USER}" # Using POSTGRES_USER from .env for database operatio
 DB_NAME="${POSTGRES_DB}"   # Using POSTGRES_DB from .env
 
 # List of tables to backup. Ensure backup files will match these names.
-TABLES="income expense transactions cashflow"
+TABLES="income expense transactions"
 
 HOST_BACKUP_DIR="$(dirname "$(realpath "$0")")/backups" # Directory for backups on host
 mkdir -p "${HOST_BACKUP_DIR}" # Ensure the directory exists

@@ -13,19 +13,13 @@ def quick_viewer_section():
    
     expense_btn()
     transaction_btn()
-    query_buttons = st.columns(3)        
+    query_buttons = st.columns(2)        
     with query_buttons[0]:
         if st.button("💰 View All Income", use_container_width=True):
             execute_predefined_query("SELECT *, SUM(amount) OVER (PARTITION BY EXTRACT(YEAR FROM date)) AS year_total FROM income ORDER BY date DESC")
     with query_buttons[1]:
-        if st.button("💧 View All Cashflow", use_container_width=True):
-            execute_predefined_query("SELECT * FROM cashflow ORDER BY date DESC")
-    with query_buttons[2]:
         if st.button("✍️ Write Customized Query", use_container_width=True, key="custom_query_btn",type="primary"):
             reset_to_query_mode() 
-         
-
-    
     st.markdown("---")
 
 

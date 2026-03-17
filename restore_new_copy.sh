@@ -10,7 +10,7 @@ fi
 
 DB_USER="${POSTGRES_USER}"
 DB_NAME="${POSTGRES_DB}"
-TABLES_TO_PROCESS="transactions income expense cashflow"
+TABLES_TO_PROCESS="transactions income expense"
 HOST_BACKUP_DIR="./backups"
 
 echo "--- Starting Smart Database Restore (Schema-Safe) ---"

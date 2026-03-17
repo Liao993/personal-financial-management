@@ -69,13 +69,8 @@ payment_method = ["PC", "Scotia_Red", "RBC", "eTransfer", "Debit Card", "Cash", 
 fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "House", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
 
 account_name_list = ["RBC Chequing", "TD House", "EQ 10D Notice", "EQ 30D Notice", "RBC TFSA", "EQ TFSA", "Questrade TFSA (Travel)", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP" ]
-cashflow_account_name_list = ["RBC Chequing", "EQ 10D Notice", "EQ 30D Notice"]
 
 transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
-
-# cashflow
-cashflow_transaction_type_list = ["Withdrawal (Daily and House Expenses)", "Transfer Between Accounts"]
-cashflow_purpose = ["House Expense" ,"RBC credit card payment", "PC credit card payment","Scotia-Red credit card payment", "Debit Card payment", "eTransfer payment", "Cash payment", "Account deduction"]
 
 # the one used for database for both transactions and cashflow
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]

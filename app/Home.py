@@ -19,15 +19,7 @@ def main():
   <li> The <b style='color:#e74c3c;'>Monthly Saving and House </b> should be recorded via Monthly Calculations They will have <b style='color:#e74c3c;'>saved from</b> in sources_notes. and <b style='color:#5dade2;'>Deposit</b> as transaction type.</li>   
   <li>If the extra money coming in from other sources  <b style='color:#e74c3c;'>(not earning)</b>, such as Parents Support, Just record it as  <b style='color:#5dade2;'>Deposit</b> in trnasaction directly.</li>
   <li>If expense from savings, such as Travel Funds or Medium-term Saving, Just record it as  <b style='color:#5dade2;'>Withdraw</b> in trnasaction directly.</li>
-  <li>Record <b style='color:#5dade2;'>Transfer Between Accounts</b> after each Monthly Calculations to match the amount in different accounts. The amount can be found in cashflow unbooked page.</li>   
-  <hr/>
-  <b style='color:#f1c40f; font-size: 24px;'>Cashflow Unbooked Rules: Used for the money before bookkeeping.</b>
-  <li>Mainly Used for <b style='color:#e74c3c;'>Expense Tracking</b>. Not Used for Recording Saving.</li>
-  <li> Record <b style='color:#5dade2;'>Deposit</b> in Cashflow Unbooked for the money <b style='color:#e74c3c;'>NOT</b> have a fund category.</li>                   
-  <li>Record <b style='color:#5dade2;'>Withdrawl</b> in Cashflow Unbooked after recording <b style='color:#e74c3c;'>ANY</b> expense (Manual, Statement and  <b style='color:#e74c3c;'>House</b>), and <b style='color:#e74c3c;'>seperated them by month.</b> No matter RBC or EQ</li>
-  <li>Record <b style='color:#5dade2;'>Withdrawl</b> in Cashflow Unbooked for any <b style='color:#e74c3c;'>unbooked</b> money <b style='color:#e74c3c;'>coming out</b> from EQ saving account.</li>
-  <li>Record <b style='color:#5dade2;'>Transfer between accounts </b> in Cashflow Unbooked for any Money Transfer to Saving Account <b style='color:#e74c3c;'>before</b> bookkeeping.</li>
-  
+  <li>Record <b style='color:#5dade2;'>Transfer Between Accounts</b> after each Monthly Calculations to match the amount in different accounts.</li>   
   
   </ul>
   """, unsafe_allow_html=True)
@@ -45,7 +37,6 @@ def main():
     <li><a href="/Monthly_Income_Input" style='color: #2980b9;'>Input Monthly Income</a> - Enter your monthly income details.</li>
     <li><a href="/Manual_Expense_Input" style='color: #2980b9;'>Input Single Expense</a> - Input Single Expense Spending Manually.</li>
     <li><a href="/Upload_Expense" style='color: #2980b9;'>Upload Your Expense Statement</a> - Upload your bank statement without manual input.</li>
-    <li><a href="/Cashflow_Unbooked" style='color: #2980b9;'>Trace Cashflow Before Bookkeeping</a> - Money Move in is Earning, Moeny Move out is Expense, based on <b style='color:#e74c3c;'>actual account</b>.</li>
     <li><a href="/Monthly_Calculation" style='color: #2980b9;'>Calculate Monthly Expenses and Savings</a> - Summary of your monthly expenses and savings.</li>
     <li><a href="/Funds_Transaction" style='color: #2980b9;'>Make a Transaction</a> - Money move in and out is based on <b style='color:#e74c3c;'>fund category, not actual account</b>.</li>
     <li><a href="/Historical_Stats" style='color: #2980b9;'>View Historical Statistics</a> - Analyze your financial data over time.</li>

@@ -1,5 +1,5 @@
 import streamlit as st # type: ignore
-from utils.data import expense_category_options, transaction_type_database, fund_categories,traveling_category_options,account_name_list, cashflow_purpose 
+from utils.data import expense_category_options, transaction_type_database, fund_categories,traveling_category_options,account_name_list 
 
 def table_hint():
     
@@ -42,14 +42,3 @@ def table_hint():
             
             options_fund = style_text(', '.join(fund_categories), "pink")
             st.markdown(f"**Fund category options:** {options_fund}", unsafe_allow_html=True)
-
-        # --- CASHFLOW TABLE ---
-        with st.expander("💧 cashflow Table"):
-            columns = style_text("id, date, account_name, transaction_type, amount, purpose, source_notes, transfer_to_account", "orange")
-            st.markdown(f"**Columns:** {columns}", unsafe_allow_html=True)
-            
-            options_account = style_text(', '.join(account_name_list), "pink")
-            st.markdown(f"**Account name options:** {options_account}", unsafe_allow_html=True)
-            
-            options_purpose = style_text(', '.join(cashflow_purpose), "pink")
-            st.markdown(f"**Cashflow purpose options:** {options_purpose}", unsafe_allow_html=True)
