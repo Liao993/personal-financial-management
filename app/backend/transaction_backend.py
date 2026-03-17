@@ -15,9 +15,9 @@ def insert_transaction_data(validated_data: dict):
             query = """
             INSERT INTO transactions (
                date, account_name, transaction_type, amount,
-               fund_category, source_notes, transfer_to_account
+               fund_category, source_notes, transfer_to_account, prepaid
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
              """
             values = (
                 validated_data['date'],
@@ -26,7 +26,8 @@ def insert_transaction_data(validated_data: dict):
                 validated_data['amount'],
                 validated_data['fund_category'],
                 validated_data['source_notes'],
-                validated_data['transfer_to_account']
+                validated_data['transfer_to_account'],
+                validated_data['prepaid']   
             )
             cursor.execute(query, values)
             conn.commit()
@@ -111,7 +112,6 @@ def fetch_transaction_data_by_year(year):
         return []
 
 def fetch_transaction_deposit_check(year, month):
-    # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
     search_pattern = "saved from%"
     if conn:
@@ -181,7 +181,7 @@ def fetch_last_transaction_data():
         query = """
             SELECT *
             FROM transactions
-            ORDER BY date DESC
+            ORDER BY date DESC, transaction_id DESC
             LIMIT 20;
         """
         try:

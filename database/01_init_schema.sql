@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     amount NUMERIC(10, 2) NOT NULL,
     fund_category VARCHAR(255),
     source_notes TEXT,
+    prepaid BOOLEAN NOT NULL DEFAULT FALSE,
     transfer_to_account VARCHAR(255)
 );
 

@@ -1,5 +1,5 @@
 from modules.historical_spending.middle_layer.selected_year_form import selected_year_choice_form
-from modules.historical_spending.components.average_kpi import average_kpi
+from modules.historical_spending.components.kpi import kpi
 from modules.historical_spending.components.annual_expense_category_chart import create_summary_bar_chart
 from modules.historical_spending.components.total_monthly_expenses import create_monthly_expense_bar_chart
 from modules.historical_spending.components.pct_monthly_expense import create_expense_line_chart
@@ -30,7 +30,7 @@ def historical_spending():
             #if st.button("Choose Again", key="choose_again"):
              #   selected_year_choice_form()
         else:
-            average_kpi(selected_year, all_fetched_expense, all_fetched_income, all_fetched_transaction)
+            kpi(all_fetched_expense, all_fetched_income, all_fetched_transaction)
             col1, col2 = st.columns(2)
             with col1:
                  # Show All Monthly Expenses by Amount

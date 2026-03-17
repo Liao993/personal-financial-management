@@ -52,7 +52,7 @@ def transaction_btn():
     with query_buttons[4]:
         if st.button("📈 All Withdrawal", use_container_width=True):
             execute_predefined_query("""
-                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account,
+                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account, prepaid,
                                             sum(amount) over (partition by fund_category) AS fund_category_total_amount
                                         FROM transactions 
                                         WHERE transaction_type = 'Withdrawal'

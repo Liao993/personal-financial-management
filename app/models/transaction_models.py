@@ -11,6 +11,7 @@ class Transaction(BaseModel):
     fund_category: str
     source_notes: Optional[str] = None
     transfer_to_account: Optional[str] = None
+    prepaid: bool = False
 
     class Config:
         orm_mode = True
@@ -66,3 +67,7 @@ class Transaction(BaseModel):
     @validator('source_notes', pre=True)
     def empty_string_to_none_source_notes(cls, value):
         return value if value and value.strip() else None
+
+    @validator('prepaid', pre=True)
+    def empty_string_to_none_prepaid(cls, value):
+        return value if value and value.strip() else None   

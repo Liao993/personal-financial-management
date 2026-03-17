@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-def average_kpi(year, expense, income, transaction):
+def kpi(expense, income, transaction):
 
 
     # --- 1. Calculations ---
