@@ -57,7 +57,7 @@ common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Sobeys', 'Leonha
 
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
-                    "House", "Medicine", "Exercise", "Saved For Love", "Transportation", "Education", "Traveling" , 
+                     "Medicine", "Exercise", "Saved For Love", "Transportation", "Education", "Traveling" , 
                     "Fun/Tickets", "Clothing", "Liquor", "Others", "Car"]
 
 # travel expense
@@ -82,4 +82,4 @@ RRSP_room = 14729
 years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]
 
 # Default value for income amount in the form
-fixed_income_data = 1787.28
+fixed_income_data = 1982.17

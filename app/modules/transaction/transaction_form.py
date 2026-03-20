@@ -21,7 +21,7 @@ def transaction_form():
     fund_category = st.selectbox("Usable Fund Category", fund_categories)
     account_name = st.selectbox("Account", account_name_list)
     amount = st.number_input("Amount", min_value=0.0)
-    prepaid = st.checkbox("Prepaid (Check it if the spending is paid in advance and got the money later (Both for Withdrawl and Deposit)).")
+    prepaid = st.checkbox("Prepaid (Check it if the spending is paid in advance and got the money later (Both for Withdrawl and Deposit)). It will be excluded from analysis")
     source_notes = st.text_input("Notes (Optional)")
     transfer_to_account = None
 

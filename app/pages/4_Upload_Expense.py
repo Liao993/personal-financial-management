@@ -6,7 +6,8 @@ st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
 
 def upload_expense():
     st.markdown("<h1 style='color: #e74c3c; text-align: center;'>Upload Your Expenses PDF Here</h1>", unsafe_allow_html=True)
-    st.write("Don't change the name of the file, it will be used to catch the year.")
+    st.warning("Don't change the name of the file, it will be used to catch the year.")
+    st.warning("Please exclude prepaid transactions (noted in transaction records) and house-related expenses (pre-filtered by the ETL pipeline) — these do not reflect actual spending.")
 
     if 'upload_pdf_state' not in st.session_state:
         st.session_state['upload_pdf_state'] = True

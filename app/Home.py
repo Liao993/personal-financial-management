@@ -14,6 +14,8 @@ def main():
   <b style='color:#f1c40f; font-size: 24px;'>Expense Rules</b>  
   <li>If expense is <b style='color:#e74c3c;'>monthly daily expense</b>, Use Manual Expense Input and Upload Statement.</li>  
   <li> House expense should be recorded as <b style='color:#5dade2;'>House Deposit in Transaction.</b></li>
+  <li> <b style='color:#5dade2;'>Prepaid</b> expense should NOT be recorded as <b style='color:#5dade2;'>Expense.</b></li>
+
   <hr/>
   <b style='color:#f1c40f; font-size: 24px;'>Transaction Rules</b> 
   <li> The <b style='color:#e74c3c;'>Monthly Saving and House </b> should be recorded via Monthly Calculations They will have <b style='color:#e74c3c;'>saved from</b> in sources_notes. and <b style='color:#5dade2;'>Deposit</b> as transaction type.</li>   

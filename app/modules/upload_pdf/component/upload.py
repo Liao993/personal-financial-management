@@ -8,8 +8,6 @@ def pdf_upload() -> List[UploadedFile]:
     drop_down_list()
 
     
-    st.write("")
-    
     uploaded_files = st.file_uploader(
         "Upload up to 3 PDF files",
         type=["pdf"],
