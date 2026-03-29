@@ -1,7 +1,7 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
 
-def display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving):
+def display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, emergency_funds):
     """Displays the saving KPIs with custom styling."""
    
     st.markdown("<h1 style='text-align: center;'>Saving Overview</h1>", unsafe_allow_html=True)
@@ -34,7 +34,7 @@ def display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_t
     with col5:
         st.markdown(
             f"<p style='font-size: 20px; color: lightblue;'>RBC Saving</p>"
-            f"<p style='font-size: 24px; color: lightblue;'>${rbc_saving:.2f}</p>",
+            f"<p style='font-size: 24px; color: lightblue;'>${emergency_funds:.2f}</p>",
             unsafe_allow_html=True,
         )
    

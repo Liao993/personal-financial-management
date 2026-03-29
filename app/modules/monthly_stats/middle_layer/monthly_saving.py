@@ -35,10 +35,10 @@ def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, re
         ),
         Transaction(
             date=goal_datetime,
-            account_name="RBC TFSA",
+            account_name="RBC Chequing",
             transaction_type="Deposit",
             amount=rbc_saving,
-            fund_category="Direct Investing",
+            fund_category="Emergency Funds",
             source_notes=source_notes,
         ),
          Transaction(
@@ -82,12 +82,12 @@ def monthly_savings_action():
     travel_saving = st.session_state.get('travel_saving')
     retirement_saving = st.session_state.get('retirement_saving')
     medium_term_saving = st.session_state.get('medium_term_saving')
-    rbc_saving = st.session_state.get('rbc_saving')
+    emergency_funds = st.session_state.get('emergency funds')
     home_deposit = st.session_state.get('home_deposit')
   
 
     
-    status = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving, home_deposit)
+    status = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, emergency_funds, home_deposit)
      
     if status:
         st.success("Data is successfully saved !")

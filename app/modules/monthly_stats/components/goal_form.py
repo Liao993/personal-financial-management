@@ -32,7 +32,7 @@ def financial_goals_form():
         # Third line: Traveling Fund Max and Min
         col7, col8, col9 = st.columns(3)
         with col7:
-            rbc_saving = st.number_input("RBC Saving Amount", min_value=0.0, value=100.0, format="%.2f")
+            emergency_funds = st.number_input("Emergency Saving Amount", min_value=0.0, value=0.0, format="%.2f")
         with col8:
             travel_fund_max = st.number_input("Traveling Fund Max", min_value=0.0, value=400.00, format="%.2f")
         with col9:
@@ -45,7 +45,7 @@ def financial_goals_form():
             form_data = {}
             if submit_button:
                 form_data['goal_date'] = goal_date
-                form_data['rbc_saving'] = rbc_saving
+                form_data['emergency_funds'] = emergency_funds
                 form_data['saving_goal'] = saving_goal
                 form_data['retirement_percentage'] = retirement_percentage / 100.0  # Store as a decimal
                 form_data['medium_term_amount'] = medium_term_amount

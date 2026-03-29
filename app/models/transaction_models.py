@@ -69,5 +69,7 @@ class Transaction(BaseModel):
         return value if value and value.strip() else None
 
     @validator('prepaid', pre=True)
-    def empty_string_to_none_prepaid(cls, value):
-        return value if value and value.strip() else None   
+    def coerce_prepaid_to_bool(cls, value):
+        if value is None or value == "":
+            return False
+        return bool(value)  

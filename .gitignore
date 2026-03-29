@@ -10,3 +10,5 @@ historical_data
 backups
 backups_copy
 service
+.venv
+.idea

@@ -66,9 +66,9 @@ traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift"
 payment_method = ["PC", "Scotia_Red", "RBC", "eTransfer", "Debit Card", "Cash", "Account Deduction"]
 
 # transaction
-fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "House", "Direct Investing", "Parents Support", "Emergency Funds", "Others"]
+fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "House", "Emergency Funds", "Parents Support", "Others"]
 
-account_name_list = ["RBC Chequing", "TD House", "EQ 10D Notice", "EQ 30D Notice", "RBC TFSA", "EQ TFSA", "Questrade TFSA (Travel)", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP" ]
+account_name_list = ["RBC Chequing", "TD House", "EQ 10D Notice", "EQ 30D Notice", "RBC_DI TFSA", "EQ TFSA", "Questrade TFSA (Travel)", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP" ]
 
 transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 
@@ -76,7 +76,7 @@ transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (betw
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
 # Change every year
-TFSA_room = 32500
+TFSA_room = 32500+7000
 RRSP_room = 14729
 
 years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]

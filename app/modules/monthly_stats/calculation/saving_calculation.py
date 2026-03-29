@@ -12,7 +12,7 @@ def expense_and_saving_calculation(financial_goals):
     saving_goal = financial_goals.get('saving_goal', 0.0)
     travel_fund_goal = financial_goals.get('travel_fund_max', 0.0)
     min_travel_saving = financial_goals.get('travel_fund_min', 0.0)
-    rbc_saving = financial_goals.get('rbc_saving', 100.0)
+    emergency_funds = financial_goals.get('emergency_funds', 0.0)
     retirement_saving_pct = financial_goals.get('retirement_percentage', 1.0)
     medium_term_amount = financial_goals.get('medium_term_amount', 0.0)
     home_deposit_amount = financial_goals.get('home_deposit', 0.0)
@@ -33,7 +33,7 @@ def expense_and_saving_calculation(financial_goals):
 
             # Calculate more detailed saving breakdown
             travel_saving, retirement_saving, medium_term_saving = savings_formula(
-              total_saving, travel_fund_goal, saving_goal, min_travel_saving, rbc_saving, retirement_saving_pct, medium_term_amount
+              total_saving, travel_fund_goal, saving_goal, min_travel_saving, emergency_funds, retirement_saving_pct, medium_term_amount
             )
 
         else:
@@ -41,4 +41,4 @@ def expense_and_saving_calculation(financial_goals):
     else:
       st.warning("Please select a goal date to calculate monthly statistics.")
 
-    return goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, monthly_expense_daily_data, monthly_income, monthly_expense, home_deposit_amount
+    return goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, emergency_funds, monthly_expense_daily_data, monthly_income, monthly_expense, home_deposit_amount
