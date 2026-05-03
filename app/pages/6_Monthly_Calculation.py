@@ -24,7 +24,7 @@ def monthly_stats_page():
 
     if financial_goals:
         # calculate the monthly spending and saving if I got the financial goals
-        goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving, \
+        goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, emergency_funds, \
         monthly_expense_daily_data, monthly_income, monthly_expense, \
              home_deposit_amount = expense_and_saving_calculation(
             financial_goals)
@@ -35,13 +35,13 @@ def monthly_stats_page():
         st.session_state['travel_saving'] = travel_saving
         st.session_state['retirement_saving'] = retirement_saving
         st.session_state['medium_term_saving'] = medium_term_saving
-        st.session_state['rbc_saving'] = rbc_saving
+        st.session_state['emergency_funds'] = emergency_funds
         st.session_state['home_deposit'] = home_deposit_amount
 
         # Display the spending and saving results
         st.write("---")
         # Display Saving KPIs
-        display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, rbc_saving)
+        display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_term_saving, emergency_funds)
 
         st.write(" ")
         st.write(" ")

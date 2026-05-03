@@ -16,7 +16,7 @@ def expense_and_saving_calculation(financial_goals):
     retirement_saving_pct = financial_goals.get('retirement_percentage', 1.0)
     medium_term_amount = financial_goals.get('medium_term_amount', 0.0)
     home_deposit_amount = financial_goals.get('home_deposit', 0.0)
-
+    #calculate the monthly spending and saving
     if goal_date:
         # Get the Monthly Income
         monthly_income = fetch_monthly_income(goal_date.year, goal_date.month)
@@ -40,5 +40,5 @@ def expense_and_saving_calculation(financial_goals):
           st.warning("No expense data available for the selected month. Please check your records.")
     else:
       st.warning("Please select a goal date to calculate monthly statistics.")
-
+      
     return goal_date, total_saving, travel_saving, retirement_saving, medium_term_saving, emergency_funds, monthly_expense_daily_data, monthly_income, monthly_expense, home_deposit_amount
