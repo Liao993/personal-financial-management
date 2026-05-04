@@ -33,7 +33,7 @@ def display_saving_kpis(total_saving, travel_saving, retirement_saving, medium_t
         )
     with col5:
         st.markdown(
-            f"<p style='font-size: 20px; color: lightblue;'>RBC Saving</p>"
+            f"<p style='font-size: 20px; color: lightblue;'>Emergency Saving</p>"
             f"<p style='font-size: 24px; color: lightblue;'>${emergency_funds:.2f}</p>",
             unsafe_allow_html=True,
         )

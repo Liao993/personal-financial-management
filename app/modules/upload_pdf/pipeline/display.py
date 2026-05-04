@@ -34,7 +34,7 @@ def display_editable_dataframe(dataframe, bank):
         st.success("Your data is being processed")
         st.write("Please input your trip below!")
         single_trip = st.checkbox("Single Trip", value=True)
-        trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-Jan25)")
+        trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-012025)")
         st.warning("Please Exclude House Related Expenses!")
         edited_df = st.data_editor(
             st.session_state[review_data],

@@ -11,9 +11,12 @@ def fetch_trip_selection():
             cursor = conn.cursor()
          
             query = """
-                SELECT DISTINCT trip
-                FROM dbt_budget.intermediate_expenses_with_summary
-                WHERE category = 'Traveling'
+                        SELECT DISTINCT 
+                            trip, 
+                            TO_DATE(SPLIT_PART(trip, '-', 2), 'MMYYYY') as sort_date
+                        FROM dbt_budget.intermediate_expenses_with_summary
+                        WHERE category = 'Traveling'
+                        ORDER BY sort_date DESC;
                     """
             cursor.execute(query, ())
 

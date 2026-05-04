@@ -7,7 +7,7 @@ from models.transaction_models import Transaction  # Import your Pydantic model
 from backend.transaction_backend import fetch_transaction_deposit_check
 
 # Function to handle the data and insert it into the database
-def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, rbc_saving, home_deposit):
+def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, energency_funds, home_deposit):
     transactions_to_insert = [
         Transaction(
             date=goal_datetime,
@@ -37,7 +37,7 @@ def monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, re
             date=goal_datetime,
             account_name="RBC Chequing",
             transaction_type="Deposit",
-            amount=rbc_saving,
+            amount=energency_funds,
             fund_category="Emergency Funds",
             source_notes=source_notes,
         ),
@@ -82,9 +82,8 @@ def monthly_savings_action():
     travel_saving = st.session_state.get('travel_saving')
     retirement_saving = st.session_state.get('retirement_saving')
     medium_term_saving = st.session_state.get('medium_term_saving')
-    emergency_funds = st.session_state.get('emergency funds')
+    emergency_funds = st.session_state.get('emergency_funds')
     home_deposit = st.session_state.get('home_deposit')
-  
 
     
     status = monthly_savings_data_handling(goal_datetime, source_notes, travel_saving, retirement_saving, medium_term_saving, emergency_funds, home_deposit)

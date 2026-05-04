@@ -7,8 +7,13 @@ dbt/profiles.yml
 .DS_Store
 test/
 historical_data
-backups
+backups/
 backups_copy
 service
 .venv
 .idea
+*.plist
+docs/
+# Keep the example templates
+!.env.example
+!*.plist.example
