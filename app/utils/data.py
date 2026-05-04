@@ -1,3 +1,8 @@
+import os
+from decimal import Decimal
+
+years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]
+
 # Expense
 common_store_directory = {
     'SOBEYS': 'Grocery',
@@ -66,20 +71,22 @@ traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift"
 payment_method = ["PC", "Scotia_Red", "RBC", "eTransfer", "Debit Card", "Cash", "Account Deduction"]
 
 # transaction
-fund_categories = ["Traveling Funds", "Retirement Saving", "Medium-term Saving", "House", "Emergency Funds", "Parents Support", "Others"]
+_raw_fund_categories = os.environ.get("FUND_CATEGORIES", "")
+fund_categories = [a.strip() for a in _raw_fund_categories.split(",") if a.strip()]
+transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 
-account_name_list = ["RBC Chequing", "TD House", "EQ 10D Notice", "EQ 30D Notice", "RBC_DI TFSA", "EQ TFSA", "Questrade TFSA (Travel)", "Questrade TFSA (Retire)", "Questrade TFSA (Medium)", "Moomoo RRSP" ]
-
+_raw_accounts = os.environ.get("ACCOUNT_NAMES", "")
+account_name_list = [a.strip() for a in _raw_accounts.split(",") if a.strip()]
 transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
 
 # the one used for database for both transactions and cashflow
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
 # Change every year
-TFSA_room = 32500+7000
-RRSP_room = 14729
+TFSA_room = Decimal(os.environ.get("TFSA_LIMIT",  "0"))
+RRSP_room = Decimal(os.environ.get("RRSP_LIMIT",  "0"))
 
-years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]
+
 
 # Default value for income amount in the form
-fixed_income_data = 1982.17
+fixed_income_data = float(os.environ.get("BIWEEKLY_INCOME",  "0"))

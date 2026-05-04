@@ -1,19 +1,66 @@
+# =============================================================================
+# .gitignore — Personal Finance Management App
+# Everything sensitive stays local. Only code and structure go to GitHub.
+# =============================================================================
+ 
+# --- Credentials & environment variables ---
+.env
+.env.dev
+.env.prod
+*.env
+service/google_creds.json
+service/
+
+# --- Real personal data (backups and exports) ---
+backups/
+*.sql.gz
+*.sql
+# Allow the seed file — it has fake data only
+!database/02_seed_dev.sql
+
+
+# --- dbt runtime artifacts ---
+dbt/budget_project/target/
+dbt/budget_project/dbt_packages/
+dbt/budget_project/logs/
+.dbt/
+dbt/profiles.yml
+
+# --- Python ---
 __pycache__/
 *.pyc
-.env
-postgres_data/
-dbt/profiles.yml
-*.log
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+ 
+# --- Streamlit ---
+.streamlit/secrets.toml
+
+# --- Docker ---
+# (docker-compose files ARE committed — they contain no secrets)
+ 
+# --- Mac noise ---
 .DS_Store
-test/
-historical_data
-backups/
-backups_copy
-service
-.venv
-.idea
-*.plist
+.AppleDouble
+.LSOverride
+ 
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+ 
+# --- Logs ---
+*.log
+*.err
+/tmp/
+
+
+# Extra Document
 docs/
-# Keep the example templates
-!.env.example
-!*.plist.example

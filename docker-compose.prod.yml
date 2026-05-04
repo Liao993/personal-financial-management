@@ -1,0 +1,40 @@
+# docker-compose.prod.yml — PRODUCTION overrides
+# Run via: ./prod.sh up
+
+services:
+
+  db:
+    container_name: budget_db
+    restart: unless-stopped
+    volumes:
+      - ./database/01_init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - budget_network_prod
+
+  app:
+    container_name: budget_streamlit
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      APP_ENV: production
+      ACCOUNT_NAMES: ${ACCOUNT_NAMES}
+      FUND_CATEGORIES: ${FUND_CATEGORIES}
+      TFSA_LIMIT: ${TFSA_LIMIT}
+      RRSP_LIMIT: ${RRSP_LIMIT}
+      BIWEEKLY_INCOME: ${BIWEEKLY_INCOME}
+    networks:
+      - budget_network_prod
+  dbt:
+    container_name: budget_dbt
+    environment:
+      APP_ENV: production
+    networks:
+      - budget_network_prod
+      
+networks:
+  budget_network_prod:
+    name: budget_network_prod
+volumes:
+  postgres_data:
