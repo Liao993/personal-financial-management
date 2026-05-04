@@ -2,6 +2,9 @@ import streamlit as st # type: ignore
 from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
 import pandas as pd # type: ignore
+import os
+
+DBT_SCHEMA = os.environ.get("DBT_SCHEMA", "dbt_budget")
 def insert_expense_data(validated_data: dict):
     conn = get_db_connection()
     if conn:
@@ -53,9 +56,9 @@ def fetch_monthly_expenses_with_summary(year, month):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
-        query = """
+        query = f"""
         SELECT date, amount, category, summary_category
-        FROM dbt_budget.intermediate_expenses_with_summary
+        FROM {DBT_SCHEMA}.intermediate_expenses_with_summary
         WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND category != 'House';
         """
         try:
@@ -82,9 +85,9 @@ def fetch_annual_expense(year):
             cursor = conn.cursor()
          
             if isinstance(year, int):
-                query = """
+                query =f"""
                     SELECT date, amount, category, summary_category
-                    FROM dbt_budget.intermediate_expenses_with_summary
+                    FROM {DBT_SCHEMA}.intermediate_expenses_with_summary
                     WHERE EXTRACT(YEAR FROM date) = %s AND category != 'Traveling' AND category != 'House';
                 """
                 cursor.execute(query, (year,))
@@ -137,10 +140,10 @@ def fetch_house_expesne():
     if conn:
         try:
             cursor = conn.cursor()
-            query = """
+            query = f"""
                 SELECT id, date, items, amount, category, house_category, house_summary_category, 
                     EXTRACT(MONTH FROM date) AS month, EXTRACT(YEAR FROM date) AS year
-                FROM dbt_budget.intermediate_expenses_with_summary
+                FROM {DBT_SCHEMA}.intermediate_expenses_with_summary
                 WHERE category = 'House'
                 ORDER BY date DESC
             """

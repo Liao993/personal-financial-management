@@ -2,7 +2,8 @@ import streamlit as st # type: ignore
 from utils.connection import get_db_connection # type: ignore
 import psycopg2 # type: ignore
 import pandas as pd # type: ignore
-
+import os
+DBT_SCHEMA = os.environ.get("DBT_SCHEMA", "dbt_budget")
 def fetch_trip_selection():
     
     conn = get_db_connection()
@@ -10,11 +11,11 @@ def fetch_trip_selection():
         try:
             cursor = conn.cursor()
          
-            query = """
+            query = f"""
                         SELECT DISTINCT 
                             trip, 
                             TO_DATE(SPLIT_PART(trip, '-', 2), 'MMYYYY') as sort_date
-                        FROM dbt_budget.intermediate_expenses_with_summary
+                        FROM {DBT_SCHEMA}.intermediate_expenses_with_summary
                         WHERE category = 'Traveling'
                         ORDER BY sort_date DESC;
                     """
@@ -40,7 +41,7 @@ def fetch_trip_expense(trip):
     if conn:
         cursor = conn.cursor()
          # To calculate total_spending by trip and the % for category in SQL first
-        query = """
+        query = f"""
                 SELECT
                     trip,
                     traveling_category,
@@ -58,7 +59,7 @@ def fetch_trip_expense(trip):
                         (SUM(amount_I_spend) / NULLIF(SUM(SUM(amount_I_spend)) OVER (PARTITION BY trip), 0)) * 100.0, 
                     2) AS percentage_I_spent
                 FROM
-                    dbt_budget.intermediate_expenses_with_summary
+                    {DBT_SCHEMA}.intermediate_expenses_with_summary
                 WHERE
                     category = 'Traveling' AND trip = %s 
                 GROUP BY

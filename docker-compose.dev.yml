@@ -1,0 +1,41 @@
+# docker-compose.dev.yml — DEVELOPMENT overrides
+# Run via: ./dev.sh up
+
+services:
+
+  db:
+    container_name: budget_db_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./database/01_init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql
+      - ./database/02_seed_dev.sql:/docker-entrypoint-initdb.d/02_seed_dev.sql
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - budget_network_dev
+
+  app:
+    container_name: budget_streamlit_dev
+    ports:
+      - "8502:8501"
+    environment:
+      APP_ENV: development
+      ACCOUNT_NAMES: ${ACCOUNT_NAMES}
+      FUND_CATEGORIES: ${FUND_CATEGORIES}
+      TFSA_LIMIT: ${TFSA_LIMIT}
+      RRSP_LIMIT: ${RRSP_LIMIT}
+      BIWEEKLY_INCOME: ${BIWEEKLY_INCOME}
+    networks:
+      - budget_network_dev
+  dbt:
+    container_name: budget_dbt_dev
+    environment:
+      APP_ENV: development
+    networks:
+      - budget_network_dev
+
+networks:
+  budget_network_dev:
+    name: budget_network_dev
+volumes:
+  postgres_data_dev:
