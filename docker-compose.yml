@@ -42,6 +42,8 @@ services:
       FUND_CATEGORIES: ${FUND_CATEGORIES}
       TFSA_LIMIT: ${TFSA_LIMIT}
       RRSP_LIMIT: ${RRSP_LIMIT}
+      DBT_TARGET: ${DBT_TARGET}
+      DBT_SCHEMA: ${DBT_SCHEMA}
 
   dbt:
     build:
@@ -60,5 +62,6 @@ services:
       POSTGRES_HOST: db
       POSTGRES_PORT: "5432"
       DBT_TARGET: ${DBT_TARGET}
+      DBT_SCHEMA: ${DBT_SCHEMA}
     volumes:
       - ./dbt:/dbt
