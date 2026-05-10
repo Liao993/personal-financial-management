@@ -21,7 +21,7 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
       """, unsafe_allow_html=True)
 
 
-      st.warning("Please exclude prepaid transactions (noted in transaction records) and house-related expenses (pre-filtered by the ETL pipeline).")
+      st.warning("Please exclude prepaid transactions and house-related expenses (pre-filtered by the ETL pipeline).")
       st.info("Expenses is used to record my acutal spending including regular expenses and traveling expense.")
       expense_date = st.date_input("Date", value=date.today())
       expense_common_items = st.selectbox("Items", common_store_list, key="common_item_select")
