@@ -19,6 +19,10 @@ def create_monthly_expense_bar_chart(expense, transaction):
             return 'Grocery'
         elif category == 'Gifts':
             return 'Gifts'
+        elif category == 'Car':
+            return 'Car & Gas'
+        elif category == 'Gas':
+            return 'Car & Gas'
         else:
             return 'Other'
             
@@ -41,9 +45,8 @@ def create_monthly_expense_bar_chart(expense, transaction):
     summary_data['amount'] = summary_data['amount'].apply(decimal.Decimal.__float__)
     # 3.Pivot so each month has two columns: Donation, Grocery, Others
     pivot_data = summary_data.pivot(index='month', columns='expense_group', values='amount').fillna(0)
-
     # Ensure all three columns exist, even if a month has 0 for a category
-    required_cols = ['Grocery', 'Other', 'Donation', "Gifts", "House"]
+    required_cols = ['Grocery', 'Other', 'Donation', "Gifts", "House", "Car & Gas"]
     for col in required_cols:
         if col not in pivot_data.columns:
             pivot_data[col] = 0
@@ -55,13 +58,16 @@ def create_monthly_expense_bar_chart(expense, transaction):
     donation = pivot_data['Donation']
     gifts = pivot_data['Gifts']
     house = pivot_data['House']
+    car = pivot_data['Car & Gas']
+
 
     #5. Calculate the 'bottom' positions for stacking
     #The order from the lowest to the top
     lowest = house
     second_lowest = grocery + house
     third_lowest = grocery + house + other
-    fourth_lowest = grocery + house + other + donation
+    fourth_lowest = grocery + house + other + car
+    fifth_lowest = grocery + house + car + other + donation
 
     # 6. Plot stacked bar chart (using the specified colors and order)
     plt.figure(figsize=(10, 8))
@@ -69,24 +75,28 @@ def create_monthly_expense_bar_chart(expense, transaction):
     # Bar 1:  House (Second Bottom) - green
     plt.bar(months, house, color='green', label='House')
     
-    # Bar 2: Grocery (Bottom) - lightblue
-    plt.bar(months, grocery, bottom=lowest, color='skyblue', label='Grocery')
+    # Bar 2: Grocery (Bottom) - pink
+    plt.bar(months, grocery, bottom=lowest, color='#ff8fab', label='Grocery')
     
     # Bar 3: Other (Third Bottom) - orange
     plt.bar(months, other, bottom=second_lowest, color='orange', label='Other')
 
-    # Bar 4: Donation (Top) - red
-    plt.bar(months, donation, bottom=third_lowest, color='red', label='Donation')
+    # Bar 4: Car (Fourth Bottm) - lightblue
+    plt.bar(months, car, bottom=third_lowest, color='lightblue', label='Car & Gas')
+    # Bar 5: Donation (Fifth Bottom) - red
+    plt.bar(months, donation, bottom=fourth_lowest, color='red', label='Donation')
 
-    # Bar 4: Gifts (Top) - purple (starts on top of Grocery + Other)
-    plt.bar(months, gifts, bottom=fourth_lowest, color='purple', label='Gifts')
+
+
+    # Bar 5: Gifts (Top) - purple
+    plt.bar(months, gifts, bottom=fifth_lowest, color='purple', label='Gifts')
 
     # Labels
     plt.xlabel('Month', fontsize=18)
     plt.ylabel('Amount', fontsize=18)
 
     # Y-Axis ticks (every 100)
-    max_amt = (third_lowest + gifts).max()
+    max_amt = (fifth_lowest + gifts).max()
     plt.yticks(np.arange(0, max_amt + 100, 100), fontsize=18)
 
     # X-Axis
@@ -103,7 +113,6 @@ def create_monthly_expense_bar_chart(expense, transaction):
     # Legend (horizontal bottom)
     plt.legend(
         fontsize=16,
-    
         ncol=2
     )
 

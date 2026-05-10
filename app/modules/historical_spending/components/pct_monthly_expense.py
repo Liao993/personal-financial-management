@@ -14,7 +14,7 @@ def create_expense_line_chart(expense, income, transaction):
     expense['month'] = expense['date'].dt.month
 
     # Filter for the specified categories
-    categories_of_interest = ['Grocery', 'Food Outside', 'Donation', 'Gas', "Gifts", 'Education', "Exercise"]
+    categories_of_interest = ['Grocery', 'Food Outside', 'Donation', 'Gas', "Gifts", 'Education', "Exercise", 'Car']
     expense['major_category'] = expense['category'].apply(lambda x: x if x in categories_of_interest else 'Others')
 
     # Group data
@@ -53,14 +53,15 @@ def create_expense_line_chart(expense, income, transaction):
     monthly_income = merged_df[merged_df['total_income'] !=0]['total_income'].mean()
     # Define colors
     category_colors = {
-        'Grocery': '#5dade2',
+        'Grocery': '#ff8fab',
         'Food Outside': "#e0a539",
         'Gas': "#198553A0",
         'Donation': "#e62922",
         'Others': "#716E74",
         'Gifts': "#BD1CC5",
         'Education': "#130fe4",
-        'Exercise': "#07294b"
+        'Exercise': "#07294b",
+        'Car': "#5dade2"
 
     }
     palette = {cat: category_colors.get(cat, 'gray') for cat in all_categories}
