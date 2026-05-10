@@ -107,17 +107,16 @@ def fetch_annual_expense(year):
             cursor.close()
 
 def fetch_last_expense_data():
-    """Fetches the last two expense data from the database."""
+    """Fetches the last month expense data from the database."""
     conn = get_db_connection()
     if conn:
         try:
             cursor = conn.cursor()
             query = """
-                SELECT date, items, amount, category
+                SELECT date, items, amount, category, payment_method
                 FROM expense
-                Where category != 'House'
-                ORDER BY date DESC
-                LIMIT 20;
+                Where category != 'House' AND date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+                ORDER BY date 
             """
             cursor.execute(query)
             rows = cursor.fetchall()
