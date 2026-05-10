@@ -5,7 +5,7 @@ from utils.data import account_name_list, fund_categories, transaction_type_list
 from modules.transaction.transaction_review import record_saving_transaction
 from modules.transaction.transaction_instruction import instruction
 def transaction_form():
-    st.subheader("Record New Transaction")
+    st.subheader("Record New Transaction: This page is to track all money flow between my account, inlcuding prepaid in travelings.")
 
     drop_down_list()
 

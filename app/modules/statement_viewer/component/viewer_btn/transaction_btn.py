@@ -25,7 +25,8 @@ def transaction_btn():
         if st.button("📈 All by Fund Category", use_container_width=True):
             execute_predefined_query("""
                                         SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account,
-                                            sum(amount) over (partition by fund_category) AS fund_category_total_amount
+                                        sum(amount) over (partition by fund_category) AS fund_category_total_amount
+
                                         FROM transactions 
                                         ORDER BY fund_category, date DESC
                                      """)
@@ -38,35 +39,38 @@ def transaction_btn():
                                         FROM transactions 
                                         ORDER BY account_name, date DESC
                                      """)
+
         # add window function to get total amount by fund category
     with query_buttons[3]:
-        if st.button("📈 All Deposit", use_container_width=True):
-            execute_predefined_query("""
-                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account,
-                                            sum(amount) over (partition by fund_category) AS fund_category_total_amount
-                                        FROM transactions 
-                                        WHERE transaction_type = 'Deposit'
-                                        ORDER BY fund_category, date DESC
-                                     """)
-        # add window function to get total amount by fund category
-    with query_buttons[4]:
         if st.button("📈 All Withdrawal", use_container_width=True):
             execute_predefined_query("""
                                         SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account, prepaid,
                                             sum(amount) over (partition by fund_category) AS fund_category_total_amount
                                         FROM transactions 
                                         WHERE transaction_type = 'Withdrawal'
-                                        ORDER BY fund_category, date DESC
+                                        ORDER BY 
+                                        CASE fund_category
+                                         WHEN 'Emergency Funds' THEN 1
+                                         WHEN 'Retirement Saving' THEN 2
+                                         WHEN 'Parents Support' THEN 3
+                                         WHEN 'Medium-term Saving' THEN 4
+                                         WHEN 'Traveling Funds' THEN 5
+                                        END
+                                         , date DESC
                                      """) 
-        # add window function to get total amount by fund category   
-    with query_buttons[5]:
-        if st.button("📈 All Transfer", use_container_width=True):
+    with query_buttons[4]:
+        if st.button("📈 All Traveling Withdrawal", use_container_width=True):
             execute_predefined_query("""
-                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account,
-                                            sum(amount) over (partition by fund_category) AS fund_category_total_amount
-                                        FROM transactions 
-                                        WHERE transaction_type Like '%Transfer%'
-                                        ORDER BY date DESC, fund_category, transaction_id DESC
-                                     """)    
+                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account, prepaid                                      FROM transactions 
+                                        WHERE transaction_type = 'Withdrawal' and fund_category = 'Traveling Funds'
+                                        ORDER BY date DESC
+                                     """) 
+    with query_buttons[5]:
+        if st.button("📈 All Medium Withdrawal", use_container_width=True):
+            execute_predefined_query("""
+                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account, prepaid                                      FROM transactions 
+                                        WHERE transaction_type = 'Withdrawal' and fund_category = 'Medium-term Saving'
+                                        ORDER BY date DESC
+                                     """) 
     
     st.write("")
