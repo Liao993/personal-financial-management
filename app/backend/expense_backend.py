@@ -161,3 +161,4 @@ def fetch_house_expesne():
     else:
         st.info("Database connection failed, cannot retrieve data.")
         return pd.DataFrame()
+

@@ -16,9 +16,9 @@ def RRSP(original_data, room):
   rrsp_data['date'] = pd.to_datetime(rrsp_data['date'])
   rrsp_amount = rrsp_data['amount'].sum()
   rrsp_contribution = rrsp_data[(rrsp_data['transaction_type'].isin(['Transfer In', 'Deposit']))]['amount'].sum()
-  selected_year_contribution = rrsp_data[rrsp_data['transaction_type'].isin(['Transfer In', 'Deposit']) & (rrsp_data['date'].dt.year == selected_year)]['amount'].sum()
+  selected_year_contribution = rrsp_data[rrsp_data['transaction_type'].isin(['Transfer In']) & (rrsp_data['date'].dt.year == selected_year)]['amount'].sum()
   other_year_contribution = rrsp_contribution - selected_year_contribution
-  rrsp_withdrawal = rrsp_data[(rrsp_data['transaction_type'].isin(['Transfer Out', 'Withdrawal']))]['amount'].sum() 
+  rrsp_withdrawal = rrsp_data[(rrsp_data['transaction_type'].isin(['Transfer Out']))]['amount'].sum() 
   total_room = room
   total_left = total_room - rrsp_contribution
 

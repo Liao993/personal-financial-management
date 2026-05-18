@@ -11,12 +11,13 @@ def upload_expense():
       <style>
       /* Target the text inside st.info and st.warning */
       .stAlert p {
-         font-size: 24px !important;
+         font-size: 22px !important;
       }
       </style>
       """, unsafe_allow_html=True)
     st.warning("Don't change the name of the file, it will be used to catch the year.")
-    st.warning("Please exclude prepaid transactions (wait for people return it and the amount difference just record gift or income) and house-related expenses (pre-filtered by the ETL pipeline).")
+    st.warning("If the transaction is not traveling, please exclude those prepaid transactions (wait for people return it) and the amount difference just record gift or income).")
+    st.warning("Please exlcude house-related expenses (pre-filtered by the ETL pipeline).")
     st.info("Expenses is used to record my acutal spending including regular expenses and traveling expense.")
 
     if 'upload_pdf_state' not in st.session_state:

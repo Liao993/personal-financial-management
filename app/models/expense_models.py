@@ -76,8 +76,8 @@ class Expense(BaseModel):
     @validator('trip')
     def trip_check(cls, value, values):
         category = values.get('category')
-        if value is not None and category != 'Traveling':
+        if value and category != 'Traveling':
             raise ValueError("If trip is provided, category must be 'Traveling'")
-        if category == 'Traveling' and value is None:
-            raise ValueError("If category is 'Traveling', trip cannot be None")
+        if category == 'Traveling' and not value:
+            raise ValueError("If category is 'Traveling', trip cannot be empty")
         return value

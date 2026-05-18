@@ -5,6 +5,9 @@ import numpy as np
 from utils.data import expense_category_options as category_list, traveling_category_options
 from modules.upload_pdf.pipeline.load import load_expense_data
 from modules.upload_pdf.component.monthly_summary import monthly_summary
+from backend.trip_backend import fetch_all_trips
+
+
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
 review_data = 'review_expense_data'
@@ -34,7 +37,17 @@ def display_editable_dataframe(dataframe, bank):
         st.success("Your data is being processed")
         st.write("Please input your trip below!")
         single_trip = st.checkbox("Single Trip", value=True)
-        trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-012025)")
+        
+        existing_trips = fetch_all_trips()
+        
+        trip_options = existing_trips + ["Add New Trip"]
+        selected_trip = st.selectbox("Select Trip", options=trip_options)
+        
+        if selected_trip == "Add New Trip":
+            trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-012025)")
+        else:
+            trip_input = selected_trip
+            
         st.warning("Please Exclude House Related Expenses!")
         edited_df = st.data_editor(
             st.session_state[review_data],
