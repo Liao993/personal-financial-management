@@ -10,9 +10,10 @@ def load_expense_data(updated_dataframe, bank):
        # 3. Validate each row and collect valid data
         valid_expenses = []
         for index, row in updated_dataframe.iterrows():
-            expense_data = row.to_dict()
+            # Convert row to dict and replace NaN with None
+            expense_data = row.where(pd.notna(row), None).to_dict()
             expense_data['payment_method'] = bank
-            validated = validate_expense_data(expense_data)   
+            validated = validate_expense_data(expense_data)
 
             if validated:
                 valid_expenses.append(expense_data)
