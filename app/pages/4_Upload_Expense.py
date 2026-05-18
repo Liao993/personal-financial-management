@@ -7,17 +7,18 @@ st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
 def upload_expense():
 
     st.markdown("<h1 style='color: #e74c3c; text-align: center;'>Upload Your Expenses PDF Here</h1>", unsafe_allow_html=True)
-    st.markdown("""
-      <style>
-      /* Target the text inside st.info and st.warning */
-      .stAlert p {
-         font-size: 24px !important;
-      }
-      </style>
-      """, unsafe_allow_html=True)
-    st.warning("Don't change the name of the file, it will be used to catch the year.")
-    st.warning("Please exclude prepaid transactions (wait for people return it and the amount difference just record gift or income) and house-related expenses (pre-filtered by the ETL pipeline).")
-    st.info("Expenses is used to record my acutal spending including regular expenses and traveling expense.")
+
+    with st.expander("📋 Quick Reference Notes (click to expand)", expanded=False):
+        st.markdown("""
+        | Topic | Note |
+        |---|---|
+        | 📁 **File Name** | Don't rename the PDF — the filename is used to extract the statement year. |
+        | 🏠 **House Expenses** | Exclude house-related items (pre-filtered by the ETL pipeline). |
+        | 💳 **Prepaid (non-travel)** | If someone owes you money, exclude it — record the return as Gift or Income later. |
+        | ✈️ **Traveling Rows** | Set the Trip and Traveling Category in the data editor for traveling rows. |
+        | 💰 **Fund Withdrawal** | Set a Primary Target Fund in the editor to auto-create a withdrawal from RBC Chequing. |
+        | 🔄 **Is Prepaid** | Check if you paid upfront for others — record a Deposit in the Transaction page after reimbursement. |
+        """)
 
     if 'upload_pdf_state' not in st.session_state:
         st.session_state['upload_pdf_state'] = True

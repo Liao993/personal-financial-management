@@ -17,9 +17,16 @@ def insert_expense_data(validated_data: dict):
                     traveling_category, trip,  payment_method, source_notes, 
                     house_category, 
                     amount_for_number_of_travelers, 
-                    paid_for_number_of_travlerers
+                    paid_for_number_of_travlerers,
+                    exclude_from_monthly,
+                    is_prepaid,
+                    target_fund_category,
+                    split_fund_category_1,
+                    split_amount_1,
+                    split_fund_category_2,
+                    split_amount_2
                 ) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             
             # 2. Map the values (using .get for everything that isn't mandatory)
@@ -34,7 +41,14 @@ def insert_expense_data(validated_data: dict):
                 validated_data.get('source_notes'),
                 validated_data.get('house_category'),
                 validated_data.get('amount_for_number_of_travelers'),
-                validated_data.get('paid_for_number_of_travlerers')
+                validated_data.get('paid_for_number_of_travlerers'),
+                validated_data.get('exclude_from_monthly', False),
+                validated_data.get('is_prepaid', False),
+                validated_data.get('target_fund_category'),
+                validated_data.get('split_fund_category_1'),
+                validated_data.get('split_amount_1') or 0.0,
+                validated_data.get('split_fund_category_2'),
+                validated_data.get('split_amount_2') or 0.0
             )
             
             cursor.execute(query, values)
@@ -161,3 +175,4 @@ def fetch_house_expesne():
     else:
         st.info("Database connection failed, cannot retrieve data.")
         return pd.DataFrame()
+

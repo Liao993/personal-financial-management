@@ -148,6 +148,7 @@ def fetch_all_transaction_data():
                       Returns None if the database connection fails.
     """
     conn = get_db_connection()
+    columns = []
     if conn:
         cursor = conn.cursor()
         query = """
@@ -156,23 +157,65 @@ def fetch_all_transaction_data():
             WHERE prepaid = False   
             """
         try:
-            cursor.execute(query) #removed the extra parameter
-            columns = [desc[0] for desc in cursor.description] #added this line to get the column names
+            cursor.execute(query)
+            columns = [desc[0] for desc in cursor.description]
             data = cursor.fetchall()
             if data:
-                df = pd.DataFrame(data, columns=columns) # Pass the column names to the DataFrame constructor
+                df = pd.DataFrame(data, columns=columns)
                 return columns, df
             else:
-                return pd.DataFrame()  # Return empty DataFrame
+                return columns, pd.DataFrame(columns=columns)
         except psycopg2.Error as e:
             st.error(f"Error retrieving transaction data: {e}")
-            return columns, None # Return None on error
+            return columns, pd.DataFrame()
         finally:
             cursor.close()
             conn.close()
     else:
         st.info("Database connection failed, cannot retrieve data.")
-        return columns, None  # Return None on connection failure
+        return columns, pd.DataFrame()
+
+
+def fetch_expense_withdrawal_transactions():
+    """Fetches all auto-created withdrawal transactions linked to expenses (from the DB trigger)."""
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT 
+                t.transaction_id,
+                t.date,
+                t.amount,
+                t.fund_category,
+                t.transaction_type,
+                t.prepaid,
+                t.expense_id,
+                t.trip,
+                e.items AS expense_items,
+                e.category AS expense_category,
+                e.source_notes
+            FROM transactions t
+            JOIN expense e ON t.expense_id = e.id
+            WHERE t.expense_id IS NOT NULL
+            ORDER BY t.date DESC, t.transaction_id DESC
+        """
+        try:
+            cursor.execute(query)
+            columns = [desc[0] for desc in cursor.description]
+            data = cursor.fetchall()
+            if data:
+                return pd.DataFrame(data, columns=columns)
+            else:
+                return pd.DataFrame(columns=columns)
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving expense-linked transactions: {e}")
+            return pd.DataFrame()
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return pd.DataFrame()
 
 def fetch_last_transaction_data():
     """Fetches the last two transaction data from the database."""
