@@ -28,10 +28,9 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
          |---|---|
          | 📌 **Purpose** | Record actual spending — regular expenses and traveling expenses. |
          | 🏠 **House Expenses** | Exclude house-related items (pre-filtered by the ETL pipeline). |
-         | 💳 **Prepaid (non-travel)** | If someone owes you money, exclude it here — record the return as Gift or Income later. |
          | ✈️ **Traveling Section** | Use the expander below to fill in trip and traveler details. |
          | 💰 **Fund Withdrawal** | Use the Fund Withdrawal expander to auto-deduct from a savings fund. |
-         | 🔄 **Is Prepaid** | Check if you paid upfront for others — record a Deposit in the Transaction page after reimbursement. |
+         | 🔄 **Is Prepaid** | If someone owes you money, exclude it here — record as Gift for amount difference or no record it. |
          """)
       expense_date = st.date_input("Date", value=date.today())
       expense_common_items = st.selectbox("Items", common_store_list, key="common_item_select")
