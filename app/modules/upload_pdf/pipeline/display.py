@@ -43,19 +43,6 @@ def display_editable_dataframe(dataframe, bank):
         </style>
         """, unsafe_allow_html=True)
 
-        with st.expander("📋 Quick Reference Notes (click to expand)", expanded=False):
-            st.markdown("""
-            | Topic | Note |
-            |---|---|
-            | 📌 **Purpose** | Record actual spending — regular expenses and traveling expenses. |
-            | 🏠 **House Expenses** | Exclude house-related items (pre-filtered by the ETL pipeline). |
-            | 💳 **Prepaid (non-travel)** | If someone owes you money, exclude it here — record the return as Gift or Income later. |
-            | ✈️ **Traveling Section** | Fill in the trip below. Enable "Single Trip" to apply the same trip to all Traveling rows automatically. |
-            | 💰 **Fund Withdrawal Required** | Check this column (or set a Primary Target Fund) to auto-create a withdrawal transaction from RBC Chequing. |
-            | 🔄 **Is Prepaid** | Check if you paid upfront for others — record a Deposit in the Transaction page after reimbursement. |
-            | 🏦 **Split Allocations** | Set Secondary/Tertiary fund + amount to split the withdrawal across multiple funds. The remainder goes to Primary. |
-            """)
-
         st.markdown('<div style="font-size:22px; color: #ff9900; padding: 6px; border-radius: 5px;">📍 Traveling Section</div>', unsafe_allow_html=True)
         st.write("Please input your trip below!")
         single_trip = st.checkbox("Single Trip", value=True)

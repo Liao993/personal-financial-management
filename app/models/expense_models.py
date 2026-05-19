@@ -88,3 +88,13 @@ class Expense(BaseModel):
         if category == 'Traveling' and not value:
             raise ValueError("If category is 'Traveling', trip cannot be empty")
         return value
+
+    @validator('target_fund_category')
+    def fund_required_when_excluded(cls, value, values):
+        exclude = values.get('exclude_from_monthly', False)
+        if exclude and not value:
+            raise ValueError(
+                "Target Fund Category is required when 'Fund Withdrawal Required' is checked. "
+                "Please select a fund to deduct from, or uncheck 'Fund Withdrawal Required'."
+            )
+        return value
