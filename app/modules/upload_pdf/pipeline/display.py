@@ -2,9 +2,12 @@ import streamlit as st # type: ignore
 import pandas as pd
 import time
 import numpy as np
-from utils.data import expense_category_options as category_list, traveling_category_options
+from utils.data import expense_category_options as category_list, traveling_category_options, fund_categories
 from modules.upload_pdf.pipeline.load import load_expense_data
 from modules.upload_pdf.component.monthly_summary import monthly_summary
+from backend.trip_backend import fetch_all_trips
+
+
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
 review_data = 'review_expense_data'
@@ -32,10 +35,47 @@ def display_editable_dataframe(dataframe, bank):
      # if it is in edit mode, show the form
     if st.session_state[edit_mode_form]:
         st.success("Your data is being processed")
+        st.markdown("""
+        <style>
+        .stAlert p {
+           font-size: 20px !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        st.markdown('<div style="font-size:22px; color: #ff9900; padding: 6px; border-radius: 5px;">📍 Traveling Section</div>', unsafe_allow_html=True)
         st.write("Please input your trip below!")
         single_trip = st.checkbox("Single Trip", value=True)
-        trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-012025)")
-        st.warning("Please Exclude House Related Expenses!")
+        
+        existing_trips = fetch_all_trips()
+        
+        trip_options = existing_trips + ["Add New Trip"]
+        selected_trip = st.selectbox("Select Trip", options=trip_options)
+        
+        if selected_trip == "Add New Trip":
+            trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-012025)")
+        else:
+            trip_input = selected_trip
+            
+        st.markdown('<div style="font-size:28px; color: #ff9900; padding: 10px; border-radius: 5px;">📊 PDF Data Editor</div>', unsafe_allow_html=True)
+        st.warning("⚠️ Please exclude House-related expenses!")
+        
+        # Initialize boolean columns if they don't exist
+        if 'exclude_from_monthly' not in st.session_state[review_data].columns:
+            st.session_state[review_data]['exclude_from_monthly'] = False
+        if 'is_prepaid' not in st.session_state[review_data].columns:
+            st.session_state[review_data]['is_prepaid'] = False
+        if 'target_fund_category' not in st.session_state[review_data].columns:
+            st.session_state[review_data]['target_fund_category'] = None
+        if 'split_fund_category_1' not in st.session_state[review_data].columns:
+            st.session_state[review_data]['split_fund_category_1'] = None
+        if 'split_amount_1' not in st.session_state[review_data].columns:
+            st.session_state[review_data]['split_amount_1'] = 0.0
+        if 'split_fund_category_2' not in st.session_state[review_data].columns:
+            st.session_state[review_data]['split_fund_category_2'] = None
+        if 'split_amount_2' not in st.session_state[review_data].columns:
+            st.session_state[review_data]['split_amount_2'] = 0.0
+
         edited_df = st.data_editor(
             st.session_state[review_data],
             column_config={
@@ -53,6 +93,46 @@ def display_editable_dataframe(dataframe, bank):
                 "Traveling Category",  # Label for the column
                 options=[None] + traveling_category_options,  # Use your options, include None
                 required=False,  # traveling_category is not required
+                ),
+                "exclude_from_monthly": st.column_config.CheckboxColumn(
+                    "Fund Withdrawal Required",
+                    help="Fund Withdrawal Required (this amount will be excluded from monthly expense). Auto-checked if you set a Target Fund.",
+                    default=False,
+                ),
+                "is_prepaid": st.column_config.CheckboxColumn(
+                    "Is Prepaid",
+                    help="Is Prepaid: check this box if I need to withdraw from the fund category first and get this money back after the bookkeeping. Record Deposit in the transaction page after getting money back.",
+                    default=False,
+                ),
+                "target_fund_category": st.column_config.SelectboxColumn(
+                    "Primary Target Fund",
+                    help="Primary Target Fund Category — set this to auto-create a withdrawal transaction. Leave blank for regular monthly spending (no transaction created).",
+                    options=[None] + fund_categories,
+                    default=None,
+                ),
+                "split_fund_category_1": st.column_config.SelectboxColumn(
+                    "Secondary Target Fund",
+                    help="Secondary Target Fund (Split Allocation) — optional. The remainder after split goes to the Primary Target Fund.",
+                    options=[None] + fund_categories,
+                    default=None,
+                ),
+                "split_amount_1": st.column_config.NumberColumn(
+                    "Amount (Secondary)",
+                    help="Amount to allocate to Secondary Target Fund. The rest (total - secondary - tertiary) goes to Primary.",
+                    default=0.0,
+                    format="%.2f",
+                ),
+                "split_fund_category_2": st.column_config.SelectboxColumn(
+                    "Tertiary Target Fund",
+                    help="Tertiary Target Fund (Split Allocation) — optional third bucket.",
+                    options=[None] + fund_categories,
+                    default=None,
+                ),
+                "split_amount_2": st.column_config.NumberColumn(
+                    "Amount (Tertiary)",
+                    help="Amount to allocate to Tertiary Target Fund.",
+                    default=0.0,
+                    format="%.2f",
                 ),
             } if category_list else None,
             use_container_width=True,

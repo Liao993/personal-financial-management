@@ -82,3 +82,23 @@ def fetch_trip_expense(trip):
             return pd.DataFrame()
         finally:
             cursor.close()
+            
+def fetch_all_trips():
+    """Fetches all unique trips from the database."""
+    conn = get_db_connection()
+    if conn:
+        try:
+            cursor = conn.cursor()
+            query = "SELECT DISTINCT trip FROM expense WHERE trip IS NOT NULL AND trip != '';"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            return [row[0] for row in rows if row[0] is not None and str(row[0]).strip().upper() not in ('NONE', 'NULL', '')]
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving trips: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return []

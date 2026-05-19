@@ -16,6 +16,13 @@ class Expense(BaseModel):
     house_category: Optional[str] = None
     amount_for_number_of_travelers: Optional[int] = None
     paid_for_number_of_travlerers: Optional[int] = None
+    exclude_from_monthly: bool = False
+    is_prepaid: bool = False
+    target_fund_category: Optional[str] = None
+    split_fund_category_1: Optional[str] = None
+    split_amount_1: float = 0.00
+    split_fund_category_2: Optional[str] = None
+    split_amount_2: float = 0.00
 
     class Config:
         orm_mode = True
@@ -76,8 +83,18 @@ class Expense(BaseModel):
     @validator('trip')
     def trip_check(cls, value, values):
         category = values.get('category')
-        if value is not None and category != 'Traveling':
+        if value and category != 'Traveling':
             raise ValueError("If trip is provided, category must be 'Traveling'")
-        if category == 'Traveling' and value is None:
-            raise ValueError("If category is 'Traveling', trip cannot be None")
+        if category == 'Traveling' and not value:
+            raise ValueError("If category is 'Traveling', trip cannot be empty")
+        return value
+
+    @validator('target_fund_category')
+    def fund_required_when_excluded(cls, value, values):
+        exclude = values.get('exclude_from_monthly', False)
+        if exclude and not value:
+            raise ValueError(
+                "Target Fund Category is required when 'Fund Withdrawal Required' is checked. "
+                "Please select a fund to deduct from, or uncheck 'Fund Withdrawal Required'."
+            )
         return value
