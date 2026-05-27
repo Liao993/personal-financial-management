@@ -44,7 +44,7 @@ def transaction_btn():
     with query_buttons[3]:
         if st.button("📈 All Withdrawal", use_container_width=True):
             execute_predefined_query("""
-                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account, prepaid,
+                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account,
                                             sum(amount) over (partition by fund_category) AS fund_category_total_amount
                                         FROM transactions 
                                         WHERE transaction_type = 'Withdrawal'
@@ -61,14 +61,31 @@ def transaction_btn():
     with query_buttons[4]:
         if st.button("📈 All Traveling Withdrawal", use_container_width=True):
             execute_predefined_query("""
-                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account, prepaid                                      FROM transactions 
-                                        WHERE transaction_type = 'Withdrawal' and fund_category = 'Traveling Funds'
-                                        ORDER BY date DESC
+                                        SELECT
+                                            t.transaction_id,
+                                            t.date,
+                                            t.fund_category,
+                                            t.amount,
+                                            t.transaction_type,
+                                            t.account_name,
+                                            t.source_notes,
+                                            t.transfer_to_account,
+                                            t.expense_id,
+                                            COALESCE(t.trip, e.trip) AS trip,
+                                            e.items AS expense_items,
+                                            e.traveling_category
+                                        FROM transactions t
+                                        LEFT JOIN expense e
+                                            ON t.expense_id = e.id
+                                        WHERE t.transaction_type = 'Withdrawal'
+                                          AND t.fund_category = 'Traveling Funds'
+                                        ORDER BY t.date DESC, trip, t.transaction_id DESC
                                      """) 
     with query_buttons[5]:
         if st.button("📈 All Medium Withdrawal", use_container_width=True):
             execute_predefined_query("""
-                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account, prepaid                                      FROM transactions 
+                                        SELECT transaction_id, date, fund_category, amount, transaction_type, account_name, source_notes, transfer_to_account
+                                        FROM transactions 
                                         WHERE transaction_type = 'Withdrawal' and fund_category = 'Medium-term Saving'
                                         ORDER BY date DESC
                                      """) 
