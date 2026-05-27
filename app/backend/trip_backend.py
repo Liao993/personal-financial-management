@@ -11,12 +11,14 @@ def fetch_trip_selection():
         try:
             cursor = conn.cursor()
          
-            query = f"""
+            query = """
                         SELECT DISTINCT 
                             trip, 
-                            TO_DATE(SPLIT_PART(trip, '-', 2), 'MMYYYY') as sort_date
-                        FROM {DBT_SCHEMA}.intermediate_expenses_with_summary
+                            MAX(date) OVER (PARTITION BY trip) AS sort_date
+                        FROM expense
                         WHERE category = 'Traveling'
+                          AND trip IS NOT NULL
+                          AND trip != ''
                         ORDER BY sort_date DESC;
                     """
             cursor.execute(query, ())
@@ -41,14 +43,26 @@ def fetch_trip_expense(trip):
     if conn:
         cursor = conn.cursor()
          # To calculate total_spending by trip and the % for category in SQL first
-        query = f"""
+        query = """
                 SELECT
                     trip,
                     traveling_category,
                     SUM(amount) AS category_spending,
-                    ROUND(SUM(amount_I_spend),2) AS category_i_spent,
+                    ROUND(SUM(
+                        COALESCE(
+                            (amount / NULLIF(amount_for_number_of_travelers, 0))
+                            * paid_for_number_of_travlerers,
+                            0
+                        )
+                    ), 2) AS category_i_spent,
                     SUM(SUM(amount)) OVER (PARTITION BY trip) AS total_spending,
-                    ROUND(SUM(SUM(amount_I_spend)) OVER (PARTITION BY trip),2) AS total_i_spent,
+                    ROUND(SUM(SUM(
+                        COALESCE(
+                            (amount / NULLIF(amount_for_number_of_travelers, 0))
+                            * paid_for_number_of_travlerers,
+                            0
+                        )
+                    )) OVER (PARTITION BY trip), 2) AS total_i_spent,
                     -- Percentage of Total (Safe from Division by Zero)
                     ROUND(
                         (SUM(amount) / NULLIF(SUM(SUM(amount)) OVER (PARTITION BY trip), 0)) * 100.0, 
@@ -56,10 +70,28 @@ def fetch_trip_expense(trip):
                     
                     -- Percentage I Spent (Safe from Division by Zero)
                     ROUND(
-                        (SUM(amount_I_spend) / NULLIF(SUM(SUM(amount_I_spend)) OVER (PARTITION BY trip), 0)) * 100.0, 
+                        (
+                            SUM(
+                                COALESCE(
+                                    (amount / NULLIF(amount_for_number_of_travelers, 0))
+                                    * paid_for_number_of_travlerers,
+                                    0
+                                )
+                            )
+                            / NULLIF(
+                                SUM(SUM(
+                                    COALESCE(
+                                        (amount / NULLIF(amount_for_number_of_travelers, 0))
+                                        * paid_for_number_of_travlerers,
+                                        0
+                                    )
+                                )) OVER (PARTITION BY trip),
+                                0
+                            )
+                        ) * 100.0,
                     2) AS percentage_I_spent
                 FROM
-                    {DBT_SCHEMA}.intermediate_expenses_with_summary
+                    expense
                 WHERE
                     category = 'Traveling' AND trip = %s 
                 GROUP BY
