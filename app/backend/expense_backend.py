@@ -138,6 +138,7 @@ def fetch_last_expense_data():
                 SELECT date, items, amount, category, payment_method, exclude_from_monthly
                 FROM expense
                 WHERE category != 'House'
+                  AND house_category IS NULL
                   AND date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
                 ORDER BY date DESC, id DESC
             """
@@ -180,6 +181,7 @@ def fetch_house_expesne():
                     EXTRACT(YEAR FROM date)  AS year
                 FROM expense
                 WHERE category = 'House'
+                   OR house_category IS NOT NULL
                 ORDER BY date DESC
             """
             cursor.execute(query)

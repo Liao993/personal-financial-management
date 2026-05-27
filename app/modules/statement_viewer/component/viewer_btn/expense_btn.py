@@ -22,6 +22,7 @@ def expense_btn():
                 FROM expense
                 WHERE category != 'Traveling'
                   AND category != 'House'
+                  AND house_category IS NULL
                   AND exclude_from_monthly = FALSE
                 ORDER BY date DESC;
             """)
@@ -31,17 +32,34 @@ def expense_btn():
             execute_predefined_query("""
                 SELECT
                     id, date, items, amount, category, house_category,
-                    house_summary_category,
-                    SUM(CASE WHEN house_summary_category = 'Regular Expenses'
-                             THEN amount ELSE 0 END)
+                    exclude_from_monthly,
+                    CASE
+                        WHEN house_category = 'Mortgage' THEN 'Mortgage'
+                        WHEN house_category = 'Extra Mortgage' THEN 'Extra Mortgage'
+                        WHEN house_category IN (
+                            'Internet', 'Electricity', 'Insurance',
+                            'Water & Sewage', 'Oil', 'Snow Removal'
+                        ) THEN 'Regular Expenses'
+                        WHEN house_category LIKE '%Repair%' THEN 'Repairs'
+                        WHEN house_category LIKE '%Tax%' THEN 'Tax'
+                        ELSE 'Other'
+                    END AS house_summary_category,
+                    SUM(CASE
+                            WHEN house_category IN (
+                                'Internet', 'Electricity', 'Insurance',
+                                'Water & Sewage', 'Oil', 'Snow Removal'
+                            )
+                            THEN amount ELSE 0
+                        END)
                         OVER (PARTITION BY EXTRACT(YEAR FROM date))
                         AS "year_regular_expense",
                     SUM(CASE WHEN house_category != 'Extra Mortgage'
                              THEN amount ELSE 0 END)
                         OVER (PARTITION BY EXTRACT(YEAR FROM date))
                         AS "year_total (Excluded Extra Mortgage)"
-                FROM dbt_budget.intermediate_expenses_with_summary
+                FROM expense
                 WHERE category = 'House'
+                   OR house_category IS NOT NULL
                 ORDER BY date DESC;
             """)
 
@@ -51,6 +69,7 @@ def expense_btn():
                 SELECT
                     id, date, items, amount, category, trip,
                     traveling_category,
+                    exclude_from_monthly,
                     amount_for_number_of_travelers,
                     paid_for_number_of_travlerers,
                     SUM(amount) OVER (PARTITION BY trip) AS trip_total
@@ -68,11 +87,11 @@ def expense_btn():
                     SELECT *
                     FROM expense
                     WHERE (house_category != 'Extra Mortgage' OR house_category IS NULL)
-                      AND exclude_from_monthly = FALSE
                 )
                 SELECT
                     EXTRACT(YEAR FROM date)                                             AS year,
                     category,
+                    exclude_from_monthly,
                     SUM(amount)                                                         AS total_amount,
                     SUM(SUM(CASE WHEN category != 'House' THEN amount ELSE 0 END))
                         OVER (PARTITION BY EXTRACT(YEAR FROM date))
@@ -84,8 +103,8 @@ def expense_btn():
                         OVER (PARTITION BY EXTRACT(YEAR FROM date))
                         AS total_yearly_expense
                 FROM no_prepaid
-                GROUP BY category, EXTRACT(YEAR FROM date)
-                ORDER BY year DESC, total_amount DESC;
+                GROUP BY category, exclude_from_monthly, EXTRACT(YEAR FROM date)
+                ORDER BY year DESC, exclude_from_monthly, total_amount DESC;
             """)
 
     with query_buttons[4]:
@@ -110,6 +129,7 @@ def expense_btn():
                         AS total_yearly_expense
                 FROM expense
                 WHERE category != 'Traveling'
+                  AND house_category IS NULL
                   AND exclude_from_monthly = FALSE
                   AND (
                         UPPER(items) LIKE '%SUPER%'
@@ -129,13 +149,14 @@ def expense_btn():
                     payment_method,
                     EXTRACT(YEAR  FROM date) AS year,
                     EXTRACT(MONTH FROM date) AS month,
+                    exclude_from_monthly,
                     SUM(amount)              AS total_amount_by_payment_method
                 FROM expense
                 WHERE category != 'Traveling'
                   AND date > '2025-10-31'
                   AND payment_method IS NOT NULL
-                  AND exclude_from_monthly = FALSE
                 GROUP BY payment_method,
+                         exclude_from_monthly,
                          EXTRACT(YEAR  FROM date),
                          EXTRACT(MONTH FROM date)
                 ORDER BY EXTRACT(YEAR  FROM date) DESC,

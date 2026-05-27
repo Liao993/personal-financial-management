@@ -33,3 +33,4 @@ FROM {{ source('public', 'expense') }}
 #}
 WHERE exclude_from_monthly = FALSE
   AND category != 'House'
+  AND house_category IS NULL
