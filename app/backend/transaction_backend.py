@@ -1,33 +1,30 @@
-import streamlit as st # type: ignore
-from utils.connection import get_db_connection # type: ignore
-import psycopg2 # type: ignore
-import pandas as pd # type: ignore
+import streamlit as st  # type: ignore
+from utils.connection import get_db_connection  # type: ignore
+import psycopg2  # type: ignore
+import pandas as pd  # type: ignore
+
 
 def insert_transaction_data(validated_data: dict):
-    #st.info("Received validated income data in income_backend.py:")
-    # Here you would add your logic to interact with the database
-    # using the validated_data (e.g., insert into the income table)
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         success = False
         try:
             query = """
-            INSERT INTO transactions (
-               date, account_name, transaction_type, amount,
-               fund_category, source_notes, transfer_to_account, prepaid
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-             """
+                INSERT INTO transactions (
+                    date, account_name, transaction_type, amount,
+                    fund_category, source_notes, transfer_to_account
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
             values = (
-                validated_data['date'],
-                validated_data['account_name'],
-                validated_data['transaction_type'],
-                validated_data['amount'],
-                validated_data['fund_category'],
-                validated_data['source_notes'],
-                validated_data['transfer_to_account'],
-                validated_data['prepaid']   
+                validated_data["date"],
+                validated_data["account_name"],
+                validated_data["transaction_type"],
+                validated_data["amount"],
+                validated_data["fund_category"],
+                validated_data["source_notes"],
+                validated_data["transfer_to_account"],
             )
             cursor.execute(query, values)
             conn.commit()
@@ -44,108 +41,119 @@ def insert_transaction_data(validated_data: dict):
         return False
 
 
-# To get the data for monthly report, and thus I need to exclude the transfer and deposit between account
 def fetch_transaction_data_by_month(year):
+    """
+    Used by Monthly Calculation and Historical Stats.
+    Only counts 'saved from' deposits — not expense-linked withdrawals.
+    """
     search_pattern = "saved from%"
-    # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
-
     if conn:
         cursor = conn.cursor()
         query = """
-            SELECT EXTRACT(MONTH FROM date) AS month, fund_category, SUM(amount) AS total_amount
+            SELECT EXTRACT(MONTH FROM date) AS month,
+                   fund_category,
+                   SUM(amount) AS total_amount
             FROM transactions
-            WHERE EXTRACT(YEAR FROM date) = %s AND  transaction_type = 'Deposit' AND prepaid = False AND source_notes LIKE %s
+            WHERE EXTRACT(YEAR FROM date) = %s
+              AND transaction_type = 'Deposit'
+              AND source_notes LIKE %s
+              AND expense_id IS NULL
             GROUP BY EXTRACT(MONTH FROM date), fund_category
-            ORDER BY month;  -- Order by month for consistency
-            """
+            ORDER BY month;
+        """
         try:
-            cursor.execute(query, (year,search_pattern))
-            columns = ['month', 'fund_category', 'total_amount']  # Define column names
+            cursor.execute(query, (year, search_pattern))
+            columns = ["month", "fund_category", "total_amount"]
             data = cursor.fetchall()
             if data:
-                df = pd.DataFrame(data, columns=columns)
-                return df
+                return pd.DataFrame(data, columns=columns)
             else:
-                return pd.DataFrame(columns=columns) # return empty df
-            
+                return pd.DataFrame(columns=columns)
         except psycopg2.Error as e:
             st.error(f"Error retrieving transaction data: {e}")
-            return []
+            return pd.DataFrame()
         finally:
             cursor.close()
             conn.close()
     else:
         st.info("Database connection failed, cannot retrieve data.")
-        return []
+        return pd.DataFrame()
+
 
 def fetch_transaction_data_by_year(year):
-    # Here you would add your logic to retrieve data from the database
+    """
+    Used by Historical Stats for yearly saving totals.
+    Excludes expense-linked transactions to avoid double-counting.
+    """
     conn = get_db_connection()
-
     if conn:
         cursor = conn.cursor()
         query = """
             SELECT fund_category, SUM(amount) AS total_amount
             FROM transactions
-            WHERE EXTRACT(YEAR FROM date) = %s AND prepaid = False
-            GROUP BY fund_category
-            """
+            WHERE EXTRACT(YEAR FROM date) = %s
+              AND expense_id IS NULL
+            GROUP BY fund_category;
+        """
         try:
             cursor.execute(query, (year,))
-            columns = ['fund_category', 'total_amount']  # Define column names
+            columns = ["fund_category", "total_amount"]
             data = cursor.fetchall()
             if data:
-                df = pd.DataFrame(data, columns=columns)
-                return df
+                return pd.DataFrame(data, columns=columns)
             else:
-                return pd.DataFrame(columns=columns) # return empty df
-            
+                return pd.DataFrame(columns=columns)
         except psycopg2.Error as e:
             st.error(f"Error retrieving transaction data: {e}")
-            return []
+            return pd.DataFrame()
         finally:
             cursor.close()
             conn.close()
     else:
         st.info("Database connection failed, cannot retrieve data.")
-        return []
+        return pd.DataFrame()
+
 
 def fetch_transaction_deposit_check(year, month):
+    """
+    Checks if saving deposits already exist for a given month.
+    Used by Monthly Calculation to decide Save vs Rerun.
+    """
     conn = get_db_connection()
     search_pattern = "saved from%"
     if conn:
         cursor = conn.cursor()
         query = """
-        SELECT transaction_id, date, fund_category, amount
-        FROM transactions
-        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s AND transaction_type = 'Deposit' AND prepaid = False AND source_notes LIKE %s;
+            SELECT transaction_id, date, fund_category, amount
+            FROM transactions
+            WHERE EXTRACT(YEAR FROM date)  = %s
+              AND EXTRACT(MONTH FROM date) = %s
+              AND transaction_type = 'Deposit'
+              AND source_notes LIKE %s
+              AND expense_id IS NULL;
         """
         try:
             cursor.execute(query, (year, month, search_pattern))
             columns = [desc[0] for desc in cursor.description]
             df = pd.DataFrame(cursor.fetchall(), columns=columns)
             return df
-            
         except psycopg2.Error as e:
             st.error(f"Error retrieving transaction data: {e}")
-            return []
+            return pd.DataFrame()
         finally:
             cursor.close()
             conn.close()
     else:
         st.info("Database connection failed, cannot retrieve data.")
-        return []
+        return pd.DataFrame()
 
 
 def fetch_all_transaction_data():
     """
-    Fetches all data from the transactions table.
-
-    Returns:
-        pd.DataFrame: A Pandas DataFrame containing all transaction data,
-                      or an empty DataFrame if no data is found or an error occurs.
-                      Returns None if the database connection fails.
+    Fetches all manually recorded transactions (not expense-linked).
+    Used by Current Saving Status pivot table (Page 10).
+    Expense-linked withdrawals are shown separately on that page.
     """
     conn = get_db_connection()
     columns = []
@@ -154,15 +162,14 @@ def fetch_all_transaction_data():
         query = """
             SELECT *
             FROM transactions
-            WHERE prepaid = False   
-            """
+            WHERE expense_id IS NULL
+        """
         try:
             cursor.execute(query)
             columns = [desc[0] for desc in cursor.description]
             data = cursor.fetchall()
             if data:
-                df = pd.DataFrame(data, columns=columns)
-                return columns, df
+                return columns, pd.DataFrame(data, columns=columns)
             else:
                 return columns, pd.DataFrame(columns=columns)
         except psycopg2.Error as e:
@@ -177,22 +184,25 @@ def fetch_all_transaction_data():
 
 
 def fetch_expense_withdrawal_transactions():
-    """Fetches all auto-created withdrawal transactions linked to expenses (from the DB trigger)."""
+    """
+    Fetches all auto-created withdrawal transactions linked to expenses.
+    Used by Current Saving Status (Page 10) to show fund deductions.
+    """
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         query = """
-            SELECT 
+            SELECT
                 t.transaction_id,
                 t.date,
+                t.account_name,
                 t.amount,
                 t.fund_category,
                 t.transaction_type,
-                t.prepaid,
                 t.expense_id,
                 t.trip,
-                e.items AS expense_items,
-                e.category AS expense_category,
+                e.items       AS expense_items,
+                e.category    AS expense_category,
                 e.source_notes
             FROM transactions t
             JOIN expense e ON t.expense_id = e.id
@@ -217,8 +227,8 @@ def fetch_expense_withdrawal_transactions():
         st.info("Database connection failed, cannot retrieve data.")
         return pd.DataFrame()
 
+
 def fetch_last_transaction_data():
-    """Fetches the last two transaction data from the database."""
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -233,16 +243,15 @@ def fetch_last_transaction_data():
             columns = [desc[0] for desc in cursor.description]
             data = cursor.fetchall()
             if data:
-                df = pd.DataFrame(data, columns=columns)
-                return df
+                return pd.DataFrame(data, columns=columns)
             else:
-                return pd.DataFrame()  # Return empty DataFrame if no data found
+                return pd.DataFrame()
         except psycopg2.Error as e:
             st.error(f"Error retrieving last transaction data: {e}")
-            return pd.DataFrame()  # Return empty DataFrame on error
+            return pd.DataFrame()
         finally:
             cursor.close()
             conn.close()
     else:
         st.info("Database connection failed, cannot retrieve last transaction data.")
-        return pd.DataFrame()  # Return empty DataFrame on connection failure
+        return pd.DataFrame()

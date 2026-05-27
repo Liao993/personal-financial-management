@@ -17,7 +17,7 @@ backups/
 *.sql
 # Allow the seed file — it has fake data only
 !database/02_seed_dev.sql
-!database/03_schema_extension.sql
+!database/03_add_foreign_key_expen
 
 # --- dbt runtime artifacts ---
 dbt/budget_project/target/

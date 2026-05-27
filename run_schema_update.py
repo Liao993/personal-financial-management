@@ -11,7 +11,7 @@ def run_update():
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
-        sql_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'database', '03_schema_extension.sql'))
+        sql_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'database', '03_expense_transaction_sync.sql'))
         with open(sql_file_path, 'r') as f:
             sql = f.read()
         try:
