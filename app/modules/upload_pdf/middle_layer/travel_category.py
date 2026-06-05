@@ -1,5 +1,6 @@
-from utils.data import daily_expense_in_other_provinces, hotel_booking
 
+from utils.data import daily_expense_in_other_provinces, hotel_booking
+ 
 def categorize_description_travel(description):
     
     current_residence = ["PE", "CH"]
@@ -7,6 +8,7 @@ def categorize_description_travel(description):
     if (last_two_words not in current_residence) and not any(word in description.upper() for word in daily_expense_in_other_provinces):
         return "Traveling"
     if any(word in description.upper() for word in hotel_booking):
-        return "Treveling"
+        return "Traveling"
     else:
         return None
+ 
