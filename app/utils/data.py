@@ -83,10 +83,25 @@ transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (betw
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
 # Change every year
-TFSA_room = Decimal(os.environ.get("TFSA_LIMIT",  "0"))
-RRSP_room = Decimal(os.environ.get("RRSP_LIMIT",  "0"))
+def env_decimal(name):
+    return Decimal(os.environ.get(name, "").strip() or "0")
 
 
+TFSA_room = env_decimal("TFSA_LIMIT")
+RRSP_room = env_decimal("RRSP_LIMIT")
+
+total_mortgage_loan = env_decimal("MORTGAGE_TOTAL")
+total_mortgage_left = env_decimal("MORTGAGE_LEFT")
+total_principal_paid = total_mortgage_loan - total_mortgage_left
+mortgage_payment_history = {
+    year: {
+        "principal": env_decimal(f"PRINCIPAL_{year}"),
+        "interest": env_decimal(f"INTEREST_{year}"),
+    }
+    for year in years
+    if os.environ.get(f"PRINCIPAL_{year}", "").strip()
+    or os.environ.get(f"INTEREST_{year}", "").strip()
+}
 
 # Default value for income amount in the form
 fixed_income_data = float(os.environ.get("BIWEEKLY_INCOME",  "0"))

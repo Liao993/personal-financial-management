@@ -60,5 +60,3 @@ def scotia_red_transformed(extracted_data):
 
 
     return categorized_df
-    
- 

@@ -5,7 +5,8 @@ import time
 from backend.transaction_backend import insert_transaction_data
 from models.transaction_models import Transaction
 from backend.transaction_backend import fetch_transaction_deposit_check
-
+# get account name from environment variable, default to "RBC Chequing" if not set
+import os
 
 def monthly_savings_data_handling(
     goal_datetime,
@@ -16,10 +17,13 @@ def monthly_savings_data_handling(
     emergency_funds,
     home_deposit,
 ):
+    raw_accounts = os.environ.get("ACCOUNT_NAMES", "")
+    Chequing_Account = raw_accounts.split(",")[0].strip() if raw_accounts else "Default Chequing"
+    House_Account = raw_accounts.split(",")[1].strip() if len(raw_accounts.split(",")) > 1 else "Default House Account"
     transactions_to_insert = [
         Transaction(
             date=goal_datetime,
-            account_name="RBC Chequing",
+            account_name=Chequing_Account,
             transaction_type="Deposit",
             amount=travel_saving,
             fund_category="Traveling Funds",
@@ -27,7 +31,7 @@ def monthly_savings_data_handling(
         ),
         Transaction(
             date=goal_datetime,
-            account_name="RBC Chequing",
+            account_name=Chequing_Account,
             transaction_type="Deposit",
             amount=retirement_saving,
             fund_category="Retirement Saving",
@@ -35,7 +39,7 @@ def monthly_savings_data_handling(
         ),
         Transaction(
             date=goal_datetime,
-            account_name="RBC Chequing",
+            account_name=Chequing_Account,
             transaction_type="Deposit",
             amount=medium_term_saving,
             fund_category="Medium-term Saving",
@@ -43,7 +47,7 @@ def monthly_savings_data_handling(
         ),
         Transaction(
             date=goal_datetime,
-            account_name="RBC Chequing",
+            account_name=Chequing_Account,
             transaction_type="Deposit",
             amount=emergency_funds,
             fund_category="Emergency Funds",
@@ -51,7 +55,7 @@ def monthly_savings_data_handling(
         ),
         Transaction(
             date=goal_datetime,
-            account_name="House Account",
+            account_name=House_Account,
             transaction_type="Deposit",
             amount=home_deposit,
             fund_category="House",
@@ -73,6 +77,8 @@ def monthly_savings_data_handling(
 
     else:
         insertion_errors = []
+        st.info(f"Using account: {Chequing_Account} for monthly savings transactions")
+
         for transaction in transactions_to_insert:
             try:
                 validated_data = Transaction(**transaction.dict())
@@ -99,7 +105,7 @@ def monthly_savings_action():
     medium_term_saving= st.session_state.get("medium_term_saving")
     emergency_funds   = st.session_state.get("emergency_funds")
     home_deposit      = st.session_state.get("home_deposit")
-
+   
     status = monthly_savings_data_handling(
         goal_datetime,
         source_notes,

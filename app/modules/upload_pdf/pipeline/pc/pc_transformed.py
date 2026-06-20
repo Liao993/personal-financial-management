@@ -60,4 +60,3 @@ def pc_transformed(extracted_data):
 
 
     return categorized_df
-    
