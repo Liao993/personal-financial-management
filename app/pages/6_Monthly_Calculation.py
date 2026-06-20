@@ -10,7 +10,7 @@ from modules.monthly_stats.middle_layer.monthly_saving import monthly_savings_ac
 from modules.monthly_stats.calculation.saving_calculation import expense_and_saving_calculation  # type: ignore
 from backend.transaction_backend import fetch_transaction_deposit_check, insert_transaction_data
 from models.transaction_models import Transaction
-
+import os
 st.set_page_config(page_title="Monthly Stats", page_icon="💰", layout="wide")
 
 
@@ -75,11 +75,13 @@ def rerun_monthly_saving(
     deleted = delete_month_saving_deposits(year, month)
     if not deleted:
         return False
-
+    raw_accounts = os.environ.get("ACCOUNT_NAMES", "")
+    Chequing_Account = raw_accounts.split(",")[0].strip() if raw_accounts else "Default Chequing"
+    House_Account = raw_accounts.split(",")[1].strip() if len(raw_accounts.split(",")) > 1 else "Default House Account"
     transactions_to_insert = [
         Transaction(
             date=goal_datetime,
-            account_name="RBC Chequing",
+            account_name=Chequing_Account,
             transaction_type="Deposit",
             amount=travel_saving,
             fund_category="Traveling Funds",
@@ -87,7 +89,7 @@ def rerun_monthly_saving(
         ),
         Transaction(
             date=goal_datetime,
-            account_name="RBC Chequing",
+            account_name=Chequing_Account,
             transaction_type="Deposit",
             amount=retirement_saving,
             fund_category="Retirement Saving",
@@ -95,7 +97,7 @@ def rerun_monthly_saving(
         ),
         Transaction(
             date=goal_datetime,
-            account_name="RBC Chequing",
+            account_name=Chequing_Account,
             transaction_type="Deposit",
             amount=medium_term_saving,
             fund_category="Medium-term Saving",
@@ -103,7 +105,7 @@ def rerun_monthly_saving(
         ),
         Transaction(
             date=goal_datetime,
-            account_name="RBC Chequing",
+            account_name=Chequing_Account,
             transaction_type="Deposit",
             amount=emergency_funds,
             fund_category="Emergency Funds",
@@ -111,7 +113,7 @@ def rerun_monthly_saving(
         ),
         Transaction(
             date=goal_datetime,
-            account_name="House Account",
+            account_name=House_Account,
             transaction_type="Deposit",
             amount=home_deposit,
             fund_category="House",
