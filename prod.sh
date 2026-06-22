@@ -24,15 +24,19 @@ case "$CMD" in
         $DC down ;;
     restart)
         $DC down && $DC up -d ;;
+    build)
+        $DC build app dbt ;;
     logs)
         $DC logs -f "${2:-}" ;;
     psql)
         $DC exec db psql -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" ;;
+    schema)
+        $DC exec -T db psql -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/04_portfolio_schema.sql ;;
     dbt)
         $DC run --rm dbt dbt run ;;
     backup)
         /Users/henry/Desktop/personal_finance_management_backup/backup.sh ;;
     *)
-        echo "Usage: ./prod.sh [up|down|restart|logs|psql|dbt|backup]"
+        echo "Usage: ./prod.sh [up|down|restart|build|logs|psql|schema|dbt|backup]"
         exit 1 ;;
 esac
