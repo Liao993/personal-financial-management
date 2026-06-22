@@ -320,3 +320,48 @@ def fetch_last_price_update():
     finally:
         cursor.close()
         conn.close()
+
+def fetch_total_deposit(tab_key: str = None) -> float:
+    """
+    Sums the 'amount' column directly from the transactions table for
+    investment-type accounts. Mirrors the column total Page 10's
+    Pivot_Table shows for those same accounts.
+
+    tab_key maps to an account name keyword:
+      "tfsa"       -> accounts containing 'TFSA'
+      "rrsp"       -> accounts containing 'RRSP'
+      "retirement" -> accounts containing 'Retire'
+      None (or any other value, e.g. "total") -> combined TFSA + RRSP + Retire
+    """
+    keyword_map = {
+        "tfsa": "TFSA",
+        "rrsp": "RRSP",
+        "retirement": "Retire",
+    }
+
+    conn = get_db_connection()
+    if not conn:
+        return 0.0
+    try:
+        cursor = conn.cursor()
+        if tab_key in keyword_map:
+            query = "SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE account_name ILIKE %s"
+            params = [f"%{keyword_map[tab_key]}%"]
+        else:
+            query = """
+                SELECT COALESCE(SUM(amount), 0)
+                FROM transactions
+                WHERE account_name ILIKE %s
+                   OR account_name ILIKE %s
+                   OR account_name ILIKE %s
+            """
+            params = ["%TFSA%", "%RRSP%", "%Retire%"]
+        cursor.execute(query, params)
+        result = cursor.fetchone()
+        return float(result[0]) if result and result[0] is not None else 0.0
+    except psycopg2.Error as e:
+        st.error(f"Error retrieving total deposit: {e}")
+        return 0.0
+    finally:
+        cursor.close()
+        conn.close()

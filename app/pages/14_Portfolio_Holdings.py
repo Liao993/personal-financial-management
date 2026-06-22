@@ -9,6 +9,7 @@ from backend.portfolio_backend import (
     delete_holding,
     fetch_last_price_update,
     fetch_usd_cad_rate,
+    fetch_total_deposit,
 )
 from backend.live_price_fetch import run_manual_price_fetch
 from models.portfolio_models import Holding
@@ -154,10 +155,13 @@ def render_dashboard_mode():
         ("rrsp", _filter_by_account(df, "RRSP")),
         ("retirement", _filter_by_account(df, "Retire")),
     ]
-
+    
     for tab, (tab_key, df_tab) in zip(tabs, tab_configs):
         with tab:
-            display_portfolio_kpis(df_tab)
+
+            total_deposit = fetch_total_deposit() if tab_key == "total" else fetch_total_deposit(tab_key)
+
+            display_portfolio_kpis(df_tab, total_deposit=total_deposit)
             st.write(" ")
             create_etf_bar(df_tab, tab_key=tab_key, usd_cad_rate=usd_cad_rate)
             st.write(" ")
