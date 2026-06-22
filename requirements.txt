@@ -18,3 +18,4 @@ seaborn
 gspread           # Add this line
 google-auth       # Often needed as a dependency for gspread
 sqlalchemy
+yfinance>=0.2.40
