@@ -10,6 +10,7 @@ services:
     volumes:
       - ./database/01_init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql
       - ./database/02_seed_dev.sql:/docker-entrypoint-initdb.d/02_seed_dev.sql
+      - ./database/04_portfolio_schema.sql:/docker-entrypoint-initdb.d/04_portfolio_schema.sql
       - postgres_data_dev:/var/lib/postgresql/data
     networks:
       - budget_network_dev

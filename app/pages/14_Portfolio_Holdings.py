@@ -146,12 +146,13 @@ def render_dashboard_mode():
     df = fetch_all_holdings()
     usd_cad_rate = fetch_usd_cad_rate()
 
-    tabs = st.tabs(["🌐  Total Portfolio", "🟢  TFSA", "🔵  RRSP"])
+    tabs = st.tabs(["🌐  Total Portfolio", "🟢  TFSA", "🔵  RRSP", "🟠 Retirement"])
 
     tab_configs = [
         ("total", df),
         ("tfsa", _filter_by_account(df, "TFSA")),
         ("rrsp", _filter_by_account(df, "RRSP")),
+        ("retirement", _filter_by_account(df, "Retire")),
     ]
 
     for tab, (tab_key, df_tab) in zip(tabs, tab_configs):

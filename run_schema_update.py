@@ -7,15 +7,27 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'app')))
 from app.utils.connection import get_db_connection
 
 
+SCHEMA_FILES = [
+    '03_expense_transaction_sync.sql',
+    '04_portfolio_schema.sql',
+]
+
+
 def run_update():
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
-        sql_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'database', '03_expense_transaction_sync.sql'))
-        with open(sql_file_path, 'r') as f:
-            sql = f.read()
         try:
-            cursor.execute(sql)
+            for schema_file in SCHEMA_FILES:
+                sql_file_path = os.path.abspath(
+                    os.path.join(os.path.dirname(__file__), 'database', schema_file)
+                )
+                with open(sql_file_path, 'r') as f:
+                    sql = f.read()
+
+                print(f"Applying {schema_file}...")
+                cursor.execute(sql)
+
             conn.commit()
             print("Schema updated successfully!")
         except Exception as e:
