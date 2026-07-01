@@ -2,6 +2,7 @@ import streamlit as st  # type: ignore
 import pandas as pd # type: ignore
 import matplotlib.pyplot as plt # type: ignore
 import seaborn as sns # type: ignore
+import numpy as np # type: ignore
 
 def create_expense_line_chart(expense, income, transaction):
     
@@ -36,18 +37,27 @@ def create_expense_line_chart(expense, income, transaction):
 
     # Join grouped data with full grid
     monthly_expenses = pd.merge(full_grid, grouped, on=['month', 'major_category'], how='left')
-    monthly_expenses['total_amount'] = monthly_expenses['total_amount'].fillna(0)
+    monthly_expenses['total_amount'] = pd.to_numeric(
+        monthly_expenses['total_amount'], errors='coerce'
+    ).fillna(0)
   
 
     #Merge Income Data
     merged_df = pd.merge(monthly_expenses, income, on='month', how='left')
-    merged_df['total_income'].fillna(0, inplace=True)
+    merged_df['total_income'] = pd.to_numeric(
+        merged_df['total_income'], errors='coerce'
+    ).fillna(0)
 
     # Compute percentage with null income treatment
-    merged_df['percentage'] = merged_df.apply(
-        lambda row: (row['total_amount'] / row['total_income']) * 100 if row['total_income'] != 0 else 0,
-        axis=1
-    )
+    merged_df['percentage'] = np.divide(
+        merged_df['total_amount'],
+        merged_df['total_income'],
+        out=np.zeros(len(merged_df), dtype=float),
+        where=merged_df['total_income'].to_numpy(dtype=float) != 0,
+    ) * 100
+    merged_df['percentage'] = pd.Series(merged_df['percentage']).replace(
+        [np.inf, -np.inf], 0
+    ).fillna(0)
    
     #Monthly Income
     monthly_income = merged_df[merged_df['total_income'] !=0]['total_income'].mean()
@@ -142,7 +152,9 @@ def create_expense_line_chart(expense, income, transaction):
         labels=month_labels,
         fontsize=14
     )
-    plt.yticks(ticks=range(0, int(max(df_plot['percentage']))+2, 2), fontsize=14)
+    max_percentage = df_plot['percentage'].replace([np.inf, -np.inf], np.nan).dropna().max()
+    y_axis_max = int(np.ceil(max(max_percentage, 0))) + 2 if pd.notna(max_percentage) else 2
+    plt.yticks(ticks=range(0, y_axis_max, 2), fontsize=14)
     plt.grid(axis='y')
     plt.tight_layout()
 
@@ -158,5 +170,4 @@ def create_expense_line_chart(expense, income, transaction):
     st.pyplot(plt.gcf(), use_container_width=True)
 
     st.markdown(f"<h5 style='text-align: center; ;'>The sum of each category above should match the total spending in the below chart.</h5>", unsafe_allow_html=True)
-
 

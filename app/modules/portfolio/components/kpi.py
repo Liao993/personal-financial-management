@@ -2,7 +2,7 @@ import streamlit as st  # type: ignore
 import pandas as pd  # type: ignore
 
 
-def display_portfolio_kpis(df: pd.DataFrame):
+def display_portfolio_kpis(df: pd.DataFrame, total_deposit: float=0.0):
     if df.empty:
         st.info("No holdings to summarize yet.")
         return
@@ -17,7 +17,7 @@ def display_portfolio_kpis(df: pd.DataFrame):
     native_usd_value = df.loc[df["currency"] == "USD", "market_value"].sum()
     total_holdings = len(df)
 
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4, col5 = st.columns(5)
 
     with col1:
         st.markdown(
@@ -41,6 +41,13 @@ def display_portfolio_kpis(df: pd.DataFrame):
         st.markdown(
             f"<p style='font-size: 22px; color: #8e44ad;'><b>Total Holdings</b></p>"
             f"<p style='font-size: 26px;'><b>{total_holdings}</b></p>",
+            unsafe_allow_html=True,
+        )
+    
+    with col5:
+        st.markdown(
+            f"<p style='font-size: 22px; color: #e74c3c;'><b>Total Deposit</b></p>"
+            f"<p style='font-size: 26px;'><b>${total_deposit:,.2f}</b></p>",
             unsafe_allow_html=True,
         )
 
