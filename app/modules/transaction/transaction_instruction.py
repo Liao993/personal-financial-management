@@ -23,7 +23,7 @@ def instruction():
         unsafe_allow_html=True,
     )
     st.markdown(
-        "<p style='font-size: 20px;'>Example: Retirement Saving from RBC Chequing to Questrade TFSA — "
+        "<p style='font-size: 20px;'>Example: Retirement Saving from Main Chequing to TFSA Growth — "
         "make <b style='color:orange'>ONE</b> transaction. "
         "Choose <b style='color:yellow;'>Transfer Between Accounts</b>.</p>",
         unsafe_allow_html=True,
