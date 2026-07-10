@@ -115,6 +115,79 @@ def fetch_transaction_data_by_year(year):
         return pd.DataFrame()
 
 
+def fetch_all_transaction_data_by_month():
+    """
+    Used by Historical Stats All Year charts.
+    Only counts 'saved from' deposits, not expense-linked withdrawals.
+    """
+    search_pattern = "saved from%"
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT CAST(EXTRACT(YEAR FROM date) AS INTEGER) AS year,
+                   CAST(EXTRACT(MONTH FROM date) AS INTEGER) AS month,
+                   fund_category,
+                   SUM(amount) AS total_amount
+            FROM transactions
+            WHERE transaction_type = 'Deposit'
+              AND source_notes LIKE %s
+              AND expense_id IS NULL
+            GROUP BY 1, 2, fund_category
+            ORDER BY year, month;
+        """
+        try:
+            cursor.execute(query, (search_pattern,))
+            columns = ["year", "month", "fund_category", "total_amount"]
+            data = cursor.fetchall()
+            if data:
+                return pd.DataFrame(data, columns=columns)
+            else:
+                return pd.DataFrame(columns=columns)
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving transaction data: {e}")
+            return pd.DataFrame()
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return pd.DataFrame()
+
+
+def fetch_all_transaction_data_by_year():
+    """
+    Used by Historical Stats All Year KPI.
+    Excludes expense-linked transactions to avoid double-counting.
+    """
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT fund_category, SUM(amount) AS total_amount
+            FROM transactions
+            WHERE expense_id IS NULL
+            GROUP BY fund_category;
+        """
+        try:
+            cursor.execute(query)
+            columns = ["fund_category", "total_amount"]
+            data = cursor.fetchall()
+            if data:
+                return pd.DataFrame(data, columns=columns)
+            else:
+                return pd.DataFrame(columns=columns)
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving transaction data: {e}")
+            return pd.DataFrame()
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return pd.DataFrame()
+
+
 def fetch_transaction_deposit_check(year, month):
     """
     Checks if saving deposits already exist for a given month.

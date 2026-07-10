@@ -123,6 +123,35 @@ def fetch_annual_expense(year):
             conn.close()
 
 
+def fetch_all_annual_expense():
+    """
+    Used by Historical Stats All Year view.
+    The dbt view already filters exclude_from_monthly=FALSE and category != 'House'.
+    """
+    conn = get_db_connection()
+    if conn:
+        try:
+            cursor = conn.cursor()
+            query = f"""
+                SELECT date, amount, category, summary_category
+                FROM {DBT_SCHEMA}.intermediate_expenses_with_summary;
+            """
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            cols = [col[0] for col in cursor.description]
+            return pd.DataFrame(rows, columns=cols)
+
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving expense data: {e}")
+            return pd.DataFrame()
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.error("Database connection failed, cannot fetch expense data.")
+        return pd.DataFrame()
+
+
 def fetch_last_expense_data():
     """
     Used on expense input page to show recent entries.

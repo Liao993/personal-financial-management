@@ -54,7 +54,7 @@ common_store_directory = {
 daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT', "LUCKY MOBILE", "PHO VIETNAM"]
 
 # used for expense input
-common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
+common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Bell Canada', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
                      'Dollarama', 'A&W', 'Shoppers Drug Mart', 'Global Grocery', 'Costco', 
                      'Take Sushi', 'Petro', 'Starbucks', 'Irving', 
                      'Hopspot', 'Mike & Andreea', 'Tim Hortons', 'Panda Mart', 'Eastlink', 'Pho Vietnam Rest', 
@@ -68,7 +68,7 @@ expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
 traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking/Tolls", "Food", "Tickets", "Others"]
-payment_method = ["PC", "Scotia_Red", "RBC", "eTransfer", "Debit Card", "Cash", "Account Deduction"]
+payment_method = ["PC", "Scotia_Red", "RBC", "Simplii", "eTransfer", "Debit Card", "Cash", "Account Deduction"]
 
 # transaction
 _raw_fund_categories = os.environ.get("FUND_CATEGORIES", "")

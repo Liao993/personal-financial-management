@@ -1,13 +1,17 @@
 import streamlit as st
 import pandas as pd
 
-def kpi(expense, income, transaction):
+def kpi(expense, income, transaction, all_year=False):
 
 
     # --- 1. Calculations ---
+    expense = expense.copy()
     expense['date'] = pd.to_datetime(expense['date'])
-    expense['month'] = expense['date'].dt.month
-    unique_month = expense['month'].nunique()
+    if all_year:
+        unique_month = expense['date'].dt.to_period('M').nunique()
+    else:
+        expense['month'] = expense['date'].dt.month
+        unique_month = expense['month'].nunique()
     
     # Avoid division by zero
     divisor = unique_month if unique_month > 0 else 1
