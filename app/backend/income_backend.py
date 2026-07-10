@@ -61,6 +61,37 @@ def fetch_annual_income_by_month(year):
         st.info("Database connection failed, cannot retrieve data.")
         return []
 
+
+def fetch_all_income_by_month():
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT CAST(EXTRACT(YEAR FROM date) AS INTEGER) AS year,
+                   CAST(EXTRACT(MONTH FROM date) AS INTEGER) AS month,
+                   SUM(amount) AS amount
+            FROM income
+            GROUP BY 1, 2
+            ORDER BY year, month;
+        """
+        try:
+            cursor.execute(query)
+            columns = ["year", "month", "total_income"]
+            data = cursor.fetchall()
+            if data:
+                return pd.DataFrame(data, columns=columns)
+            else:
+                return pd.DataFrame(columns=columns)
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving income data: {e}")
+            return pd.DataFrame(columns=["year", "month", "total_income"])
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.info("Database connection failed, cannot retrieve data.")
+        return pd.DataFrame(columns=["year", "month", "total_income"])
+
 def fetch_monthly_income(year, month):
     # Here you would add your logic to retrieve data from the database
     conn = get_db_connection()
