@@ -9,8 +9,9 @@ services:
       - "5433:5432"
     volumes:
       - ./database/01_init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql
-      - ./database/02_seed_dev.sql:/docker-entrypoint-initdb.d/02_seed_dev.sql
+      - ./database/03_expense_transaction_sync.sql:/docker-entrypoint-initdb.d/03_expense_transaction_sync.sql
       - ./database/04_portfolio_schema.sql:/docker-entrypoint-initdb.d/04_portfolio_schema.sql
+      - ./database/02_seed_dev.sql:/docker-entrypoint-initdb.d/05_seed_dev.sql
       - postgres_data_dev:/var/lib/postgresql/data
     networks:
       - budget_network_dev
@@ -26,8 +27,8 @@ services:
       TFSA_LIMIT: ${TFSA_LIMIT}
       RRSP_LIMIT: ${RRSP_LIMIT}
       BIWEEKLY_INCOME: ${BIWEEKLY_INCOME}
-      MORTGAGE_TOTAL: ${MORTGAGE_TOTAL}
-      MORTGAGE_LEFT: ${MORTGAGE_LEFT}
+      MORTGAGE_TOTAL: ${MORTGAGE_TOTAL:-0}
+      MORTGAGE_LEFT: ${MORTGAGE_LEFT:-0}
       PRINCIPAL_2022: ${PRINCIPAL_2022:-0}
       INTEREST_2022: ${INTEREST_2022:-0}
       PRINCIPAL_2023: ${PRINCIPAL_2023:-0}
@@ -47,6 +48,5 @@ services:
 
 networks:
   budget_network_dev:
-    name: budget_network_dev
 volumes:
   postgres_data_dev:
