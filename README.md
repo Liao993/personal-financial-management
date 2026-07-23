@@ -1,412 +1,261 @@
-# Personal Finance Management System
+# Personal Finance Management App
 
-**A production-grade data platform for real-time personal finance analytics, built on PostgreSQL, dbt, and Streamlit.**
+A production-minded finance data app I built to solve my own fund allocation problem: different savings goals live in different bank accounts, while spending data arrives from bank statement PDFs, manual entries, and a separate house-expense source. The app turns those scattered inputs into a PostgreSQL-backed finance system with PDF ingestion, ETL, dbt models, fund transaction logic, and Streamlit analytics dashboards.
 
-This project demonstrates core data engineering patterns: ETL pipeline orchestration, unstructured data extraction, trigger-based workflows, and analytical data modeling—applied to a real domain with measurable complexity.
+This project is written as both a working personal tool and a portfolio case study for data analytics, data engineering, and full-stack data app development.
 
----
+## Portfolio Snapshot
 
-## The Problem
+**Problem solved:** Track income, expenses, savings funds, travel spending, house expenses, TFSA/RRSP contribution room, and portfolio holdings without manually reconciling everything in spreadsheets.
 
-Personal finance tracking typically lives in spreadsheets or disconnected apps. This creates two problems:
+**Core highlight:** Upload bank statement PDFs, extract transactions, review/edit the parsed rows, validate the data, and load clean expense records into PostgreSQL.
 
-1. **Data fragmentation**: Bank statements, manual expenses, and investment holdings are siloed across PDFs, credit card statements, and Google Sheets.
-2. **Analysis debt**: Deriving insights (spending trends, savings rate, fund allocation) requires manual aggregation and recalculation.
+**Secondary ETL highlight:** Pull house-expense data from an external source, normalize it, stage it, and load only new records into the analytics database.
 
-**Why it matters for data engineering**: Building a unified system forces you to handle realistic challenges: parsing unstructured bank PDFs, maintaining data quality across multiple sources, modeling complex financial hierarchies, and keeping an analytical layer in sync with source data.
+**Analytics highlight:** Use historical dashboards to monitor savings rate, spending mix, travel savings, house costs, current fund balances, and long-term financial trends.
 
----
+## What The App Does
 
-## What This System Does
+- Ingests bank statement PDFs from multiple banks including RBC, PC, and Scotia Red.
+- Converts semi-structured PDF text into expense rows through bank-specific extraction and transformation modules.
+- Provides a Streamlit review step before loading statement data into the database.
+- Supports manual income, manual expense, fund transaction, and portfolio holding entry.
+- Tracks fund categories separately from physical bank accounts, so savings goals can be managed even when money moves between accounts.
+- Automatically creates linked fund-withdrawal transactions for expenses that should be paid from savings instead of monthly cash flow.
+- Updates linked withdrawal records when the original expense amount or notes change.
+- Syncs house-expense data through a separate Python ETL pipeline.
+- Uses dbt to create an analytical view for historical spending, summary categories, travel shares, and house summaries.
+- Provides dashboards for monthly calculations, current savings status, historical statistics, travel spending, house expenses, TFSA/RRSP tracking, statement viewing, and portfolio holdings.
 
-### Core Features
-- **Unified expense tracking**: Ingest bank statements (PDF) + manual entries → normalized expense table
-- **Income & savings reconciliation**: Monthly income vs. spending calculations, fund-level allocation tracking
-- **Time-series analysis**: Monthly/yearly trends, category breakdowns, fund performance
-- **Multi-source data fusion**: Combine PDF statements, Google Sheets house data, and manual entries into a single source of truth
+## Skills Demonstrated
 
-### Why It's Interesting
-
-| Aspect | What Happens | Why It's Hard |
-|--------|--------------|---------------|
-| **PDF parsing** | Extract transaction lines from unstructured bank statements | OCR failures, statement format variations across banks |
-| **Data quality** | De-duplicate transactions, handle partial refunds, track prepaid items | Business logic lives in forms; needs validation at multiple layers |
-| **Fact tables** | Model expenses with fund categories, travelers, trip attribution | SCD Type 2 for holdings; star schema for drilling across accounts |
-| **ETL scheduling** | Sync Google Sheets house data daily, validate freshness | Docker-based scheduler; handles failures & backfills |
-| **Trigger logic** | Auto-link fund withdrawals to expenses | DB triggers + application-layer validation |
-
----
+| Area | Evidence in this project |
+| --- | --- |
+| Data engineering | PDF extraction pipelines, Google Sheets-style external ETL, staging tables, idempotent inserts, Dockerized services |
+| Analytics engineering | dbt project, SQL transformation layer, reusable macro for summary categories, curated analytical view |
+| Database design | PostgreSQL schema, primary keys, uniqueness constraints, foreign keys, trigger-based synchronization |
+| Data quality | Validation before insert, duplicate prevention, human-in-the-loop review for parsed statements |
+| Product thinking | Workflow-specific pages for upload, review, correction, monthly recalculation, and historical analysis |
+| Backend engineering | Modular Python backend functions for expenses, income, transactions, statements, portfolio, and live prices |
+| Visualization | Streamlit dashboards with KPIs, tables, bar charts, line charts, pie charts, and category drilldowns |
+| DevOps | Docker Compose dev/prod environments, service health checks, persistent volumes, environment-based configuration |
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Streamlit (Web UI)                          │
-│  Income Input │ Expense Input │ Monthly Calcs │ Historical Stats│
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-        ┌────────────────┼────────────────┐
-        │                │                │
-┌───────▼────────┐  ┌───▼──────────┐  ┌─▼──────────────┐
-│  PDF Statement │  │ Google Sheets│  │ Manual Input   │
-│  Upload        │  │ (House Data) │  │ (Transactions) │
-└───────┬────────┘  └───┬──────────┘  └─┬──────────────┘
-        │                │                │
-        └────────────────┼────────────────┘
-                         │
-        ┌────────────────▼────────────────┐
-        │   ETL Pipeline (Python)         │
-        │  • pdfplumber extraction        │
-        │  • Text-to-table parsing        │
-        │  • Category matching            │
-        │  • Deduplication (UNIQUE const) │
-        └────────────────┬────────────────┘
-                         │
-        ┌────────────────▼────────────────┐
-        │   PostgreSQL (12 tables)        │
-        │  ├─ expense (raw)               │
-        │  ├─ income                      │
-        │  ├─ transactions (fund mgmt)    │
-        │  └─ [holdings, prices, signals] │
-        └────────────────┬────────────────┘
-                         │
-        ┌────────────────▼────────────────┐
-        │   dbt (SQL modeling layer)      │
-        │  intermediate_expenses_with     │
-        │  _summary (filters + calcs)     │
-        └────────────────┬────────────────┘
-                         │
-        ┌────────────────▼────────────────┐
-        │  Streamlit (Analytics Views)    │
-        │  Charts │ Tables │ KPIs         │
-        └─────────────────────────────────┘
+```text
+Bank PDFs          Manual Input          External House Data
+   |                    |                       |
+   v                    v                       v
+PDF extraction      Streamlit forms        Python ETL
+bank-specific       validation             extract/transform/load
+pipelines                |                       |
+   |                    v                       v
+   +-------------> PostgreSQL <------------------+
+                    |
+                    v
+                  dbt
+        curated analytical models
+                    |
+                    v
+             Streamlit dashboards
+      monthly, historical, travel, house,
+      savings, statement viewer, portfolio
 ```
 
-### Key Design Decisions
+### Main Components
 
-**Why PostgreSQL + dbt + Streamlit?**
-- **PostgreSQL**: Supports constraints (UNIQUE, CHECK, FK) for data quality enforcement. Triggers auto-sync fund transactions when expenses change.
-- **dbt**: Single source of truth for transformations (e.g., summary categories, fund allocations). Version-controlled, testable SQL.
-- **Streamlit**: Rapid iteration on dashboards. Session state handles complex multi-step forms (input → review → confirm).
+- `app/Home.py` - Streamlit entry point and navigation guidance.
+- `app/pages/` - User-facing workflows and analytics pages.
+- `app/modules/upload_pdf/pipeline/` - Bank statement extraction, transformation, review, and load flow.
+- `etl/` - External house-expense ETL pipeline.
+- `database/` - PostgreSQL schema, seed data, trigger logic, and portfolio schema.
+- `dbt/budget_project/` - Analytics engineering layer.
+- `docker-compose*.yml` - Local development and production service definitions.
 
-**Why Docker Compose?**
-- Dev/prod parity: `.env.dev` and `.env.prod` configs; `docker-compose.yml` + overlay files separate concerns.
-- Services are isolated: app ↔ db ↔ dbt via Docker network. No "works on my machine."
+## Data Pipeline Highlights
 
----
+### 1. Bank Statement PDF ETL
 
-## Data Engineering in Action
+The statement upload flow is designed around reliability rather than blind automation:
 
-### 1. Unstructured PDF → Structured Data
+1. The user selects a bank and uploads a statement PDF.
+2. A bank-specific extractor reads statement text with `pdfplumber`.
+3. A transformation module converts raw text into structured transaction rows.
+4. Streamlit displays an editable review table.
+5. Validated rows are inserted into PostgreSQL with the selected bank saved as the payment method.
 
-**The Problem**: Bank PDFs have inconsistent layouts. RBC, PC, and Scotia Red each format statements differently.
+Relevant files:
 
-**The Solution**: 
-```python
-# app/modules/upload_pdf/pipeline/rbc/rbc_extracted.py
-with pdfplumber.open(pdf_file) as pdf:
-    for page in pdf.pages:
-        text = page.extract_text()
-        for line in text.splitlines():
-            if '$' in line and any(month in line for month in months):
-                # Extract transaction line with regex
-```
+- `app/modules/upload_pdf/pipeline/pipeline.py`
+- `app/modules/upload_pdf/pipeline/rbc/`
+- `app/modules/upload_pdf/pipeline/pc/`
+- `app/modules/upload_pdf/pipeline/scotia_red/`
+- `app/modules/upload_pdf/pipeline/load.py`
 
-**Why it matters**: 
-- Regex patterns are specific per bank (RBC has different date formats than Scotia).
-- Text extraction can fail on poor scans; fallback to manual entry.
-- No magic — pattern matching + human review = reliable extraction.
+Why this matters: bank statements are semi-structured data. The project shows practical extraction engineering, source-specific parsing, validation, and a review workflow that protects the database from bad ingestion.
 
-**Trade-off**: Could use ML (paddleOCR, LayoutLM), but regex + regex is 95% accurate and maintainable. ML adds complexity without proportional gain here.
+### 2. External House Expense ETL
 
----
+House expenses are maintained outside the app and synced through a separate ETL pipeline:
 
-### 2. Data Quality: Constraints + Triggers
+1. Extract raw data using service credentials.
+2. Transform the data into the app's expense schema.
+3. Load records into a staging table with explicit column types.
+4. Insert only new rows into the main `expense` table using `ON CONFLICT DO NOTHING`.
+5. Drop the staging table after a successful load.
 
-**The Problem**: Manual expense entry is error-prone. Users can:
-- Enter the same transaction twice
-- Create a fund withdrawal without selecting a fund category
-- Update an expense, but the linked fund transaction becomes stale
+Relevant files:
 
-**The Solution**:
+- `etl/house_pipeline.py`
+- `etl/extract.py`
+- `etl/transformed.py`
+- `etl/load.py`
 
-```sql
--- Prevent duplicates at the DB level
-ALTER TABLE expense ADD CONSTRAINT unique_expense_entry 
-  UNIQUE (date, items, amount, source_notes);
+This demonstrates a common data engineering pattern: external source ingestion, schema normalization, staging, idempotent load, and database-safe typing.
 
--- Validate fund category + withdrawal requirement
-ALTER TABLE expense ADD CONSTRAINT fund_required_when_excluded
-  CHECK (
-    (exclude_from_monthly = FALSE) OR 
-    (exclude_from_monthly = TRUE AND target_fund_category IS NOT NULL)
-  );
+### 3. dbt Analytics Layer
 
--- Auto-sync fund transactions when expense amount changes
-CREATE TRIGGER expense_update_trigger AFTER UPDATE ON expense
-  FOR EACH ROW EXECUTE FUNCTION sync_linked_transactions();
-```
+The dbt model `intermediate_expenses_with_summary` centralizes analytical business logic:
 
-**Why it matters**:
-- Constraints fail fast, catch bugs at insert time.
-- Triggers keep fund ledger in sync without app-layer orchestration.
-- Single source of truth: the DB enforces business rules.
+- Calculates the user's share of group expenses.
+- Maps granular categories into summary categories through a dbt macro.
+- Builds house summary categories.
+- Excludes fund withdrawals and house records where including them would double-count monthly spending.
 
-**Trade-off**: Triggers are harder to debug than app-layer logic. But they guarantee consistency even if the app crashes mid-request.
+Relevant files:
 
----
+- `dbt/budget_project/models/intermediate/intermediate_expenses_with_summary.sql`
+- `dbt/budget_project/macros/get_summary_category.sql`
+- `dbt/budget_project/models/sources.yml`
 
-### 3. dbt: The Analytical Layer
+For a data analyst or analytics engineer, this is the layer that makes dashboard definitions consistent and maintainable.
 
-**The Problem**: Every dashboard query recalculates the same things (spending by category, summary categories, fund allocations). Duplication + inconsistency.
+## Database And Business Logic
 
-**The Solution**:
-```sql
--- dbt/budget_project/models/intermediate/intermediate_expenses_with_summary.sql
-SELECT
-    *,
-    COALESCE(
-        (amount / NULLIF(amount_for_number_of_travelers, 0)) * paid_for_number_of_travlerers, 
-        0
-    ) AS amount_I_spend,
-    {{ get_summary_category('category') }} AS summary_category
-FROM {{ source('public', 'expense') }}
-WHERE exclude_from_monthly = FALSE AND category != 'House'
-```
+The PostgreSQL layer protects financial consistency:
 
-This view:
-- Filters out fund-withdrawal expenses (already tracked as transactions).
-- Calculates per-person expense share (for group trip tracking).
-- Applies business logic (summary category macro) in one place.
-- Gets refreshed daily via `dbt run` in Docker.
+- `expense` stores normalized spending records.
+- `income` stores earning records.
+- `transactions` stores fund deposits, withdrawals, and transfers.
+- `unique_expense_entry` prevents duplicate expense loads by date, item, amount, and source note.
+- `transactions.expense_id` links auto-created withdrawals back to the original expense.
+- `ON DELETE CASCADE` removes linked fund transactions when an expense is deleted.
+- Insert and update triggers create and synchronize fund-withdrawal transactions.
 
-**Why it matters**:
-- Single source of truth for all dashboards.
-- Testable: can write assertions (e.g., "summary_category is never NULL").
-- Maintainable: change logic once, all dashboards update.
+The trigger flow is especially important for the app's real use case. When an expense is marked as excluded from monthly spending because it should be paid from a savings fund, PostgreSQL automatically creates the matching withdrawal. If the expense later changes because of a refund or correction, the linked withdrawal is updated too.
 
----
+Relevant files:
 
-### 4. ETL Scheduling: House Data Sync
+- `database/01_init_schema.sql`
+- `database/03_expense_transaction_sync.sql`
+- `app/pages/16_Expense_Editor.py`
+- `app/modules/transaction/`
 
-**The Problem**: House expenses live in a Google Sheet (maintained separately). Need daily sync to stay current.
+## Analytics Features
 
-**The Solution**:
-```python
-# etl/house_pipeline.py
-def run_house_etl():
-    raw_data = extract(CREDS_PATH)  # gspread → Pandas
-    transformed_data = transformation(raw_data)  # Normalize schema
-    new_rows_count = load_new_house_data(transformed_data)  # UPSERT via ON CONFLICT
-```
+The app is built to answer practical finance questions:
 
-Runs daily via Docker: `dbt run` container + APScheduler.
+- How much did I save this month after expenses?
+- Which fund categories need deposits or withdrawals?
+- How are current savings distributed across accounts and goals?
+- How has my savings rate changed historically?
+- Which categories drive spending changes year over year?
+- How much have I spent on travel, and which trips/categories explain it?
+- How much are house costs contributing to my overall financial picture?
+- How are TFSA/RRSP and portfolio holdings tracking?
 
-**Why it matters**:
-- Separates concerns: house data is maintained separately (Google Sheets) but merged into analytics (Postgres).
-- Idempotent: `ON CONFLICT DO NOTHING` means re-running is safe.
-- Traceable: logs capture when/why sync failed.
+Important dashboard areas:
 
----
+- `app/pages/6_Monthly_Calculation.py`
+- `app/pages/8_Historical_Stats.py`
+- `app/pages/9_Traveling_Spending_Stats.py`
+- `app/pages/10_Current_Saving_Status.py`
+- `app/pages/11_House_Expenses.py`
+- `app/pages/12_TFSA_RRSP.py`
+- `app/pages/13_Statement_Viewer.py`
+- `app/pages/14_Portfolio_Holdings.py`
 
-### 5. Monthly Calculations: Business Logic at the Right Layer
+## Tech Stack
 
-**The Problem**: Users set financial goals (saving target, retirement %, travel fund limits). System must:
-- Calculate actual savings
-- Allocate across fund categories
-- Create fund transaction records
+- **Python** for application logic and ETL.
+- **Streamlit** for the app UI and analytics dashboards.
+- **PostgreSQL** for durable storage and database-enforced consistency.
+- **dbt-postgres** for analytics modeling.
+- **pdfplumber** for statement text extraction.
+- **Pandas** and **SQLAlchemy** for data transformation and loading.
+- **Plotly**, **Matplotlib**, and **Seaborn** for visual analytics.
+- **Docker Compose** for reproducible dev/prod environments.
+- **gspread** and **google-auth** for external spreadsheet-style source integration.
+- **yfinance** for portfolio price support.
 
-**Why it's complex**:
-- Formula depends on thresholds (if savings < half the goal, travel fund = 0).
-- Results are deterministic: running calculation again should delete old records, not duplicate them.
-- Links to two data layers: expenses (from dbt view) + fund categories (manual).
+## Local Development
 
-**The Solution**: 
-```python
-# app/pages/6_Monthly_Calculation.py
-def rerun_monthly_saving(...):
-    # 1. Delete old "saved from" deposits for this month
-    cursor.execute("""
-        DELETE FROM transactions
-        WHERE EXTRACT(YEAR FROM date) = %s
-          AND EXTRACT(MONTH FROM date) = %s
-          AND source_notes LIKE 'saved from%%'
-    """, (year, month))
-    
-    # 2. Recalculate and insert fresh
-    for fund_category, amount in calculate_allocations(...):
-        insert_transaction_data(...)
-```
+Create a local environment file named `.env.dev`. The compose files expect database settings, account/fund settings, optional mortgage settings, and any external-source credentials needed for the house ETL.
 
-**Why it matters**:
-- Business logic lives in the app, not the DB (easier to test, iterate).
-- Explicit delete-then-insert ensures no duplicates.
-- User-facing: "Rerun Calculation" button means corrections are self-service.
+After `.env.dev` is populated, start the development stack:
 
----
-
-## Data Model Highlights
-
-### Fact Tables
-
-**`expense`** (raw transactional events)
-- Captures every spending event, enriched with category, trip, and fund allocation info.
-- Constraint: `UNIQUE (date, items, amount, source_notes)` prevents duplicates from re-uploads.
-- Optional: `exclude_from_monthly` flag + `target_fund_category` for fund-linked expenses.
-
-**`transactions`** (fund movement ledger)
-- Records all fund movements: deposits (from income), withdrawals (to spending), transfers (between accounts).
-- Fact: `source_notes LIKE 'saved from%'` = auto-calculated; otherwise manually entered.
-- Key link: `expense_id` foreign key ties fund withdrawals back to originating expenses.
-
-### Intermediate Tables (via dbt)
-
-**`intermediate_expenses_with_summary`**
-- Filters: excludes fund-withdrawal expenses and house (tracked separately).
-- Enrichment: adds `summary_category` (e.g., "Grocery", "Donation and Gifts", "Daily Expenses").
-- Calculation: `amount_I_spend` = per-person share for group expenses.
-
----
-
-## Testing & Validation
-
-### Data Quality Checks
-- **DB constraints**: UNIQUE, CHECK, NOT NULL, FKs catch bad data at insert.
-- **dbt assertions** (future): test summary_category is never NULL, expense amounts are positive.
-- **Application validation**: Pydantic models validate form input before insert.
-
-### Manual Tests
-- Re-upload same statement twice: UNIQUE constraint prevents duplicates. ✅
-- Update expense amount: trigger syncs linked fund transaction. ✅
-- Delete expense with fund withdrawal: cascade delete cleans up transactions. ✅
-
----
-
-## What You'd Learn from This Codebase
-
-### For Data Engineers
-1. **ETL pipeline design**: Extract (pdfplumber), transform (Pandas), load (PostgreSQL). Idempotent, traceable, testable.
-2. **Data quality**: Constraints + triggers + application validation = defense in depth.
-3. **Analytical modeling**: dbt view abstractions, macro reuse, single source of truth.
-4. **Scheduling**: Docker-based ETL orchestration with error handling.
-
-### For Full-Stack Data Roles
-1. **End-to-end system**: From form input → DB constraints → dbt views → Streamlit dashboards.
-2. **Business logic**: Allocation formulas, fund tracking, multi-source reconciliation.
-3. **Real-world complexity**: PDFs, Google Sheets integration, user corrections, audit trails.
-
----
-
-## Getting Started
-
-### Prerequisites
-- Docker & Docker Compose
-- Python 3.11+
-- PostgreSQL 14+ (or use Docker)
-
-### Quick Start
 ```bash
-# Clone repo
-git clone <repo-url>
-cd personal_finance_management
-
-# Create .env.dev (see .env.example)
-cp .env.example .env.dev
-# Fill in: POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, etc.
-
-# Start services
 ./dev.sh up
-
-# Access app
-# Streamlit: http://localhost:8502
-# PostgreSQL: localhost:5433
 ```
 
-For detailed setup, see [SETUP.md](./docs/SETUP.md).
+The development app runs at:
 
----
-
-## Project Structure
-
-```
-.
-├── app/
-│   ├── pages/           # Streamlit pages (income, expense, calculations, etc.)
-│   ├── modules/         # Reusable components (forms, charts, ETL pipelines)
-│   ├── models/          # Pydantic validation (Income, Expense, Transaction)
-│   ├── backend/         # DB queries (expense_backend.py, income_backend.py, etc.)
-│   └── utils/           # Helpers (validation, CSS, data constants)
-├── dbt/
-│   └── budget_project/
-│       ├── models/      # SQL transformations (views & staging)
-│       └── macros/      # Reusable SQL functions (get_summary_category)
-├── etl/                 # Standalone ETL scripts (house_pipeline.py)
-├── database/            # Schema & seed data
-│   ├── 01_init_schema.sql
-│   └── 02_seed_dev.sql
-├── docker-compose.yml   # Base services (app, db, dbt)
-├── docker-compose.dev.yml
-├── docker-compose.prod.yml
-└── Dockerfile
+```text
+http://localhost:8502
 ```
 
----
+Useful development commands:
 
-## Key Files to Review
+```bash
+./dev.sh restart
+./dev.sh reload-sample
+./dev.sh dbt
+./dev.sh logs
+./dev.sh psql
+```
 
-**If you want to understand the data model:**
-→ `database/01_init_schema.sql` (12 tables, constraints, triggers)
+Production uses the production compose overlay:
 
-**If you want to see ETL in action:**
-→ `app/modules/upload_pdf/pipeline/` (PDF parsing + transformation)
+```bash
+./prod.sh up
+```
 
-**If you want to see dbt modeling:**
-→ `dbt/budget_project/models/intermediate/` (SQL views with macros)
+## Suggested Portfolio Screenshots
 
-**If you want to see constraint-driven design:**
-→ `app/models/expense_models.py` + `app/models/transaction_models.py` (Pydantic validation)
+Add screenshots under a folder like `docs/images/` and reference them from this README. To protect private data, use sample data, blurred merchant names, or cropped views.
 
-**If you want to see trigger-based workflows:**
-→ Search `CREATE TRIGGER` in `database/01_init_schema.sql`
+Recommended screenshots:
 
----
+1. **Statement upload and review** - Show the PDF upload workflow after extraction, with the editable transaction table visible. This proves the PDF-to-database pipeline.
+2. **Historical stats dashboard** - Show yearly or monthly spending and savings trends. This is the best screenshot for data analyst storytelling.
+3. **Current saving status** - Show fund balances across categories/accounts. This communicates the original business problem: savings goals split across bank accounts.
+4. **Travel spending analytics** - Show trip/category breakdowns to demonstrate custom analytical dimensions beyond simple expense tracking.
+5. **House expenses dashboard** - Show the external ETL source integrated into the same analytics system.
+6. **Statement viewer** - Show a filtered query/result page to demonstrate operational data access and auditability.
+7. **Database/dbt proof screenshot** - Optional but strong for engineering recruiters: a screenshot of dbt output or the Postgres schema/trigger file beside a dashboard.
 
-## Trade-offs & Why
+Suggested README image layout:
 
-| Decision | Alternative | Why This Wins |
-|----------|-------------|---------------|
-| PostgreSQL over NoSQL | MongoDB, DynamoDB | Schema enforcement + constraints for financial data (accuracy > flexibility). |
-| dbt over in-app logic | Calculate in Streamlit | Testable, version-controlled, reusable across all dashboards. |
-| Pydantic validation + DB constraints | Just app validation | Defense in depth; catches bugs even if app logic changes. |
-| Regex PDF parsing over ML | paddleOCR, LayoutLM | 95% accuracy with zero dependency overhead. ML adds complexity without gain. |
-| Docker Compose over manual setup | Manual postgres + venv | Dev/prod parity, isolated services, reproducible environment. |
+```md
+## Screenshots
 
----
+### PDF Statement Ingestion
+![PDF statement ingestion review](docs/images/pdf-statement-review.png)
 
-## Next Steps for This Project
+### Historical Savings And Spending
+![Historical finance dashboard](docs/images/historical-stats.png)
 
-- [ ] Add dbt tests (e.g., assert summary_category is never NULL)
-- [ ] Implement CI/CD (GitHub Actions: lint, test, Docker push)
-- [ ] Add data lineage tracking (dbt docs, OpenLineage)
-- [ ] ETF price API integration + signal-based buy recommendations
-- [ ] AI chatbot (RAG + PostgreSQL vector search) for natural-language queries
+### Fund Balances
+![Current saving status dashboard](docs/images/current-saving-status.png)
 
----
+### Travel Analytics
+![Travel spending dashboard](docs/images/travel-stats.png)
+```
 
-## Contact
+## Why This Project Matters
 
-This project was built as a portfolio demonstration. It shows:
-- **How to build real data systems** with realistic constraints (unstructured inputs, quality concerns, multi-source reconciliation).
-- **Why architecture matters**: constraints, dbt modeling, and trigger-based workflows prevent bugs and keep systems maintainable.
+This is not only a dashboard. It is a small production data system with ingestion, validation, storage, transformation, analytics, and operational workflows. The project demonstrates that I can take an ambiguous personal finance problem, design a data model, automate messy source ingestion, enforce data quality, and build a working application around the analysis.
 
-**Hire me if you need someone who:**
-- Designs data pipelines that are production-ready, not just "working."
-- Understands data quality as a first-class concern (constraints, validation, testing).
-- Can bridge data engineering and analytics (SQL + Python + orchestration).
-- Ships systems, not just code.
+For data analyst roles, it shows dashboarding, metrics design, category modeling, trend analysis, and financial storytelling.
 
----
-
-## License
-
-MIT
+For data engineer or software engineer roles, it shows ETL design, PostgreSQL modeling, dbt transformations, Dockerized deployment, modular Python architecture, and database-backed workflow automation.

@@ -32,7 +32,7 @@ def upload_expense():
         | 📁 **File Name** | Don't rename the PDF — the filename is used to extract the statement year. |
         | 🏠 **House Expenses** | Exclude house-related items (pre-filtered by the ETL pipeline). |
         | ✈️ **Traveling Rows** | Set the Trip and Traveling Category in the data editor for traveling rows. |
-        | 💰 **Fund Withdrawal** | Set a Primary Target Fund in the editor to auto-create a withdrawal from RBC Chequing. |
+        | 💰 **Fund Withdrawal** | Set a Primary Target Fund in the editor to auto-create a withdrawal from Main Chequing. |
         | 🗑️ **Prepaid Rows** | Delete prepaid rows (friend's share you expect back soon) from the editor before saving. |
         | ✏️ **Refunds Later** | For paid items with pending refunds, save normally and edit on Page 16 when refund arrives. |
         """)
