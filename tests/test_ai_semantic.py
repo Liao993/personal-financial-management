@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "app"))
 
 from modules.ai_semantic.query_builder import build_metric_query
+from modules.ai_semantic.ollama_client import get_ollama_host
 from modules.ai_semantic.router import _normalize_date_range
 from modules.ai_semantic.semantic_loader import load_semantic_layer
 
@@ -50,6 +51,24 @@ class SemanticLayerTests(unittest.TestCase):
     def test_router_rejects_reversed_dates(self):
         with self.assertRaises(ValueError):
             _normalize_date_range({"start_date": "2026-08-01", "end_date": "2026-01-01"})
+
+    def test_ollama_host_uses_host_gateway_inside_container_env(self):
+        previous_app_env = os.environ.get("APP_ENV")
+        previous_ollama_host = os.environ.get("OLLAMA_HOST")
+        os.environ["APP_ENV"] = "production"
+        os.environ["OLLAMA_HOST"] = "http://localhost:11434"
+        try:
+            self.assertEqual(get_ollama_host(), "http://host.docker.internal:11434")
+        finally:
+            if previous_app_env is None:
+                os.environ.pop("APP_ENV", None)
+            else:
+                os.environ["APP_ENV"] = previous_app_env
+
+            if previous_ollama_host is None:
+                os.environ.pop("OLLAMA_HOST", None)
+            else:
+                os.environ["OLLAMA_HOST"] = previous_ollama_host
 
 
 if __name__ == "__main__":
