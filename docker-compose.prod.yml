@@ -31,6 +31,8 @@ services:
       INTEREST_2024: ${INTEREST_2024:-0}
       PRINCIPAL_2025: ${PRINCIPAL_2025:-0}
       INTEREST_2025: ${INTEREST_2025:-0}
+      OLLAMA_HOST: ${OLLAMA_HOST:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.1:8b}
     networks:
       - budget_network_prod
   dbt:
