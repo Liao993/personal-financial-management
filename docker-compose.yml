@@ -25,6 +25,7 @@ services:
       - ./app:/app
       - ./etl:/etl
       - ./service:/service
+      - ./dbt:/dbt
     depends_on:
       db:
         condition: service_healthy
