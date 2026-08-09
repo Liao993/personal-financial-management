@@ -6,7 +6,8 @@ def income_input_form(edit_mode_form_key, review_data_key):
 
   review_button = False
 
-  with st.form("income_form"):
+  form_version = st.session_state.get("income_form_version", 0)
+  with st.form(f"income_form_{form_version}"):
     income_date = st.date_input("Date", value=date.today())
     income_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=fixed_income_data)
 

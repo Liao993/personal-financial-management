@@ -7,6 +7,7 @@ from modules.transaction.transaction_instruction import instruction
 
 
 def transaction_form():
+    form_version = st.session_state.get("transaction_form_version", 0)
     st.subheader(
         "Record New Transaction: Track all money flow between accounts."
     )
@@ -23,14 +24,22 @@ def transaction_form():
     action_type = st.radio(
         "",
         transaction_type_list,
-        key="action_type_form",
+        key=f"action_type_form_{form_version}",
     )
 
-    transaction_date  = st.date_input("Transaction Date", datetime.now().date())
-    fund_category     = st.selectbox("Usable Fund Category", fund_categories)
-    account_name      = st.selectbox("Account", account_name_list)
-    amount            = st.number_input("Amount", min_value=0.0)
-    source_notes      = st.text_input("Notes (Optional)")
+    transaction_date  = st.date_input(
+        "Transaction Date", datetime.now().date(), key=f"transaction_date_{form_version}"
+    )
+    fund_category     = st.selectbox(
+        "Usable Fund Category", fund_categories, key=f"fund_category_{form_version}"
+    )
+    account_name      = st.selectbox(
+        "Account", account_name_list, key=f"account_name_{form_version}"
+    )
+    amount            = st.number_input(
+        "Amount", min_value=0.0, key=f"transaction_amount_{form_version}"
+    )
+    source_notes      = st.text_input("Notes (Optional)", key=f"transaction_notes_{form_version}")
     transfer_to_account = None
 
     if action_type == "Deposit (between funds or savings)":
@@ -56,6 +65,7 @@ def transaction_form():
             "Transfer To Account (Different Accounts)",
             account_name_list,
             index=2,
+            key=f"transfer_to_account_{form_version}",
         )
         if st.button("Record Transfer"):
             record_saving_transaction(

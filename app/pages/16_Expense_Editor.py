@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import streamlit as st  # type: ignore
 import pandas as pd  # type: ignore
 from datetime import date, timedelta
 from utils.connection import get_db_connection
 import psycopg2  # type: ignore
 import os
+from utils.data import expense_category_options, payment_method
 
 st.set_page_config(page_title="Expense Editor", page_icon="✏️", layout="wide")
 
@@ -14,7 +17,15 @@ DBT_SCHEMA = os.environ.get("DBT_SCHEMA", "dbt_budget")
 # Backend helpers
 # ─────────────────────────────────────────────
 
-def fetch_expenses_for_edit(date_from: date, date_to: date, category_filter: str) -> pd.DataFrame:
+def fetch_expenses_for_edit(
+    date_from: date,
+    date_to: date,
+    category_filter: str,
+    items_filter: str = "",
+    payment_filter: str = "All",
+    amount_min: float | None = None,
+    amount_max: float | None = None,
+) -> pd.DataFrame:
     conn = get_db_connection()
     if not conn:
         return pd.DataFrame()
@@ -27,6 +38,7 @@ def fetch_expenses_for_edit(date_from: date, date_to: date, category_filter: str
                 e.items,
                 e.amount,
                 e.category,
+                e.payment_method,
                 e.source_notes,
                 e.exclude_from_monthly,
                 e.target_fund_category,
@@ -45,6 +57,18 @@ def fetch_expenses_for_edit(date_from: date, date_to: date, category_filter: str
         if category_filter and category_filter != "All":
             base_query += " AND e.category = %s"
             params.append(category_filter)
+        if items_filter:
+            base_query += " AND e.items ILIKE %s"
+            params.append(f"%{items_filter.strip()}%")
+        if payment_filter and payment_filter != "All":
+            base_query += " AND e.payment_method = %s"
+            params.append(payment_filter)
+        if amount_min is not None:
+            base_query += " AND e.amount >= %s"
+            params.append(amount_min)
+        if amount_max is not None:
+            base_query += " AND e.amount <= %s"
+            params.append(amount_max)
         base_query += " ORDER BY e.date DESC, e.id DESC"
         cursor.execute(base_query, params)
         cols = [d[0] for d in cursor.description]
@@ -57,8 +81,18 @@ def fetch_expenses_for_edit(date_from: date, date_to: date, category_filter: str
         conn.close()
 
 
-def update_expense_amount(expense_id: int, new_amount: float, source_notes: str) -> bool:
-    """Update expense amount and notes. Trigger handles transaction sync automatically."""
+def update_expense_details(
+    expense_id: int,
+    new_items: str,
+    new_amount: float,
+    new_payment_method: str,
+    source_notes: str,
+) -> bool:
+    """Update editable details. Trigger handles transaction sync when amount changes."""
+    if not new_items.strip():
+        st.error("Items cannot be empty.")
+        return False
+
     conn = get_db_connection()
     if not conn:
         return False
@@ -67,16 +101,19 @@ def update_expense_amount(expense_id: int, new_amount: float, source_notes: str)
         cursor.execute(
             """
             UPDATE expense
-            SET amount = %s, source_notes = %s
+            SET items = %s,
+                amount = %s,
+                payment_method = %s,
+                source_notes = %s
             WHERE id = %s
             """,
-            (new_amount, source_notes, expense_id)
+            (new_items.strip(), new_amount, new_payment_method, source_notes, expense_id)
         )
         conn.commit()
         return True
     except psycopg2.Error as e:
         conn.rollback()
-        st.error(f"Error updating expense: {e}")
+        st.error(f"Error updating expense details: {e}")
         return False
     finally:
         cursor.close()
@@ -180,16 +217,38 @@ def expense_editor_page():
     with col3:
         category_filter = st.selectbox(
             "Category",
-            ["All", "Grocery", "Food Outside", "Household Goods", "Cell Phone",
-             "Gas", "Donation", "Gifts", "Medicine", "Exercise", "Saved For Love",
-             "Transportation", "Education", "Traveling", "Fun/Tickets", "Clothing",
-             "Liquor", "Others", "Car", "House"],
+            ["All"] + expense_category_options + ["House"],
         )
+
+    col4, col5, col6, col7 = st.columns([2, 1, 1, 1])
+    with col4:
+        items_filter = st.text_input("Items contains")
+    with col5:
+        payment_filter = st.selectbox("Payment Method", ["All"] + payment_method)
+    with col6:
+        amount_min = st.number_input("Min Amount", min_value=0.0, value=0.0, format="%.2f")
+    with col7:
+        amount_max = st.number_input("Max Amount", min_value=0.0, value=0.0, format="%.2f")
 
     if st.button("🔍 Search", type="primary"):
         st.session_state["expense_editor_df"] = fetch_expenses_for_edit(
-            date_from, date_to, category_filter
+            date_from,
+            date_to,
+            category_filter,
+            items_filter=items_filter,
+            payment_filter=payment_filter,
+            amount_min=amount_min if amount_min > 0 else None,
+            amount_max=amount_max if amount_max > 0 else None,
         )
+        st.session_state["expense_editor_filters"] = {
+            "date_from": date_from,
+            "date_to": date_to,
+            "category_filter": category_filter,
+            "items_filter": items_filter,
+            "payment_filter": payment_filter,
+            "amount_min": amount_min if amount_min > 0 else None,
+            "amount_max": amount_max if amount_max > 0 else None,
+        }
 
     if "expense_editor_df" not in st.session_state:
         st.info("Set filters above and click Search to load expenses.")
@@ -205,7 +264,20 @@ def expense_editor_page():
     st.markdown("---")
 
     # ── Display and edit each row ─────────────
-    from utils.data import expense_category_options
+    def refresh_editor_results():
+        filters = st.session_state.get(
+            "expense_editor_filters",
+            {
+                "date_from": date_from,
+                "date_to": date_to,
+                "category_filter": category_filter,
+                "items_filter": items_filter,
+                "payment_filter": payment_filter,
+                "amount_min": amount_min if amount_min > 0 else None,
+                "amount_max": amount_max if amount_max > 0 else None,
+            },
+        )
+        st.session_state["expense_editor_df"] = fetch_expenses_for_edit(**filters)
 
     for _, row in df.iterrows():
         expense_id = int(row["id"])
@@ -221,14 +293,31 @@ def expense_editor_page():
             col_left, col_right = st.columns([2, 1])
 
             with col_left:
-                # ── Amount edit ──────────────
-                st.markdown("**Edit Amount & Notes**")
+                # ── Details edit ─────────────
+                st.markdown("**Edit Details**")
+                new_items = st.text_input(
+                    "Items",
+                    value=row["items"] or "",
+                    key=f"items_{expense_id}",
+                )
                 new_amount = st.number_input(
                     "Amount ($)",
                     min_value=0.0,
                     value=float(row["amount"]),
                     format="%.2f",
                     key=f"amount_{expense_id}",
+                )
+                current_payment = row["payment_method"] or payment_method[0]
+                payment_index = (
+                    payment_method.index(current_payment)
+                    if current_payment in payment_method
+                    else 0
+                )
+                new_payment_method = st.selectbox(
+                    "Payment Method",
+                    payment_method,
+                    index=payment_index,
+                    key=f"payment_{expense_id}",
                 )
                 new_notes = st.text_input(
                     "Source Notes (e.g. 'partial refund applied')",
@@ -237,20 +326,29 @@ def expense_editor_page():
                 )
 
                 if st.button(
-                    "💾 Save Amount & Notes",
-                    key=f"save_amount_{expense_id}",
+                    "💾 Save Details",
+                    key=f"save_details_{expense_id}",
                 ):
-                    if new_amount != float(row["amount"]) or new_notes != (row["source_notes"] or ""):
-                        success = update_expense_amount(expense_id, new_amount, new_notes)
+                    changed = (
+                        new_items != (row["items"] or "")
+                        or new_amount != float(row["amount"])
+                        or new_payment_method != (row["payment_method"] or "")
+                        or new_notes != (row["source_notes"] or "")
+                    )
+                    if changed:
+                        success = update_expense_details(
+                            expense_id,
+                            new_items,
+                            new_amount,
+                            new_payment_method,
+                            new_notes,
+                        )
                         if success:
                             st.success(
-                                f"✅ Expense #{expense_id} updated to ${new_amount:.2f}."
+                                f"✅ Expense #{expense_id} details updated."
                                 + (" Linked transactions synced automatically." if has_linked else "")
                             )
-                            # Refresh
-                            st.session_state["expense_editor_df"] = fetch_expenses_for_edit(
-                                date_from, date_to, category_filter
-                            )
+                            refresh_editor_results()
                             st.rerun()
                     else:
                         st.info("No changes detected.")
@@ -278,9 +376,7 @@ def expense_editor_page():
                         success = update_expense_category(expense_id, new_category)
                         if success:
                             st.success(f"✅ Category updated to {new_category}.")
-                            st.session_state["expense_editor_df"] = fetch_expenses_for_edit(
-                                date_from, date_to, category_filter
-                            )
+                            refresh_editor_results()
                             st.rerun()
                     else:
                         st.info("Category unchanged.")
@@ -340,9 +436,7 @@ def expense_editor_page():
                             if success:
                                 st.success(f"Expense #{expense_id} deleted.")
                                 st.session_state[confirm_key] = False
-                                st.session_state["expense_editor_df"] = fetch_expenses_for_edit(
-                                    date_from, date_to, category_filter
-                                )
+                                refresh_editor_results()
                                 st.rerun()
                     with col_no:
                         if st.button(
