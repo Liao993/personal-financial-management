@@ -9,19 +9,23 @@ from models.transaction_models import Transaction
 
 def render_transaction_section():
     st.subheader("🔁 Quick Transaction")
+    if st.session_state.pop("mobile_transaction_success_message", None):
+        st.success("Transaction saved.")
 
-    action_type = st.radio("Action", transaction_type_list, key="mobile_action_type")
+    form_version = st.session_state.get("mobile_transaction_form_version", 0)
+    key_prefix = f"mobile_transaction_{form_version}"
+    action_type = st.radio("Action", transaction_type_list, key=f"{key_prefix}_action_type")
 
-    with st.form("mobile_transaction_form"):
+    with st.form(f"mobile_transaction_form_{form_version}"):
         transaction_date = st.date_input(
-            "Date", value=datetime.now().date(), key="mobile_transaction_date"
+            "Date", value=datetime.now().date(), key=f"{key_prefix}_date"
         )
         fund_category = st.selectbox(
-            "Fund Category", fund_categories, key="mobile_fund_category"
+            "Fund Category", fund_categories, key=f"{key_prefix}_fund_category"
         )
-        account_name = st.selectbox("Account", account_name_list, key="mobile_account_name")
-        amount = st.number_input("Amount", min_value=0.0, key="mobile_transaction_amount")
-        source_notes = st.text_input("Notes (optional)", "", key="mobile_transaction_notes")
+        account_name = st.selectbox("Account", account_name_list, key=f"{key_prefix}_account_name")
+        amount = st.number_input("Amount", min_value=0.0, key=f"{key_prefix}_amount")
+        source_notes = st.text_input("Notes (optional)", "", key=f"{key_prefix}_notes")
 
         transfer_to_account = None
         if action_type == "Transfer Between Accounts":
@@ -29,7 +33,7 @@ def render_transaction_section():
                 "Transfer To Account",
                 account_name_list,
                 index=min(2, len(account_name_list) - 1),
-                key="mobile_transfer_to_account",
+                key=f"{key_prefix}_transfer_to_account",
             )
 
         submitted = st.form_submit_button("Save Transaction")
@@ -46,7 +50,9 @@ def render_transaction_section():
                     source_notes=source_notes,
                 )
                 insert_transaction_data(txn.dict())
-                st.success(f"✅ Deposit of ${amount:.2f} saved.")
+                st.session_state["mobile_transaction_success_message"] = True
+                st.session_state["mobile_transaction_form_version"] = form_version + 1
+                st.rerun()
 
             elif action_type == "Withdrawal (between funds or spending)":
                 txn = Transaction(
@@ -58,7 +64,9 @@ def render_transaction_section():
                     source_notes=source_notes,
                 )
                 insert_transaction_data(txn.dict())
-                st.success(f"✅ Withdrawal of ${amount:.2f} saved.")
+                st.session_state["mobile_transaction_success_message"] = True
+                st.session_state["mobile_transaction_form_version"] = form_version + 1
+                st.rerun()
 
             else:  # Transfer Between Accounts
                 txn_out = Transaction(
@@ -80,7 +88,9 @@ def render_transaction_section():
                 )
                 insert_transaction_data(txn_out.dict())
                 insert_transaction_data(txn_in.dict())
-                st.success(f"✅ Transfer of ${amount:.2f} saved.")
+                st.session_state["mobile_transaction_success_message"] = True
+                st.session_state["mobile_transaction_form_version"] = form_version + 1
+                st.rerun()
 
         except ValidationError as e:
             for error in e.errors():

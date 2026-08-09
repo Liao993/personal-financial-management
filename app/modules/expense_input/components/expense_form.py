@@ -13,11 +13,49 @@ from modules.expense_input.middle_layer.common_items_combined import common_item
 from backend.trip_backend import fetch_all_trips
 
 
+def validate_manual_expense_review(expense_data: dict) -> bool:
+    is_traveling = (
+        expense_data.get("category") == "Traveling"
+        or expense_data.get("traveling_category") is not None
+    )
+    if not is_traveling:
+        return True
+
+    issues = []
+    if expense_data.get("category") != "Traveling":
+        issues.append("If a Traveling Category is selected, Category must be Traveling.")
+    if not expense_data.get("traveling_category"):
+        issues.append("Traveling expenses must have a Traveling Category selected.")
+    if not expense_data.get("trip"):
+        issues.append("Traveling expenses must have a Trip selected or entered.")
+    if not expense_data.get("exclude_from_monthly"):
+        issues.append("Traveling expenses must have Fund Withdrawal Required checked.")
+    if not expense_data.get("target_fund_category"):
+        issues.append("Traveling expenses must have a Primary Target Fund selected.")
+
+    secondary_fund = expense_data.get("split_fund_category_1")
+    secondary_amount = float(expense_data.get("split_amount_1") or 0.0)
+    total_amount = float(expense_data.get("amount") or 0.0)
+
+    if secondary_fund and secondary_amount <= 0:
+        issues.append("Secondary Target Fund needs a Secondary Amount greater than 0.")
+    if not secondary_fund and secondary_amount > 0:
+        issues.append("Secondary Amount needs a Secondary Target Fund selected.")
+    if secondary_fund and secondary_amount >= total_amount:
+        issues.append("Secondary Amount must be smaller than the total expense amount.")
+
+    for issue in issues:
+        st.warning(issue)
+
+    return not issues
+
+
 def expense_form(edit_mode_form, data_saved_key, expense_data_key):
 
     review_button = False
 
-    with st.form("expense_form"):
+    form_version = st.session_state.get("expense_form_version", 0)
+    with st.form(f"expense_form_{form_version}"):
         drop_down_list()
         st.markdown(
             """
@@ -130,7 +168,7 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
         review_button = st.form_submit_button("Review")
 
         if review_button:
-            st.session_state[expense_data_key] = {
+            expense_data = {
                 "date":                           expense_date,
                 "amount":                         expense_amount,
                 "category":                       expense_category,
@@ -146,6 +184,10 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
                 "split_fund_category_1":          split_fund_category_1,
                 "split_amount_1":                 split_amount_1,
             }
+            if not validate_manual_expense_review(expense_data):
+                st.stop()
+
+            st.session_state[expense_data_key] = expense_data
             st.session_state[edit_mode_form] = False
             st.session_state[data_saved_key] = False
             st.rerun()

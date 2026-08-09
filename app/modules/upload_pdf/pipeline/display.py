@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import streamlit as st  # type: ignore
 import pandas as pd
-import time
 import numpy as np
 from utils.data import (
     expense_category_options as category_list,
@@ -14,6 +15,123 @@ from backend.trip_backend import fetch_all_trips
 edit_mode_form = "edit_mode_expense"
 data_saved_key = "data_saved_expense"
 review_data    = "review_expense_data"
+
+
+def _is_blank(value) -> bool:
+    return value is None or pd.isna(value) or str(value).strip() == ""
+
+
+def _row_numbers(frame: pd.DataFrame, mask: pd.Series) -> str:
+    return ", ".join(str(position + 1) for position, flagged in enumerate(mask) if flagged)
+
+
+def validate_statement_review_data(
+    edited_df: pd.DataFrame,
+    single_trip: bool,
+    trip_input: str | None,
+) -> bool:
+    travel_mask = (
+        edited_df["category"].eq("Traveling")
+        | edited_df["traveling_category"].notna()
+    )
+    if not travel_mask.any():
+        return True
+
+    travel_rows = edited_df.loc[travel_mask].copy()
+    issues = []
+
+    if single_trip and _is_blank(trip_input):
+        issues.append("Select a trip or add a new trip before confirming traveling rows.")
+
+    missing_category = travel_rows["traveling_category"].isna()
+    if missing_category.any():
+        issues.append(
+            "Traveling rows must have a Traveling Category. Check row(s): "
+            + _row_numbers(travel_rows, missing_category)
+        )
+
+    category_mismatch = travel_rows["category"].ne("Traveling")
+    if category_mismatch.any():
+        issues.append(
+            "Rows with a Traveling Category must also use category Traveling. Check row(s): "
+            + _row_numbers(travel_rows, category_mismatch)
+        )
+
+    missing_withdrawal = ~travel_rows["exclude_from_monthly"].fillna(False).astype(bool)
+    if missing_withdrawal.any():
+        issues.append(
+            "Every traveling row must have Fund Withdrawal Required checked. Check row(s): "
+            + _row_numbers(travel_rows, missing_withdrawal)
+        )
+
+    missing_primary = travel_rows["target_fund_category"].isna()
+    if missing_primary.any():
+        issues.append(
+            "Every traveling row must have a Primary Target Fund selected. Check row(s): "
+            + _row_numbers(travel_rows, missing_primary)
+        )
+
+    secondary_selected = travel_rows["split_fund_category_1"].notna()
+    secondary_amount = pd.to_numeric(travel_rows["split_amount_1"], errors="coerce").fillna(0.0)
+
+    missing_secondary_amount = secondary_selected & (secondary_amount <= 0)
+    if missing_secondary_amount.any():
+        issues.append(
+            "Rows with a Secondary Target Fund must have a Secondary Amount greater than 0. "
+            "Check row(s): " + _row_numbers(travel_rows, missing_secondary_amount)
+        )
+
+    amount = pd.to_numeric(travel_rows["amount"], errors="coerce").fillna(0.0)
+    secondary_too_large = secondary_selected & (secondary_amount >= amount)
+    if secondary_too_large.any():
+        issues.append(
+            "Secondary Amount must be smaller than the expense amount so the Primary Fund "
+            "still has an amount. Check row(s): " + _row_numbers(travel_rows, secondary_too_large)
+        )
+
+    amount_without_secondary = (~secondary_selected) & (secondary_amount > 0)
+    if amount_without_secondary.any():
+        issues.append(
+            "Rows with a Secondary Amount must also select a Secondary Target Fund. Check row(s): "
+            + _row_numbers(travel_rows, amount_without_secondary)
+        )
+
+    for issue in issues:
+        st.warning(issue)
+
+    return not issues
+
+
+def build_statement_review_table(dataframe: pd.DataFrame) -> pd.DataFrame:
+    review_df = dataframe.copy()
+    amount = pd.to_numeric(review_df["amount"], errors="coerce").fillna(0.0)
+    secondary_amount = pd.to_numeric(review_df["split_amount_1"], errors="coerce").fillna(0.0)
+    has_secondary = review_df["split_fund_category_1"].notna()
+
+    review_df["primary_fund_amount"] = np.where(
+        review_df["exclude_from_monthly"].fillna(False).astype(bool),
+        np.where(has_secondary, amount - secondary_amount, amount),
+        0.0,
+    )
+    review_df["secondary_fund_amount"] = np.where(has_secondary, secondary_amount, 0.0)
+
+    columns = [
+        "date",
+        "items",
+        "amount",
+        "category",
+        "traveling_category",
+        "trip",
+        "exclude_from_monthly",
+        "target_fund_category",
+        "primary_fund_amount",
+        "split_fund_category_1",
+        "secondary_fund_amount",
+        "payment_method",
+        "source_notes",
+    ]
+    columns = [column for column in columns if column in review_df.columns]
+    return review_df[columns]
 
 
 def display_editable_dataframe(dataframe, bank):
@@ -48,7 +166,7 @@ def display_editable_dataframe(dataframe, bank):
 
         existing_trips = fetch_all_trips()
         trip_options   = existing_trips + ["Add New Trip"]
-        selected_trip  = st.selectbox("Select Trip", options=trip_options)
+        selected_trip  = st.selectbox("Select Trip", options=[None] + trip_options)
 
         if selected_trip == "Add New Trip":
             trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-012025)")
@@ -122,6 +240,8 @@ def display_editable_dataframe(dataframe, bank):
         )
 
         if st.button("Confirm your changes"):
+            if not validate_statement_review_data(edited_df, single_trip, trip_input):
+                st.stop()
             if single_trip:
                 edited_df.loc[edited_df["category"] == "Traveling", "trip"] = trip_input
                 edited_df.loc[edited_df["category"] != "Traveling", "trip"] = None
@@ -135,7 +255,25 @@ def display_editable_dataframe(dataframe, bank):
         if not st.session_state.get(data_saved_key, False):
             st.info("View your information again before saving.")
             reviewed_data_dict = st.session_state[review_data]
-            st.table(reviewed_data_dict)
+            review_table = build_statement_review_table(reviewed_data_dict)
+            st.dataframe(
+                review_table,
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "date": st.column_config.DateColumn("Date", format="YYYY-MM-DD"),
+                    "amount": st.column_config.NumberColumn("Expense Amount", format="$%.2f"),
+                    "exclude_from_monthly": st.column_config.CheckboxColumn("Fund Withdrawal"),
+                    "target_fund_category": st.column_config.TextColumn("Primary Fund"),
+                    "primary_fund_amount": st.column_config.NumberColumn(
+                        "Primary Fund Amount", format="$%.2f"
+                    ),
+                    "split_fund_category_1": st.column_config.TextColumn("Secondary Fund"),
+                    "secondary_fund_amount": st.column_config.NumberColumn(
+                        "Secondary Fund Amount", format="$%.2f"
+                    ),
+                },
+            )
             monthly_summary(reviewed_data_dict)
 
             col1, col2 = st.columns(2)
@@ -161,5 +299,4 @@ def display_editable_dataframe(dataframe, bank):
                 "Expense data from your statement successfully saved! "
                 "Moving back to upload page."
             )
-            time.sleep(6)
             return True

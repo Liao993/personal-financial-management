@@ -118,4 +118,8 @@ def monthly_savings_action():
     )
 
     if status:
-        st.success("Data is successfully saved!")
+        st.session_state["monthly_save_success_message"] = (
+            "Saving records saved successfully in the transaction database."
+        )
+        st.session_state.pop("financial_goals_data", None)
+        st.rerun()
