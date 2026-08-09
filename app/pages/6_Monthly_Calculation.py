@@ -147,6 +147,8 @@ def monthly_stats_page():
 
     if st.session_state.get("monthly_rerun_success_message"):
         st.success(st.session_state.pop("monthly_rerun_success_message"))
+    if st.session_state.get("monthly_save_success_message"):
+        st.success(st.session_state.pop("monthly_save_success_message"))
 
     financial_goals = financial_goals_form()
 

@@ -1,18 +1,32 @@
 import streamlit as st # type: ignore
-from datetime import date
-import time
-from utils.validation import validate_expense_data
-from backend.expense_backend import insert_expense_data, fetch_last_expense_data
+from backend.expense_backend import fetch_last_expense_data
 from modules.expense_input.components.expense_form import expense_form
 from modules.expense_input.components.review_data import review_data_print_out
 from modules.expense_input.middle_layer.confirmed_data_handling import confirmed_data_handling
-from backend.expense_backend import fetch_last_expense_data
 
 st.set_page_config(page_title="Expense Input", page_icon="💸", layout='wide')
 
 edit_mode_form = 'edit_mode_expense'
 data_saved_key = 'data_saved_expense'
 expense_data_key = 'expense_data'
+
+
+def reset_manual_expense_state():
+    for key in [
+        expense_data_key,
+        "common_item_select",
+        "custom_item_input",
+        "target_fund_category",
+        "split_fund_category_1",
+        "split_amount_1",
+    ]:
+        st.session_state.pop(key, None)
+    st.session_state["expense_form_version"] = (
+        st.session_state.get("expense_form_version", 0) + 1
+    )
+    st.session_state[edit_mode_form] = True
+    st.session_state[data_saved_key] = False
+
 
 def expense_input_page():
     st.markdown(
@@ -40,6 +54,9 @@ def expense_input_page():
         st.session_state[data_saved_key] = False
     if expense_data_key not in st.session_state:
         st.session_state[expense_data_key] = {}
+
+    if st.session_state.pop("manual_expense_success_message", None):
+        st.success("Expense data successfully saved.")
 
     # ── Show the form ─────────────────────────────────────────────────────
     if st.session_state[edit_mode_form]:
@@ -70,18 +87,8 @@ def expense_input_page():
                 st.rerun()
 
         elif st.session_state.get(data_saved_key, True):
-            st.success("Expense data successfully saved! Moving Back to Input Page")
-            time.sleep(3)
-            st.session_state[expense_data_key] = {
-                "date": date.today(),
-                "amount": 100.00,
-                "items": "",
-                "category": "Food Outside",
-                "traveling_category": "None",
-                "trip": "None",
-            }
-            st.session_state[edit_mode_form] = True
-            st.session_state[data_saved_key] = False
+            st.session_state["manual_expense_success_message"] = True
+            reset_manual_expense_state()
             st.rerun()
 
 

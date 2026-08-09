@@ -5,6 +5,19 @@ from modules.upload_pdf.pipeline.pipeline import pipeline # type: ignore
 st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
 
 
+def reset_upload_expense_state():
+    for key in [
+        "uploaded_pdf_files_list",
+        "selected_action",
+        "pdf_uploader",
+        "review_expense_data",
+        "edit_mode_expense",
+        "data_saved_expense",
+    ]:
+        st.session_state.pop(key, None)
+    st.session_state["upload_pdf_state"] = True
+
+
 def upload_expense():
     st.markdown(
         "<h1 style='color: #e74c3c; text-align: center;'>Upload Your Expenses PDF Here</h1>",
@@ -63,9 +76,7 @@ def upload_expense():
                 st.session_state['uploaded_pdf_files_list'],
             )
             if done:
-                if 'uploaded_pdf_files_list' in st.session_state:
-                    del st.session_state['uploaded_pdf_files_list']
-                st.session_state['upload_pdf_state'] = True
+                reset_upload_expense_state()
                 st.rerun()
 
 

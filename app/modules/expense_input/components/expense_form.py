@@ -17,7 +17,8 @@ def expense_form(edit_mode_form, data_saved_key, expense_data_key):
 
     review_button = False
 
-    with st.form("expense_form"):
+    form_version = st.session_state.get("expense_form_version", 0)
+    with st.form(f"expense_form_{form_version}"):
         drop_down_list()
         st.markdown(
             """
