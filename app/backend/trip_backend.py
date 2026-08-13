@@ -24,16 +24,19 @@ def fetch_trip_selection():
             cursor.execute(query, ())
 
             rows = cursor.fetchall()
-            cols = [col[0] for col in cursor.description]  # Get column names
-            df = pd.DataFrame(rows, columns=cols)
-            data = df[cols]
-            return data
+            return [
+                row[0]
+                for row in rows
+                if row[0] is not None and str(row[0]).strip()
+            ]
 
         except psycopg2.Error as e:
             st.error(f"Error retrieving trip data: {e}")
-            return pd.DataFrame()
+            return []
         finally:
             cursor.close()
+            conn.close()
+    return []
 
 
 

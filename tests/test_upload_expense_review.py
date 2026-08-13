@@ -12,6 +12,7 @@ from modules.upload_pdf.pipeline.display import (  # noqa: E402
     build_statement_review_table,
     validate_statement_review_data,
 )
+from modules.upload_pdf.pipeline.common import exclude_payment_credits  # noqa: E402
 
 
 class UploadExpenseReviewTests(unittest.TestCase):
@@ -83,6 +84,62 @@ class UploadExpenseReviewTests(unittest.TestCase):
                 trip_input="Toronto-082026",
             )
         )
+
+    def test_review_table_orders_by_payment_method_then_date(self):
+        data = pd.DataFrame(
+            [
+                {
+                    "date": "2026-08-10",
+                    "items": "Coffee",
+                    "amount": 5.00,
+                    "category": "Food Outside",
+                    "payment_method": "RBC",
+                    "split_fund_category_1": None,
+                    "split_amount_1": 0.00,
+                    "exclude_from_monthly": False,
+                },
+                {
+                    "date": "2026-08-12",
+                    "items": "Groceries",
+                    "amount": 50.00,
+                    "category": "Grocery",
+                    "payment_method": "PC",
+                    "split_fund_category_1": None,
+                    "split_amount_1": 0.00,
+                    "exclude_from_monthly": False,
+                },
+                {
+                    "date": "2026-08-01",
+                    "items": "Dinner",
+                    "amount": 20.00,
+                    "category": "Food Outside",
+                    "payment_method": "PC",
+                    "split_fund_category_1": None,
+                    "split_amount_1": 0.00,
+                    "exclude_from_monthly": False,
+                },
+            ]
+        )
+
+        review = build_statement_review_table(data)
+
+        self.assertEqual(
+            review[["payment_method", "date"]].values.tolist(),
+            [["PC", "2026-08-01"], ["PC", "2026-08-12"], ["RBC", "2026-08-10"]],
+        )
+
+    def test_payment_credit_rows_are_excluded(self):
+        data = pd.DataFrame(
+            [
+                {"items": "PAYMENT - THANK YOU", "amount": "-100.00"},
+                {"items": "Grocery store", "amount": "45.00"},
+                {"items": "Payment processor fee", "amount": "12.00"},
+            ]
+        )
+
+        filtered = exclude_payment_credits(data)
+
+        self.assertEqual(filtered["items"].tolist(), ["Grocery store", "Payment processor fee"])
 
 
 if __name__ == "__main__":
