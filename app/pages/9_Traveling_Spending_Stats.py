@@ -21,7 +21,8 @@ def traveling_stats():
         if (len(all_fetched_expense) == 0):
           st.warning("No Spending  in the selected trip")
           if st.button("Choose Again", key="choose_again"):
-            selected_the_trip()
+            st.session_state.pop("selected_traveling_trip", None)
+            st.rerun()
         else:
           total_spending = all_fetched_expense['total_spending'].iloc[0] #get the total spending from the first row.
           st.markdown(f"<h3 style='text-align: left; color: #f1c40f;'>Traveling Breakdown - Total Amount: ${total_spending:.2f}</h3>", unsafe_allow_html=True)

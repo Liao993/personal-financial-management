@@ -1,5 +1,6 @@
 import streamlit as st # type: ignore
 from modules.upload_pdf.component.upload import pdf_upload # type: ignore
+from modules.upload_pdf.pipeline.common import SOURCE_OPTIONS
 from modules.upload_pdf.pipeline.pipeline import pipeline # type: ignore
 
 st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
@@ -8,6 +9,7 @@ st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
 def reset_upload_expense_state():
     for key in [
         "uploaded_pdf_files_list",
+        "uploaded_pdf_sources",
         "selected_action",
         "pdf_uploader",
         "review_expense_data",
@@ -42,7 +44,7 @@ def upload_expense():
         st.markdown("""
         | Topic | Note |
         |---|---|
-        | 📁 **File Name** | Don't rename the PDF — the filename is used to extract the statement year. |
+        | 📅 **Statement Date** | Dates are read from the statement text when available. Confirm the year in the review table before saving. |
         | 🏠 **House Expenses** | Exclude house-related items (pre-filtered by the ETL pipeline). |
         | ✈️ **Traveling Rows** | Set the Trip and Traveling Category in the data editor for traveling rows. |
         | 💰 **Fund Withdrawal** | Set a Primary Target Fund in the editor to auto-create a withdrawal from Main Chequing. |
@@ -54,26 +56,42 @@ def upload_expense():
     if 'upload_pdf_state' not in st.session_state:
         st.session_state['upload_pdf_state'] = True
         st.session_state['uploaded_pdf_files_list'] = []
-        st.session_state['selected_action'] = None
+        st.session_state['uploaded_pdf_sources'] = {}
 
     if st.session_state['upload_pdf_state']:
-        action_options = ["RBC", "PC", "Scotia_Red"]
-        st.session_state['selected_action'] = st.selectbox(
-            "Which Bank for your statements?", action_options
-        )
         uploaded_pdf = pdf_upload()
         if uploaded_pdf:
             st.session_state['uploaded_pdf_files_list'] = uploaded_pdf
             st.success(f"Uploaded {len(uploaded_pdf)} file(s).")
+            st.markdown("### Statement sources")
+            st.caption("Choose the source for each file so each statement uses the right ETL pipeline.")
+            selected_sources = {}
+            for index, uploaded_file in enumerate(uploaded_pdf):
+                current_source = st.session_state.get("uploaded_pdf_sources", {}).get(
+                    uploaded_file.name,
+                    SOURCE_OPTIONS[0],
+                )
+                selected_sources[uploaded_file.name] = st.selectbox(
+                    uploaded_file.name,
+                    SOURCE_OPTIONS,
+                    index=SOURCE_OPTIONS.index(current_source)
+                    if current_source in SOURCE_OPTIONS
+                    else 0,
+                    key=f"source_{index}_{uploaded_file.name}",
+                )
+            st.session_state["uploaded_pdf_sources"] = selected_sources
 
         if st.button("Submit"):
-            st.session_state['upload_pdf_state'] = False
-            st.rerun()
+            if not st.session_state.get("uploaded_pdf_files_list"):
+                st.warning("Upload at least one statement before submitting.")
+            else:
+                st.session_state['upload_pdf_state'] = False
+                st.rerun()
     else:
         if st.session_state.get('uploaded_pdf_files_list'):
             done = pipeline(
-                st.session_state['selected_action'],
                 st.session_state['uploaded_pdf_files_list'],
+                st.session_state.get("uploaded_pdf_sources", {}),
             )
             if done:
                 reset_upload_expense_state()

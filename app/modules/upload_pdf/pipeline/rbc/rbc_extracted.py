@@ -18,8 +18,12 @@ def rbc_extracted(pdf_files):
                         text = page.extract_text()
                         if text:
                             for line in text.splitlines():
-                               
-                                if '$' in line and any(month in line for month in months):
+                                upper_line = line.upper()
+                                if (
+                                    '$' in line and any(month in upper_line for month in months)
+                                ) or (
+                                    "STATEMENT" in upper_line and re.search(r"\b20\d{2}\b", line)
+                                ):
                                     relevant_lines.append(line.strip())
                     if relevant_lines:
                         all_relevant_lines[pdf_file_obj.name] = relevant_lines

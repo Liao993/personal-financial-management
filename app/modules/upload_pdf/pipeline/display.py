@@ -116,6 +116,7 @@ def build_statement_review_table(dataframe: pd.DataFrame) -> pd.DataFrame:
     review_df["secondary_fund_amount"] = np.where(has_secondary, secondary_amount, 0.0)
 
     columns = [
+        "payment_method",
         "date",
         "items",
         "amount",
@@ -127,14 +128,17 @@ def build_statement_review_table(dataframe: pd.DataFrame) -> pd.DataFrame:
         "primary_fund_amount",
         "split_fund_category_1",
         "secondary_fund_amount",
-        "payment_method",
+        "statement_file",
         "source_notes",
     ]
     columns = [column for column in columns if column in review_df.columns]
+    sort_columns = [column for column in ["payment_method", "date"] if column in review_df.columns]
+    if sort_columns:
+        review_df = review_df.sort_values(sort_columns, kind="stable").reset_index(drop=True)
     return review_df[columns]
 
 
-def display_editable_dataframe(dataframe, bank):
+def display_editable_dataframe(dataframe):
 
     if edit_mode_form not in st.session_state:
         st.session_state[edit_mode_form] = True
@@ -181,6 +185,9 @@ def display_editable_dataframe(dataframe, bank):
 
         # Initialise columns if missing
         df = st.session_state[review_data]
+        sort_columns = [column for column in ["payment_method", "date"] if column in df.columns]
+        if sort_columns:
+            df = df.sort_values(sort_columns, kind="stable").reset_index(drop=True)
         df = df.drop(
             columns=["split_fund_category_2", "split_amount_2"],
             errors="ignore",
@@ -190,6 +197,7 @@ def display_editable_dataframe(dataframe, bank):
             ("target_fund_category",  None),
             ("split_fund_category_1", None),
             ("split_amount_1",        0.0),
+            ("source_notes",          None),
         ]:
             if col not in df.columns:
                 df[col] = default
@@ -198,6 +206,12 @@ def display_editable_dataframe(dataframe, bank):
         edited_df = st.data_editor(
             st.session_state[review_data],
             column_config={
+                "payment_method": st.column_config.TextColumn(
+                    "Statement Source",
+                ),
+                "statement_file": st.column_config.TextColumn(
+                    "Statement File",
+                ),
                 "date": st.column_config.DateColumn(
                     "Date", format="YYYY-MM-DD", required=True
                 ),
@@ -233,10 +247,15 @@ def display_editable_dataframe(dataframe, bank):
                     default=0.0,
                     format="%.2f",
                 ),
+                "source_notes": st.column_config.TextColumn(
+                    "Source Notes",
+                    help="Use this to distinguish a real same-day duplicate purchase.",
+                ),
             },
             use_container_width=True,
             hide_index=True,
             num_rows="dynamic",
+            disabled=[column for column in ["payment_method", "statement_file"] if column in df.columns],
         )
 
         if st.button("Confirm your changes"):
@@ -285,7 +304,7 @@ def display_editable_dataframe(dataframe, bank):
             if confirm_button:
                 data_to_saved = reviewed_data_dict
                 st.info("Saving your information...")
-                if load_expense_data(data_to_saved, bank):
+                if load_expense_data(data_to_saved):
                     st.session_state[data_saved_key] = True
                     st.rerun()
 
