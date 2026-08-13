@@ -9,9 +9,10 @@ from utils.data import (
     fund_categories,
 )
 from utils.validation import validate_expense_data
-from backend.expense_backend import insert_expense_data
+from backend.expense_backend import find_manual_duplicate_expense, insert_expense_data
 from backend.trip_backend import fetch_all_trips
 from modules.expense_input.middle_layer.common_items_combined import common_items_combined
+from modules.expense_input.middle_layer.confirmed_data_handling import describe_manual_duplicate
 
 
 def render_expense_section():
@@ -124,7 +125,17 @@ def render_expense_section():
             "split_amount_1": split_amount_1,
         }
         if validate_expense_data(expense_data):
-            insert_expense_data(expense_data)
-            st.session_state["mobile_expense_success_message"] = True
-            st.session_state["mobile_expense_form_version"] = form_version + 1
-            st.rerun()
+            existing_matches = find_manual_duplicate_expense(expense_data)
+            if not existing_matches.empty:
+                st.error(
+                    "This expense looks duplicated, so it was not saved. "
+                    "Mobile duplicate checks use Date, Category, Amount, and Payment Method."
+                )
+                st.warning(describe_manual_duplicate(expense_data))
+                st.dataframe(existing_matches, use_container_width=True, hide_index=True)
+                return
+
+            if insert_expense_data(expense_data):
+                st.session_state["mobile_expense_success_message"] = True
+                st.session_state["mobile_expense_form_version"] = form_version + 1
+                st.rerun()

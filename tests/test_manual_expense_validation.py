@@ -7,6 +7,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "app"))
 
 from modules.expense_input.components.expense_form import validate_manual_expense_review  # noqa: E402
+from modules.expense_input.middle_layer.confirmed_data_handling import (  # noqa: E402
+    describe_manual_duplicate,
+)
 
 
 class ManualExpenseValidationTests(unittest.TestCase):
@@ -37,6 +40,21 @@ class ManualExpenseValidationTests(unittest.TestCase):
         }
 
         self.assertTrue(validate_manual_expense_review(expense_data))
+
+    def test_manual_duplicate_description_uses_manual_duplicate_key_fields(self):
+        expense_data = {
+            "date": "2026-08-13",
+            "amount": 25.00,
+            "category": "Food Outside",
+            "items": "Custom lunch name",
+            "payment_method": "PC",
+            "source_notes": "different note",
+        }
+
+        self.assertEqual(
+            describe_manual_duplicate(expense_data),
+            "2026-08-13 | PC | Food Outside | 25.0",
+        )
 
 
 if __name__ == "__main__":

@@ -8,7 +8,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./database/01_init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql
+      - ./database/03_expense_transaction_sync.sql:/docker-entrypoint-initdb.d/03_expense_transaction_sync.sql
       - ./database/04_portfolio_schema.sql:/docker-entrypoint-initdb.d/04_portfolio_schema.sql
+      - ./database/05_expense_ingestion_dedupe.sql:/docker-entrypoint-initdb.d/05_expense_ingestion_dedupe.sql
       - postgres_data:/var/lib/postgresql/data
     networks:
       - budget_network_prod

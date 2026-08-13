@@ -24,14 +24,14 @@ def expense_btn():
                   AND category != 'House'
                   AND house_category IS NULL
                   AND exclude_from_monthly = FALSE
-                ORDER BY date DESC;
+                ORDER BY payment_method NULLS LAST, date DESC, id DESC;
             """)
 
     with query_buttons[1]:
         if st.button("💸 All House Expenses", use_container_width=True):
             execute_predefined_query("""
                 SELECT
-                    id, date, items, amount, category, house_category,
+                    id, date, items, amount, category, payment_method, house_category,
                     exclude_from_monthly,
                     CASE
                         WHEN house_category = 'Mortgage' THEN 'Mortgage'
@@ -60,14 +60,14 @@ def expense_btn():
                 FROM expense
                 WHERE category = 'House'
                    OR house_category IS NOT NULL
-                ORDER BY date DESC;
+                ORDER BY payment_method NULLS LAST, date DESC, id DESC;
             """)
 
     with query_buttons[2]:
         if st.button("💸 All Traveling Expenses", use_container_width=True):
             execute_predefined_query("""
                 SELECT
-                    id, date, items, amount, category, trip,
+                    id, date, items, amount, category, payment_method, trip,
                     traveling_category,
                     exclude_from_monthly,
                     amount_for_number_of_travelers,
@@ -75,7 +75,7 @@ def expense_btn():
                     SUM(amount) OVER (PARTITION BY trip) AS trip_total
                 FROM expense
                 WHERE category = 'Traveling'
-                ORDER BY date DESC, trip,
+                ORDER BY payment_method NULLS LAST, date DESC, trip,
                          EXTRACT(YEAR  FROM date) DESC,
                          EXTRACT(MONTH FROM date) DESC;
             """)
@@ -159,7 +159,8 @@ def expense_btn():
                          exclude_from_monthly,
                          EXTRACT(YEAR  FROM date),
                          EXTRACT(MONTH FROM date)
-                ORDER BY EXTRACT(YEAR  FROM date) DESC,
+                ORDER BY payment_method,
+                         EXTRACT(YEAR  FROM date) DESC,
                          EXTRACT(MONTH FROM date) DESC;
             """)
 

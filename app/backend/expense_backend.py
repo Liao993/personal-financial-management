@@ -7,6 +7,86 @@ import os
 DBT_SCHEMA = os.environ.get("DBT_SCHEMA", "dbt_budget")
 
 
+def find_matching_expense(expense_data: dict) -> pd.DataFrame:
+    """
+    Exact duplicate check for statement ingestion.
+    source_notes is included so a user can intentionally distinguish a same-day,
+    same-source, same-item, same-amount purchase by adding a note.
+    """
+    conn = get_db_connection()
+    if not conn:
+        return pd.DataFrame()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT id, date, items, amount, category, payment_method, source_notes
+            FROM expense
+            WHERE date = %s
+              AND payment_method IS NOT DISTINCT FROM %s
+              AND amount = %s
+              AND lower(trim(items)) = lower(trim(%s))
+              AND COALESCE(trim(source_notes), '') = COALESCE(trim(%s), '')
+            ORDER BY id DESC
+            """,
+            (
+                expense_data.get("date"),
+                expense_data.get("payment_method"),
+                expense_data.get("amount"),
+                expense_data.get("items"),
+                expense_data.get("source_notes"),
+            ),
+        )
+        rows = cursor.fetchall()
+        cols = [col[0] for col in cursor.description]
+        return pd.DataFrame(rows, columns=cols)
+    except psycopg2.Error as e:
+        st.error(f"Error checking duplicate expense data: {e}")
+        return pd.DataFrame()
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def find_manual_duplicate_expense(expense_data: dict) -> pd.DataFrame:
+    """
+    Manual entry duplicate check.
+    Item name and source_notes are intentionally ignored because manual entries
+    can use different labels for the same real-world purchase.
+    """
+    conn = get_db_connection()
+    if not conn:
+        return pd.DataFrame()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT id, date, items, amount, category, payment_method, source_notes
+            FROM expense
+            WHERE date = %s
+              AND category = %s
+              AND amount = %s
+              AND payment_method IS NOT DISTINCT FROM %s
+            ORDER BY id DESC
+            """,
+            (
+                expense_data.get("date"),
+                expense_data.get("category"),
+                expense_data.get("amount"),
+                expense_data.get("payment_method"),
+            ),
+        )
+        rows = cursor.fetchall()
+        cols = [col[0] for col in cursor.description]
+        return pd.DataFrame(rows, columns=cols)
+    except psycopg2.Error as e:
+        st.error(f"Error checking manual duplicate expense data: {e}")
+        return pd.DataFrame()
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def insert_expense_data(validated_data: dict):
     conn = get_db_connection()
     if conn:
@@ -46,15 +126,18 @@ def insert_expense_data(validated_data: dict):
             cursor.execute(query, values)
             conn.commit()
             st.success("Transaction recorded successfully!")
+            return True
 
         except psycopg2.Error as e:
             conn.rollback()
             st.error(f"Error inserting expense data: {e}")
+            return False
         finally:
             cursor.close()
             conn.close()
     else:
         st.info("Database connection failed, cannot insert data.")
+        return False
 
 
 def fetch_monthly_expenses_with_summary(year, month):
@@ -169,7 +252,7 @@ def fetch_last_expense_data():
                 WHERE category != 'House'
                   AND house_category IS NULL
                   AND date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
-                ORDER BY date DESC, id DESC
+                ORDER BY payment_method NULLS LAST, date DESC, id DESC
             """
             cursor.execute(query)
             rows = cursor.fetchall()
