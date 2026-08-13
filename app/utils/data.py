@@ -45,25 +45,26 @@ common_store_directory = {
     'CROSSINGBRIDGE': 'Traveling',
     'PROXI': 'Gas',
     "ESSO": 'Gas',
+    "Shell": 'Gas',
     "LUCKYMOBILE": 'Cell Phone',
     "PHOVIETNAM": 'Food Outside',
-    
+    "Bell": 'Cell Phone',
 }
 
 # Used for catching daily expense from being in traveling category
-daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT', "LUCKY MOBILE", "PHO VIETNAM"]
+daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT', "LUCKY MOBILE"]
 
 # used for expense input
 common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Bell Canada', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
                      'Dollarama', 'A&W', 'Shoppers Drug Mart', 'Global Grocery', 'Costco', 
-                     'Take Sushi', 'Petro', 'Starbucks', 'Irving', 
+                     'Take Sushi', 'Petro', 'Starbucks', 'Irving', 'Shell',
                      'Hopspot', 'Mike & Andreea', 'Tim Hortons', 'Panda Mart', 'Eastlink', 'Pho Vietnam Rest', 
                      'Saigon Pho', 'Receiver Coffee', 'Wal-Mart', 'Hong Mall', 'Liquor', 'Cows', 'Alambe', 'Mucho Burrito']
 
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
                      "Medicine", "Exercise", "Saved For Love", "Transportation", "Education", "Traveling" , 
-                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car"]
+                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car", "Technology"]
 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
