@@ -47,9 +47,19 @@ def load_semantic_layer(path: str | Path | None = None) -> dict:
         if not isinstance(definition, dict):
             raise ValueError(f"Metric '{name}' must be a mapping")
 
-        if definition.get("type") == "derived":
+        metric_type = definition.get("type")
+        if metric_type == "derived":
             if not definition.get("formula"):
                 raise ValueError(f"Derived metric '{name}' is missing 'formula'")
+            continue
+
+        if metric_type == "records":
+            if not definition.get("table"):
+                raise ValueError(f"Record metric '{name}' is missing required field 'table'")
+            if "columns" in definition and not isinstance(definition["columns"], list):
+                raise ValueError(f"Record metric '{name}' columns must be a list")
+            if "filters" in definition and not isinstance(definition["filters"], list):
+                raise ValueError(f"Record metric '{name}' filters must be a list")
             continue
 
         for field in REQUIRED_SIMPLE_FIELDS:
@@ -59,6 +69,9 @@ def load_semantic_layer(path: str | Path | None = None) -> dict:
         if "filters" in definition and not isinstance(definition["filters"], list):
             raise ValueError(f"Metric '{name}' filters must be a list")
 
+        if "allowed_dimensions" in definition and not isinstance(definition["allowed_dimensions"], list):
+            raise ValueError(f"Metric '{name}' allowed_dimensions must be a list")
+
     return metrics
 
 
@@ -66,5 +79,7 @@ def get_metric_catalog_text(metrics: dict) -> str:
     lines = []
     for name, definition in metrics.items():
         description = definition.get("description", "")
-        lines.append(f"- {name}: {description}")
+        dimensions = definition.get("allowed_dimensions", [])
+        dimension_text = f" Dimensions: {', '.join(dimensions)}." if dimensions else ""
+        lines.append(f"- {name}: {description}{dimension_text}")
     return "\n".join(lines)
