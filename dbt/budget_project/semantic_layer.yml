@@ -2,91 +2,453 @@
 # The LLM router sees only metric names and descriptions. SQL fragments here
 # are authored by the app owner and are the single source of truth for metrics.
 
+expense_dimensions: &expense_dimensions
+  - category
+  - summary_category
+  - payment_method
+  - traveling_category
+  - trip
+  - house_category
+  - month
+  - year
+
+transaction_dimensions: &transaction_dimensions
+  - fund_category
+  - transaction_type
+  - account_name
+  - transfer_to_account
+  - trip
+  - month
+  - year
+
+income_dimensions: &income_dimensions
+  - source
+  - regular
+  - month
+  - year
+
 metrics:
   total_income:
     description: "Total income received from salary, freelance, dividends, and other sources."
+    label: "total income"
+    unit: "currency"
     table: income
     date_column: date
     aggregation: "SUM(amount)"
     filters: []
+    allowed_dimensions: *income_dimensions
 
   total_expense:
     description: "Total daily spending, excluding house expenses and expenses already paid from funds."
+    label: "daily spending"
+    unit: "currency"
     table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
     date_column: date
     aggregation: "SUM(amount)"
     filters: []
+    allowed_dimensions: *expense_dimensions
+
+  total_spending_with_house:
+    description: "Total spending including daily spending and house-related spending, but excluding expenses already paid from funds."
+    label: "spending including house"
+    unit: "currency"
+    type: derived
+    formula: "total_expense + house_spend"
 
   grocery_spend:
     description: "Total spent on groceries."
+    label: "grocery spending"
+    unit: "currency"
     table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
     date_column: date
     aggregation: "SUM(amount)"
     filters:
       - "category = 'Grocery'"
+    allowed_dimensions: *expense_dimensions
 
   food_outside_spend:
     description: "Total spent dining out, on restaurants, or on takeout."
+    label: "restaurant and takeout spending"
+    unit: "currency"
     table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
     date_column: date
     aggregation: "SUM(amount)"
     filters:
       - "category = 'Food Outside'"
+    allowed_dimensions: *expense_dimensions
+
+  household_goods_spend:
+    description: "Total spent on household goods and home supplies, excluding house-category mortgage and utility records."
+    label: "household goods spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Household Goods'"
+    allowed_dimensions: *expense_dimensions
+
+  cell_phone_spend:
+    description: "Total spent on cell phone bills or mobile service."
+    label: "cell phone spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Cell Phone'"
+    allowed_dimensions: *expense_dimensions
+
+  gas_spend:
+    description: "Total spent on gas and fuel outside travel-fund-paid expenses."
+    label: "gas spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Gas'"
+    allowed_dimensions: *expense_dimensions
 
   donation_spend:
     description: "Total donated or spent on offerings and gifts."
+    label: "donation and gift spending"
+    unit: "currency"
     table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
     date_column: date
     aggregation: "SUM(amount)"
     filters:
       - "summary_category = 'Donation and Gifts'"
+    allowed_dimensions: *expense_dimensions
+
+  medicine_spend:
+    description: "Total spent on medicine, pharmacy, and health supplies."
+    label: "medicine spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Medicine'"
+    allowed_dimensions: *expense_dimensions
+
+  transportation_spend:
+    description: "Total spent on transportation that is not travel-fund-paid."
+    label: "transportation spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Transportation'"
+    allowed_dimensions: *expense_dimensions
+
+  education_spend:
+    description: "Total spent on education."
+    label: "education spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Education'"
+    allowed_dimensions: *expense_dimensions
+
+  technology_spend:
+    description: "Total spent on technology, electronics, software, or computer equipment."
+    label: "technology spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Technology'"
+    allowed_dimensions: *expense_dimensions
+
+  car_spend:
+    description: "Total spent on car-related expenses."
+    label: "car spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Car'"
+    allowed_dimensions: *expense_dimensions
+
+  clothing_spend:
+    description: "Total spent on clothing."
+    label: "clothing spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Clothing'"
+    allowed_dimensions: *expense_dimensions
+
+  fun_tickets_spend:
+    description: "Total spent on fun, entertainment, tickets, events, or activities."
+    label: "fun and tickets spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Fun/Tickets'"
+    allowed_dimensions: *expense_dimensions
+
+  liquor_spend:
+    description: "Total spent on liquor or alcohol."
+    label: "liquor spending"
+    unit: "currency"
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Liquor'"
+    allowed_dimensions: *expense_dimensions
 
   house_spend:
     description: "Total house-related spending, excluding extra mortgage principal payments."
+    label: "house spending"
+    unit: "currency"
     table: expense
     date_column: date
     aggregation: "SUM(amount)"
     filters:
       - "(category = 'House' OR house_category IS NOT NULL)"
       - "(house_category != 'Extra Mortgage' OR house_category IS NULL)"
+    allowed_dimensions: *expense_dimensions
+
+  extra_mortgage_principal:
+    description: "Total extra mortgage principal payments."
+    label: "extra mortgage principal"
+    unit: "currency"
+    table: expense
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "house_category = 'Extra Mortgage'"
+    allowed_dimensions: *expense_dimensions
 
   retirement_saving_deposits:
     description: "Total deposited into Retirement Saving."
+    label: "retirement saving deposits"
+    unit: "currency"
     table: transactions
     date_column: date
     aggregation: "SUM(amount)"
     filters:
       - "fund_category = 'Retirement Saving'"
       - "transaction_type = 'Deposit'"
+    allowed_dimensions: *transaction_dimensions
 
   medium_term_saving_deposits:
     description: "Total deposited into Medium-term Saving."
+    label: "medium-term saving deposits"
+    unit: "currency"
     table: transactions
     date_column: date
     aggregation: "SUM(amount)"
     filters:
       - "fund_category = 'Medium-term Saving'"
       - "transaction_type = 'Deposit'"
+    allowed_dimensions: *transaction_dimensions
+
+  emergency_fund_deposits:
+    description: "Total deposited into Emergency Funds."
+    label: "emergency fund deposits"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Emergency Funds'"
+      - "transaction_type = 'Deposit'"
+    allowed_dimensions: *transaction_dimensions
+
+  house_fund_deposits:
+    description: "Total deposited into the House fund."
+    label: "house fund deposits"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'House'"
+      - "transaction_type = 'Deposit'"
+    allowed_dimensions: *transaction_dimensions
+
+  parent_support_deposits:
+    description: "Total Parents Support deposits, parent support money received, family support received, or support deposits."
+    label: "Parents Support deposits"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Parents Support'"
+      - "transaction_type = 'Deposit'"
+    allowed_dimensions: *transaction_dimensions
+
+  total_transaction_deposits:
+    description: "Total deposits across all fund categories in the transactions table."
+    label: "transaction deposits"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "transaction_type = 'Deposit'"
+    allowed_dimensions: *transaction_dimensions
+
+  total_transaction_amount:
+    description: "Net transaction amount across deposits, withdrawals, transfers, and fund movements."
+    label: "net transaction amount"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters: []
+    allowed_dimensions: *transaction_dimensions
+
+  total_transaction_withdrawals:
+    description: "Total withdrawals across all fund categories in the transactions table, shown as a positive amount."
+    label: "transaction withdrawals"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(ABS(amount))"
+    filters:
+      - "transaction_type = 'Withdrawal'"
+    allowed_dimensions: *transaction_dimensions
 
   traveling_fund_spend:
     description: "Total withdrawn from Traveling Funds, representing trip spending paid from that fund."
+    label: "traveling fund withdrawals"
+    unit: "currency"
     table: transactions
     date_column: date
     aggregation: "SUM(ABS(amount))"
     filters:
       - "fund_category = 'Traveling Funds'"
       - "transaction_type = 'Withdrawal'"
+    allowed_dimensions: *transaction_dimensions
+
+  medium_term_withdrawals:
+    description: "Total withdrawn from Medium-term Saving, shown as a positive amount."
+    label: "medium-term withdrawals"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(ABS(amount))"
+    filters:
+      - "fund_category = 'Medium-term Saving'"
+      - "transaction_type = 'Withdrawal'"
+    allowed_dimensions: *transaction_dimensions
+
+  emergency_fund_withdrawals:
+    description: "Total withdrawn from Emergency Funds, shown as a positive amount."
+    label: "emergency fund withdrawals"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(ABS(amount))"
+    filters:
+      - "fund_category = 'Emergency Funds'"
+      - "transaction_type = 'Withdrawal'"
+    allowed_dimensions: *transaction_dimensions
+
+  parent_support_withdrawals_total:
+    description: "Total withdrawn from Parents Support, parent support withdrawal, parent support withdraw, family support spending, shown as a positive amount."
+    label: "Parents Support withdrawals"
+    unit: "currency"
+    table: transactions
+    date_column: date
+    aggregation: "SUM(ABS(amount))"
+    filters:
+      - "fund_category = 'Parents Support'"
+      - "transaction_type = 'Withdrawal'"
+    allowed_dimensions: *transaction_dimensions
+
+  parent_support_withdrawals:
+    description: "List all Parents Support withdrawal transactions with date, amount, account, notes, trip, and linked expense id."
+    label: "Parents Support withdrawals"
+    unit: "records"
+    type: records
+    table: transactions
+    date_column: date
+    columns:
+      - transaction_id
+      - date
+      - account_name
+      - amount
+      - fund_category
+      - transaction_type
+      - source_notes
+      - trip
+      - expense_id
+    filters:
+      - "fund_category = 'Parents Support'"
+      - "transaction_type = 'Withdrawal'"
+    order_by: "date DESC, transaction_id DESC"
+    limit: 100
 
   emergency_fund_balance:
     description: "Net balance currently in Emergency Funds from deposits and withdrawals."
+    label: "current Emergency Funds balance"
+    unit: "currency"
     table: transactions
-    date_column: date
+    date_column: null
     aggregation: "SUM(amount)"
     filters:
       - "fund_category = 'Emergency Funds'"
 
+  traveling_fund_balance:
+    description: "Net balance currently in Traveling Funds from deposits and withdrawals."
+    label: "current Traveling Funds balance"
+    unit: "currency"
+    table: transactions
+    date_column: null
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Traveling Funds'"
+
+  retirement_saving_balance:
+    description: "Net balance currently in Retirement Saving from deposits, withdrawals, and transfers."
+    label: "current Retirement Saving balance"
+    unit: "currency"
+    table: transactions
+    date_column: null
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Retirement Saving'"
+
+  medium_term_saving_balance:
+    description: "Net balance currently in Medium-term Saving from deposits and withdrawals."
+    label: "current Medium-term Saving balance"
+    unit: "currency"
+    table: transactions
+    date_column: null
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Medium-term Saving'"
+
+  parent_support_balance:
+    description: "Net balance currently in Parents Support from deposits and withdrawals."
+    label: "current Parents Support balance"
+    unit: "currency"
+    table: transactions
+    date_column: null
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Parents Support'"
+
   portfolio_total_value_cad:
     description: "Total current market value of all investment holdings, converted to CAD."
+    label: "portfolio value"
+    unit: "currency"
     table: "portfolio_holdings h"
     join: |
       LEFT JOIN LATERAL (
@@ -110,5 +472,21 @@ metrics:
 
   savings_rate:
     description: "Percentage of income saved into retirement and medium-term savings."
+    label: "savings rate"
+    unit: "percent"
     type: derived
     formula: "(retirement_saving_deposits + medium_term_saving_deposits) / total_income * 100"
+
+  spending_rate:
+    description: "Percentage of income spent on daily and house spending."
+    label: "spending rate"
+    unit: "percent"
+    type: derived
+    formula: "total_spending_with_house / total_income * 100"
+
+  net_cashflow:
+    description: "Income minus daily spending and house spending."
+    label: "net cashflow"
+    unit: "currency"
+    type: derived
+    formula: "total_income - total_spending_with_house"
