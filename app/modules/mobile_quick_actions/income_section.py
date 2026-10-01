@@ -1,7 +1,7 @@
 import streamlit as st  # type: ignore
 from datetime import date
 
-from utils.data import fixed_income_data
+from utils.data import fixed_income_data, account_name_list
 from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data
 
@@ -14,6 +14,8 @@ def render_income_section():
         st.success("Income saved.")
 
     form_version = st.session_state.get("mobile_income_form_version", 0)
+    default_account = account_name_list[0] if account_name_list else "Main Chequing"
+
     with st.form(f"mobile_income_form_{form_version}"):
         income_date = st.date_input("Date", value=date.today(), key=f"mobile_income_date_{form_version}")
         income_amount = st.number_input(
@@ -26,6 +28,16 @@ def render_income_section():
         income_source = st.selectbox("Source", INCOME_SOURCE_OPTIONS, key=f"mobile_income_source_{form_version}")
         income_regular = st.checkbox("Regular Income", value=True, key=f"mobile_income_regular_{form_version}")
         notes_input = st.text_input("Notes (optional)", "", key=f"mobile_income_notes_{form_version}")
+        deposit_account = st.selectbox(
+            "Deposit Into Account",
+            options=account_name_list if account_name_list else [default_account],
+            index=0,
+            key=f"mobile_income_deposit_account_{form_version}",
+            help=(
+                "Chequing → tracked in monthly savings. "
+                "Other accounts → a linked deposit transaction is created automatically."
+            ),
+        )
         submitted = st.form_submit_button("Save Income")
 
     if submitted:
@@ -35,6 +47,7 @@ def render_income_section():
             "source": income_source,
             "regular": income_regular,
             "notes": notes_input if notes_input else None,
+            "deposit_account": deposit_account,
         }
         if validate_income_data(income_data):
             insert_income_data(income_data)

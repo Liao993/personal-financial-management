@@ -8,8 +8,10 @@ from modules.historical_spending.components.all_year_pct_annual_expense_by_categ
 from modules.historical_spending.components.single_year_pct_saving_spending_distribution_line_chart import create_monthly_saving_spending_distribution_line_chart
 from modules.historical_spending.components.all_year_pct_saving_spending_distribution_line_chart import create_annual_saving_spending_distribution_line_chart
 from modules.historical_spending.components.all_year_total_expense_by_category_bar_chart import create_total_expense_distribution_chart
+from modules.historical_spending.components.single_year_monthly_income_source_bar_chart import create_monthly_income_source_bar_chart
+from modules.historical_spending.components.all_year_annual_income_source_bar_chart import create_annual_income_source_bar_chart
+from modules.historical_spending.components.total_income_source_pie_chart import create_income_source_pie_chart
 
- 
 from backend import expense_backend, income_backend, transaction_backend
 import pandas as pd # type: ignore
 import streamlit as st # type: ignore
@@ -62,6 +64,32 @@ def fetch_all_income_by_month_safe():
             cursor.close()
             conn.close()
     return pd.DataFrame(columns=["year", "month", "total_income"])
+
+
+def fetch_income_source_data_safe(year=None):
+    conn = income_backend.get_db_connection()
+    if conn:
+        try:
+            cursor = conn.cursor()
+            if year is None or year == "All Year":
+                query = """
+                    SELECT date, source, amount
+                    FROM income;
+                """
+                cursor.execute(query)
+            else:
+                query = """
+                    SELECT date, source, amount
+                    FROM income
+                    WHERE EXTRACT(YEAR FROM date) = %s;
+                """
+                cursor.execute(query, (year,))
+            data = cursor.fetchall()
+            return pd.DataFrame(data, columns=["date", "source", "amount"])
+        finally:
+            cursor.close()
+            conn.close()
+    return pd.DataFrame(columns=["date", "source", "amount"])
 
 
 def fetch_all_transaction_data_by_month_safe():
@@ -140,6 +168,23 @@ def historical_spending():
              #   selected_year_choice_form()
         else:
             kpi(all_fetched_expense, all_fetched_income, all_fetched_transaction, all_year=is_all_year)
+            st.write("---")
+            
+            # Show Income Source Distribution
+            all_fetched_income_source = fetch_income_source_data_safe(selected_year if not is_all_year else None)
+            inc_col1, inc_col2 = st.columns(2)
+            with inc_col1:
+                if is_all_year:
+                    create_annual_income_source_bar_chart(all_fetched_income_source)
+                else:
+                    create_monthly_income_source_bar_chart(all_fetched_income_source)
+            with inc_col2:
+                if is_all_year:
+                    create_income_source_pie_chart(all_fetched_income_source, title="Total Earning by Source (All Years)")
+                else:
+                    create_income_source_pie_chart(all_fetched_income_source, title=f"Total Earning by Source ({selected_year})")
+            st.write("---")
+            
             col1, col2 = st.columns(2)
             with col1:
                  # Show All Monthly Expenses by Amount

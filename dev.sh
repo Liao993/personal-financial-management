@@ -34,9 +34,11 @@ reload_sample_data() {
     echo "Applying development schema extensions..."
     run_db_sql /docker-entrypoint-initdb.d/03_expense_transaction_sync.sql
     run_db_sql /docker-entrypoint-initdb.d/04_portfolio_schema.sql
+    run_db_sql /docker-entrypoint-initdb.d/05_expense_ingestion_dedupe.sql
+    run_db_sql /docker-entrypoint-initdb.d/06_income_deposit_account.sql
 
     echo "Reloading development sample data..."
-    run_db_sql /docker-entrypoint-initdb.d/05_seed_dev.sql
+    run_db_sql /docker-entrypoint-initdb.d/99_seed_dev.sql
 
     echo "Refreshing dbt models..."
     $DC run --rm dbt dbt run

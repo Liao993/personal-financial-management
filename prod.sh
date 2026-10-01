@@ -33,7 +33,8 @@ case "$CMD" in
     schema)
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/03_expense_transaction_sync.sql
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/04_portfolio_schema.sql
-        $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/05_expense_ingestion_dedupe.sql ;;
+        $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/05_expense_ingestion_dedupe.sql
+        $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/06_income_deposit_account.sql ;;
     dbt)
         $DC run --rm dbt dbt run ;;
     backup)
