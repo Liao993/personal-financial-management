@@ -8,6 +8,7 @@ class Income(BaseModel):
     source: str
     regular: bool = True
     notes: Optional[str] = None
+    deposit_account: Optional[str] = None
 
     class Config:
         orm_mode = True

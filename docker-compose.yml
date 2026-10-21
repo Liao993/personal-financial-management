@@ -25,9 +25,12 @@ services:
       - ./app:/app
       - ./etl:/etl
       - ./service:/service
+      - ./dbt:/dbt
     depends_on:
       db:
         condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

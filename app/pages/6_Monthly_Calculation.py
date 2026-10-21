@@ -144,9 +144,12 @@ def monthly_stats_page():
         "<h1 style='color: #5e548e; text-align: center;'>Monthly Stats</h1>",
         unsafe_allow_html=True,
     )
+    st.caption("ℹ️ Note: Only income deposited into a Chequing account is included in this calculation. Income deposited into other accounts (like TFSA or House) are excluded to prevent double-counting savings.")
 
     if st.session_state.get("monthly_rerun_success_message"):
         st.success(st.session_state.pop("monthly_rerun_success_message"))
+    if st.session_state.get("monthly_save_success_message"):
+        st.success(st.session_state.pop("monthly_save_success_message"))
 
     financial_goals = financial_goals_form()
 

@@ -1,5 +1,6 @@
 import os
-from decimal import Decimal
+import re
+from decimal import Decimal, InvalidOperation
 
 years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040]
 
@@ -45,30 +46,31 @@ common_store_directory = {
     'CROSSINGBRIDGE': 'Traveling',
     'PROXI': 'Gas',
     "ESSO": 'Gas',
+    "Shell": 'Gas',
     "LUCKYMOBILE": 'Cell Phone',
     "PHOVIETNAM": 'Food Outside',
-    
+    "Bell": 'Cell Phone',
 }
 
 # Used for catching daily expense from being in traveling category
-daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT', "LUCKY MOBILE", "PHO VIETNAM"]
+daily_expense_in_other_provinces = ["COSTCO", "EASTLINK", "HONGMALL", 'HTSP', 'HOPSPOT', "LUCKY MOBILE"]
 
 # used for expense input
-common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
+common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Bell Canada', 'Sobeys', 'Leonhard', 'Superstore', 'Amazon.ca', 'Leezen', 'Great Enlightenment', 
                      'Dollarama', 'A&W', 'Shoppers Drug Mart', 'Global Grocery', 'Costco', 
-                     'Take Sushi', 'Petro', 'Starbucks', 'Irving', 
+                     'Take Sushi', 'Petro', 'Starbucks', 'Irving', 'Shell',
                      'Hopspot', 'Mike & Andreea', 'Tim Hortons', 'Panda Mart', 'Eastlink', 'Pho Vietnam Rest', 
                      'Saigon Pho', 'Receiver Coffee', 'Wal-Mart', 'Hong Mall', 'Liquor', 'Cows', 'Alambe', 'Mucho Burrito']
 
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
                      "Medicine", "Exercise", "Saved For Love", "Transportation", "Education", "Traveling" , 
-                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car"]
+                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car", "Technology"]
 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
 traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking/Tolls", "Food", "Tickets", "Others"]
-payment_method = ["PC", "Scotia_Red", "RBC", "eTransfer", "Debit Card", "Cash", "Account Deduction"]
+payment_method = ["PC", "Scotia_Red", "RBC", "Simplii", "eTransfer", "Debit Card", "Cash", "Account Deduction"]
 
 # transaction
 _raw_fund_categories = os.environ.get("FUND_CATEGORIES", "")
@@ -83,8 +85,30 @@ transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (betw
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
 # Change every year
+def _decimal_from_raw(raw_value, seen_names=None):
+    seen_names = seen_names or set()
+    if not raw_value:
+        return Decimal("0")
+
+    if "+" in raw_value:
+        return sum(
+            (_decimal_from_raw(part.strip(), seen_names) for part in raw_value.split("+")),
+            Decimal("0"),
+        )
+
+    if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", raw_value):
+        if raw_value in seen_names:
+            return Decimal("0")
+        return _decimal_from_raw(os.environ.get(raw_value, "").strip(), seen_names | {raw_value})
+
+    try:
+        return Decimal(raw_value.replace(",", ""))
+    except InvalidOperation:
+        return Decimal("0")
+
+
 def env_decimal(name):
-    return Decimal(os.environ.get(name, "").strip() or "0")
+    return _decimal_from_raw(os.environ.get(name, "").strip(), {name})
 
 
 TFSA_room = env_decimal("TFSA_LIMIT")

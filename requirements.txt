@@ -19,3 +19,5 @@ gspread           # Add this line
 google-auth       # Often needed as a dependency for gspread
 sqlalchemy
 yfinance>=0.2.40
+pyyaml>=6.0
+requests>=2.31.0

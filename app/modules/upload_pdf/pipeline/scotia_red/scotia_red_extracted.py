@@ -18,7 +18,9 @@ def scotia_red_extracted(pdf_files):
                     
                         if text:
                             for line in text.splitlines():
-                               
+                                if "STATEMENT" in line.upper() and re.search(r"\b20\d{2}\b", line):
+                                    relevant_lines.append(line.strip())
+                                    continue
                                 #line start with "0"
                                 if line.startswith("0"):
                                  

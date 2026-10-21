@@ -5,7 +5,8 @@ import time
 from backend.transaction_backend import insert_transaction_data
 from models.transaction_models import Transaction
 from backend.transaction_backend import fetch_transaction_deposit_check
-# get account name from environment variable, default to "RBC Chequing" if not set
+# Get account names from environment variables so public sample data can use
+# neutral labels instead of real institution-specific account names.
 import os
 
 def monthly_savings_data_handling(
@@ -117,4 +118,8 @@ def monthly_savings_action():
     )
 
     if status:
-        st.success("Data is successfully saved!")
+        st.session_state["monthly_save_success_message"] = (
+            "Saving records saved successfully in the transaction database."
+        )
+        st.session_state.pop("financial_goals_data", None)
+        st.rerun()

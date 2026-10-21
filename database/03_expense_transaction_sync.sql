@@ -98,7 +98,7 @@ FOR EACH ROW EXECUTE FUNCTION set_expense_defaults();
 -- Fires when a new expense row is inserted.
 -- Only acts when exclude_from_monthly = TRUE.
 -- Creates up to 2 withdrawal rows: primary and secondary split.
--- The account is always RBC Chequing — payment_method is just the card used.
+-- The account is always Main Chequing — payment_method is just the card used.
 -- The application layer validates that target_fund_category IS NOT NULL
 -- whenever exclude_from_monthly = TRUE before data reaches here.
 
@@ -109,7 +109,7 @@ DECLARE
     v_secondary    NUMERIC(10, 2);
     v_account      VARCHAR(255);
 BEGIN
-    v_account := 'RBC Chequing';
+    v_account := 'Main Chequing';
 
     IF NEW.exclude_from_monthly = TRUE THEN
         v_secondary := CASE

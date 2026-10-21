@@ -9,15 +9,10 @@ def pdf_upload() -> List[UploadedFile]:
 
     
     uploaded_files = st.file_uploader(
-        "Upload up to 3 PDF files",
+        "Upload PDF files",
         type=["pdf"],
         accept_multiple_files=True,
         key="pdf_uploader",
     )
-  
-    if uploaded_files:
-        if len(uploaded_files) > 3:
-            st.warning(f"You uploaded {len(uploaded_files)} files. Only the newest 3 will be considered.")
-            uploaded_files = uploaded_files[:3]
 
     return uploaded_files

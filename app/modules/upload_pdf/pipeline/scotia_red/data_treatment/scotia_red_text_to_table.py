@@ -1,15 +1,17 @@
 import streamlit as st # type: ignore
 import re
 import pandas as pd
+from modules.upload_pdf.pipeline.common import exclude_payment_credits, infer_statement_year
+
 def text_to_table(extracted_data):
     selected_data = []
     if extracted_data:
         for filename, text in extracted_data.items():
-            if 'e-statement' in filename:
-                    year_match = re.search(r'\d{4}\b', filename)
-                    year = year_match.group() if year_match else None
+            year = infer_statement_year(text, filename)
 
             for line in text:
+                if "STATEMENT" in line.upper() and re.search(r"\b20\d{2}\b", line):
+                    continue
                 pattern = r"""
                     ^\d+\s+                      # Start of line, transaction number (005), and one or more spaces
                     (?P<date>[A-Za-z]{3}\s\d{1,2})\s+  # CAPTURE 1: Month abbreviation (Nov) and Day (14)
@@ -35,5 +37,6 @@ def text_to_table(extracted_data):
         df = pd.DataFrame(selected_data, columns=["date", "Post Date", "items", "amount", "year"])
 
         df = df.drop(columns=["Post Date"], errors='ignore') 
+        df = exclude_payment_credits(df)
         return df
         

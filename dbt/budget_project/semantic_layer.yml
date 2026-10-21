@@ -1,0 +1,114 @@
+# Hand-written semantic layer for the AI Financial Assistant.
+# The LLM router sees only metric names and descriptions. SQL fragments here
+# are authored by the app owner and are the single source of truth for metrics.
+
+metrics:
+  total_income:
+    description: "Total income received from salary, freelance, dividends, and other sources."
+    table: income
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters: []
+
+  total_expense:
+    description: "Total daily spending, excluding house expenses and expenses already paid from funds."
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters: []
+
+  grocery_spend:
+    description: "Total spent on groceries."
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Grocery'"
+
+  food_outside_spend:
+    description: "Total spent dining out, on restaurants, or on takeout."
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "category = 'Food Outside'"
+
+  donation_spend:
+    description: "Total donated or spent on offerings and gifts."
+    table: "{{ env.DBT_SCHEMA }}.intermediate_expenses_with_summary"
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "summary_category = 'Donation and Gifts'"
+
+  house_spend:
+    description: "Total house-related spending, excluding extra mortgage principal payments."
+    table: expense
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "(category = 'House' OR house_category IS NOT NULL)"
+      - "(house_category != 'Extra Mortgage' OR house_category IS NULL)"
+
+  retirement_saving_deposits:
+    description: "Total deposited into Retirement Saving."
+    table: transactions
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Retirement Saving'"
+      - "transaction_type = 'Deposit'"
+
+  medium_term_saving_deposits:
+    description: "Total deposited into Medium-term Saving."
+    table: transactions
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Medium-term Saving'"
+      - "transaction_type = 'Deposit'"
+
+  traveling_fund_spend:
+    description: "Total withdrawn from Traveling Funds, representing trip spending paid from that fund."
+    table: transactions
+    date_column: date
+    aggregation: "SUM(ABS(amount))"
+    filters:
+      - "fund_category = 'Traveling Funds'"
+      - "transaction_type = 'Withdrawal'"
+
+  emergency_fund_balance:
+    description: "Net balance currently in Emergency Funds from deposits and withdrawals."
+    table: transactions
+    date_column: date
+    aggregation: "SUM(amount)"
+    filters:
+      - "fund_category = 'Emergency Funds'"
+
+  portfolio_total_value_cad:
+    description: "Total current market value of all investment holdings, converted to CAD."
+    table: "portfolio_holdings h"
+    join: |
+      LEFT JOIN LATERAL (
+        SELECT close
+        FROM etf_prices p
+        WHERE p.ticker = h.ticker
+          AND p.ticker != 'USDCAD=X'
+        ORDER BY p.price_date DESC
+        LIMIT 1
+      ) lp ON TRUE
+      LEFT JOIN LATERAL (
+        SELECT close AS fx
+        FROM etf_prices fx
+        WHERE fx.ticker = 'USDCAD=X'
+        ORDER BY fx.price_date DESC
+        LIMIT 1
+      ) fxr ON TRUE
+    date_column: null
+    aggregation: "SUM(h.units * lp.close * (CASE WHEN h.currency = 'USD' THEN COALESCE(fxr.fx, 1) ELSE 1 END))"
+    filters: []
+
+  savings_rate:
+    description: "Percentage of income saved into retirement and medium-term savings."
+    type: derived
+    formula: "(retirement_saving_deposits + medium_term_saving_deposits) / total_income * 100"

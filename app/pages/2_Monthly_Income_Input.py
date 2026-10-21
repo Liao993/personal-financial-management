@@ -1,6 +1,4 @@
 import streamlit as st # type: ignore
-from datetime import date
-import time
 from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data, fetch_last_income_data
 from modules.income_input.income_form import income_input_form
@@ -11,6 +9,15 @@ st.set_page_config(page_title="Income Input", page_icon="💰", layout='wide')
 edit_mode_form = 'edit_mode_income'
 data_saved_key = 'data_saved_income'
 review_data_key = 'review_income_data'
+
+
+def reset_income_input_state():
+    st.session_state.pop(review_data_key, None)
+    st.session_state["income_form_version"] = (
+        st.session_state.get("income_form_version", 0) + 1
+    )
+    st.session_state[edit_mode_form] = True
+    st.session_state[data_saved_key] = False
 
 
 def income_input_page():
@@ -25,6 +32,9 @@ def income_input_page():
     # catch review data
     if review_data_key not in st.session_state:
         st.session_state[review_data_key] = {}
+
+    if st.session_state.pop("income_success_message", None):
+        st.success("Income data successfully saved.")
     
     # if it is in edit mode, show the form
     if st.session_state[edit_mode_form]:
@@ -70,16 +80,8 @@ def income_input_page():
 
         # If data is saved, show the option to add more income
         elif st.session_state.get(data_saved_key, True):
-            st.success("Income data successfully saved! Move back to Input Page")
-            time.sleep(3)
-            # Reset all form-related session state to default
-            st.session_state['date'] = date.today()
-            st.session_state['amount'] = 1717.85
-            st.session_state['source'] = "Gov"
-            st.session_state['regular'] = True
-            st.session_state['notes'] = ""
-            st.session_state[edit_mode_form] = True
-            st.session_state[data_saved_key] = False
+            st.session_state["income_success_message"] = True
+            reset_income_input_state()
             st.rerun()
 
 if __name__ == "__main__":

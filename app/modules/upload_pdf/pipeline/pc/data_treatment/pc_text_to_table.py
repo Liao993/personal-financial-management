@@ -1,16 +1,17 @@
 import pandas as pd
 import re
 import streamlit as st # type: ignore
+from modules.upload_pdf.pipeline.common import exclude_payment_credits, infer_statement_year
 
 def text_to_table(extracted_data):
     selected_data = []
     if extracted_data:
         for filename, text in extracted_data.items():
+            year = infer_statement_year(text, filename)
             for line in text:
                 #to extract the year
                 if 'Statement date' in line:
-                    year_match = re.search(r'\d{4}', line)
-                    year = year_match.group() if year_match else None
+                    continue
                     #st.info(year)
                 else:
                     #st.info(line)
@@ -36,5 +37,6 @@ def text_to_table(extracted_data):
         # Create a DataFrame
         df = pd.DataFrame(selected_data, columns=["date", "Post Date", "items", "amount", "year"])
         df = df.drop(columns=["Post Date"], errors='ignore') 
+        df = exclude_payment_credits(df)
         return df
            
