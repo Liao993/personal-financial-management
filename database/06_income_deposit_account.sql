@@ -20,11 +20,21 @@
 ALTER TABLE income
     ADD COLUMN IF NOT EXISTS deposit_account VARCHAR(255);
 
--- Backfill all historical income rows with the default chequing account.
--- The application always uses the first entry in ACCOUNT_NAMES as the
--- default, which in both dev and prod is the main chequing account.
+-- Backfill historical income rows using the chequing account already present
+-- in transactions. Dev uses Main Chequing; production uses RBC Chequing.
+-- Fresh databases have no historical income rows, so the fallback is only
+-- used when a database has no recognizable chequing account yet.
 UPDATE income
-SET deposit_account = 'Main Chequing'
+SET deposit_account = COALESCE(
+    (
+        SELECT account_name
+        FROM transactions
+        WHERE account_name ILIKE '%chequing%'
+        ORDER BY transaction_id
+        LIMIT 1
+    ),
+    'Main Chequing'
+)
 WHERE deposit_account IS NULL;
 
 

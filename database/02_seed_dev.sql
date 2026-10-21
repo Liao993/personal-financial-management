@@ -5,7 +5,7 @@
 --   ACCOUNT_NAMES    = Main Chequing, Home Reserve, Notice Savings,
 --                      TFSA Growth, TFSA Dividend, RRSP Retirement
 --   FUND_CATEGORIES  = Traveling Funds, Retirement Saving, Medium-term Saving,
---                      House, Emergency Funds, Others
+--                      House, Emergency Funds, Parents Support, Others
 --   transaction_type_database = Deposit, Withdrawal, Transfer Out, Transfer In
 -- =============================================================================
 

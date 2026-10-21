@@ -11,6 +11,7 @@ SCHEMA_FILES = [
     '03_expense_transaction_sync.sql',
     '04_portfolio_schema.sql',
     '05_expense_ingestion_dedupe.sql',
+    '06_income_deposit_account.sql',
 ]
 
 
