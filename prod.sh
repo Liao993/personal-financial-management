@@ -12,10 +12,26 @@ DC="docker compose \
 
 CMD="${1:-up}"
 
+wait_for_db() {
+    echo "Waiting for database..."
+    for _ in {1..30}; do
+        if $DC exec -T db sh -lc 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' >/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 1
+    done
+
+    echo "Database did not become ready in time."
+    exit 1
+}
+
 case "$CMD" in
     up)
         echo "Starting PROD environment..."
-        $DC up -d
+        $DC up -d db
+        wait_for_db
+        "$SCRIPT_DIR/prod.sh" schema
+        $DC up -d app dbt
         echo ""
         echo "  budget_db        → internal only"
         echo "  budget_streamlit → http://localhost:8501"

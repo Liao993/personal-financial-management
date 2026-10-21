@@ -42,6 +42,20 @@ def _default_chequing_account() -> str:
     return accounts[0] if accounts else "Main Chequing"
 
 
+def _income_schema_columns(cursor) -> set[str]:
+    """Return optional income schema columns present in this database."""
+    cursor.execute(
+        """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'income'
+          AND column_name IN ('deposit_account')
+        """
+    )
+    return {row[0] for row in cursor.fetchall()}
+
+
 # ---------------------------------------------------------------------------
 # Insert income + optional linked deposit transaction
 # ---------------------------------------------------------------------------
@@ -56,26 +70,37 @@ def insert_income_data(validated_data: dict):
 
     try:
         cursor = conn.cursor()
+        optional_columns = _income_schema_columns(cursor)
+        has_deposit_account = "deposit_account" in optional_columns
 
         # 1. Insert income row and return the new id
-        query = """
-            INSERT INTO income (date, amount, source, regular, notes, deposit_account)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING id
-        """
-        values = (
-            validated_data["date"],
-            validated_data["amount"],
-            validated_data["source"],
-            validated_data["regular"],
-            validated_data["notes"],
-            deposit_account,
-        )
+        if has_deposit_account:
+            query = """
+                INSERT INTO income (date, amount, source, regular, notes, deposit_account)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING id
+            """
+            values = (
+                validated_data["date"], validated_data["amount"],
+                validated_data["source"], validated_data["regular"],
+                validated_data["notes"], deposit_account,
+            )
+        else:
+            query = """
+                INSERT INTO income (date, amount, source, regular, notes)
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING id
+            """
+            values = (
+                validated_data["date"], validated_data["amount"],
+                validated_data["source"], validated_data["regular"],
+                validated_data["notes"],
+            )
         cursor.execute(query, values)
         new_income_id = cursor.fetchone()[0]
 
         # 2. For non-chequing accounts auto-create a linked Deposit transaction
-        if not _is_chequing_account(deposit_account):
+        if has_deposit_account and not _is_chequing_account(deposit_account):
             fund_cat = _fund_category_for_account(deposit_account)
             source_label = validated_data.get("source", "income")
             source_notes = f"income deposit – {source_label}"
@@ -177,13 +202,16 @@ def fetch_monthly_income(year, month):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
-        query = """
-        SELECT SUM(amount)
-        FROM income
-        WHERE EXTRACT(YEAR FROM date) = %s AND EXTRACT(MONTH FROM date) = %s
-          AND deposit_account ILIKE '%%chequing%%';
-    """
         try:
+            has_deposit_account = "deposit_account" in _income_schema_columns(cursor)
+            account_filter = "AND deposit_account ILIKE '%%chequing%%'" if has_deposit_account else ""
+            query = f"""
+                SELECT SUM(amount)
+                FROM income
+                WHERE EXTRACT(YEAR FROM date) = %s
+                  AND EXTRACT(MONTH FROM date) = %s
+                  {account_filter};
+            """
             cursor.execute(query, (year, month))
             result = cursor.fetchone()
             if result and result[0] is not None:
@@ -202,13 +230,15 @@ def fetch_monthly_income(year, month):
         return []
 
 def fetch_last_income_data():
-    """Fetches the last 20 income records including the deposit account."""
+    """Fetches the last 20 income records across current and legacy schemas."""
     conn = get_db_connection()
     if conn:
         try:
             cursor = conn.cursor()
-            query = """
-                SELECT date, amount, source, notes, deposit_account
+            has_deposit_account = "deposit_account" in _income_schema_columns(cursor)
+            deposit_column = "deposit_account" if has_deposit_account else "NULL::varchar AS deposit_account"
+            query = f"""
+                SELECT date, amount, source, notes, {deposit_column}
                 FROM income
                 ORDER BY date DESC
                 LIMIT 20;
@@ -220,7 +250,7 @@ def fetch_last_income_data():
             return df
 
         except psycopg2.Error as e:
-            st.error(f"Error retrieving last two income data: {e}")
+            st.error(f"Error retrieving last income data: {e}")
             return pd.DataFrame()
         finally:
             cursor.close()
