@@ -123,10 +123,10 @@ BEGIN
         IF v_my_share > 0 THEN
             INSERT INTO transactions (
                 date, account_name, transaction_type, amount,
-                fund_category, source_notes, expense_id, trip
+                fund_category, transaction_category, source_notes, expense_id, trip
             ) VALUES (
                 NEW.date, v_account, 'Withdrawal', -v_my_share,
-                NEW.target_fund_category, NEW.source_notes, NEW.id, NEW.trip
+                NEW.target_fund_category, 'Spending', NEW.source_notes, NEW.id, NEW.trip
             );
         END IF;
 
@@ -135,10 +135,10 @@ BEGIN
            AND NEW.split_fund_category_1 IS NOT NULL THEN
             INSERT INTO transactions (
                 date, account_name, transaction_type, amount,
-                fund_category, source_notes, expense_id, trip
+                fund_category, transaction_category, source_notes, expense_id, trip
             ) VALUES (
                 NEW.date, v_account, 'Withdrawal', -v_secondary,
-                NEW.split_fund_category_1, NEW.source_notes, NEW.id, NEW.trip
+                NEW.split_fund_category_1, 'Spending', NEW.source_notes, NEW.id, NEW.trip
             );
         END IF;
 

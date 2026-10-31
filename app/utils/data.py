@@ -84,6 +84,17 @@ transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (betw
 # the one used for database for both transactions and cashflow
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
 
+# A transaction's purpose is separate from its direction.  For example, a
+# withdrawal can be either real spending or an account-to-account movement.
+transaction_category_options = [
+    "Account Balance",
+    "Spending",
+    "Monthly Saving",
+    "Investment",
+    "Income",
+    "Other",
+]
+
 # Change every year
 def _decimal_from_raw(raw_value, seen_names=None):
     seen_names = seen_names or set()

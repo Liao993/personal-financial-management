@@ -1,7 +1,12 @@
 import streamlit as st  # type: ignore
 from datetime import datetime
 from utils.css import drop_down_list
-from utils.data import account_name_list, fund_categories, transaction_type_list
+from utils.data import (
+    account_name_list,
+    fund_categories,
+    transaction_category_options,
+    transaction_type_list,
+)
 from modules.transaction.transaction_review import record_saving_transaction
 from modules.transaction.transaction_instruction import instruction
 
@@ -39,6 +44,13 @@ def transaction_form():
     amount            = st.number_input(
         "Amount", min_value=0.0, key=f"transaction_amount_{form_version}"
     )
+    transaction_category = st.selectbox(
+        "Transaction Category",
+        transaction_category_options,
+        index=transaction_category_options.index("Spending"),
+        key=f"transaction_category_{form_version}",
+        help="Classifies the purpose of this money movement. Transfers are always Account Balance.",
+    )
     source_notes      = st.text_input("Notes (Optional)", key=f"transaction_notes_{form_version}")
     transfer_to_account = None
 
@@ -47,6 +59,7 @@ def transaction_form():
             record_saving_transaction(
                 transaction_date, account_name, "Deposit",
                 amount, fund_category, source_notes,
+                transaction_category=transaction_category,
             )
             st.session_state["show_the_form"] = False
             st.rerun()
@@ -56,6 +69,7 @@ def transaction_form():
             record_saving_transaction(
                 transaction_date, account_name, "Withdrawal",
                 -amount, fund_category, source_notes,
+                transaction_category=transaction_category,
             )
             st.session_state["show_the_form"] = False
             st.rerun()
@@ -73,11 +87,13 @@ def transaction_form():
                 -amount, fund_category,
                 source_notes=f"Transfer to {transfer_to_account} {source_notes}",
                 transfer_to_account=transfer_to_account,
+                transaction_category="Account Balance",
             )
             record_saving_transaction(
                 transaction_date, transfer_to_account, "Transfer In",
                 amount, fund_category,
                 source_notes=f"Transfer from {account_name} {source_notes}",
+                transaction_category="Account Balance",
             )
             st.session_state["show_the_form"] = False
             st.rerun()

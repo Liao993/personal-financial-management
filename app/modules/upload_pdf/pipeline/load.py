@@ -40,7 +40,8 @@ def load_expense_data(updated_dataframe):
         for index, row in updated_dataframe.iterrows():
             # Convert row to dict and replace NaN with None
             expense_data = row.where(pd.notna(row), None).to_dict()
-            expense_data.pop("statement_file", None)
+            expense_data.pop("statement_file", None)  # display-only column, not stored
+            # injection_source carries the PDF filename and IS stored in the DB
             validated = validate_expense_data(expense_data)
 
             if validated:

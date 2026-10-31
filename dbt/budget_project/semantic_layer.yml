@@ -334,6 +334,7 @@ metrics:
     filters:
       - "fund_category = 'Traveling Funds'"
       - "transaction_type = 'Withdrawal'"
+      - "transaction_category = 'Spending'"
     allowed_dimensions: *transaction_dimensions
 
   medium_term_withdrawals:
