@@ -15,6 +15,9 @@ def confirmed_data_handling(reviewed_data, data_saved_key):
     Handles data processing after the user confirms the input.
     """
     expense_data = reviewed_data
+    # Tag every manually entered expense so we know its ingestion path
+    expense_data["injection_source"] = "manual_input"
+
     if validate_expense_data(expense_data):
         existing_matches = find_manual_duplicate_expense(expense_data)
         if not existing_matches.empty:
@@ -32,3 +35,4 @@ def confirmed_data_handling(reviewed_data, data_saved_key):
             st.rerun()
     else:
         pass
+

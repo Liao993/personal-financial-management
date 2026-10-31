@@ -85,6 +85,7 @@ def rerun_monthly_saving(
             transaction_type="Deposit",
             amount=travel_saving,
             fund_category="Traveling Funds",
+            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
         Transaction(
@@ -93,6 +94,7 @@ def rerun_monthly_saving(
             transaction_type="Deposit",
             amount=retirement_saving,
             fund_category="Retirement Saving",
+            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
         Transaction(
@@ -101,6 +103,7 @@ def rerun_monthly_saving(
             transaction_type="Deposit",
             amount=medium_term_saving,
             fund_category="Medium-term Saving",
+            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
         Transaction(
@@ -109,6 +112,7 @@ def rerun_monthly_saving(
             transaction_type="Deposit",
             amount=emergency_funds,
             fund_category="Emergency Funds",
+            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
         Transaction(
@@ -117,6 +121,7 @@ def rerun_monthly_saving(
             transaction_type="Deposit",
             amount=home_deposit,
             fund_category="House",
+            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
     ]
@@ -144,6 +149,7 @@ def monthly_stats_page():
         "<h1 style='color: #5e548e; text-align: center;'>Monthly Stats</h1>",
         unsafe_allow_html=True,
     )
+    st.caption("ℹ️ Note: Only income deposited into a Chequing account is included in this calculation. Income deposited into other accounts (like TFSA or House) are excluded to prevent double-counting savings.")
 
     if st.session_state.get("monthly_rerun_success_message"):
         st.success(st.session_state.pop("monthly_rerun_success_message"))

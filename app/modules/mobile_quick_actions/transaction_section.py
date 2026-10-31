@@ -2,7 +2,7 @@ import streamlit as st  # type: ignore
 from datetime import datetime
 from pydantic import ValidationError  # type: ignore
 
-from utils.data import account_name_list, fund_categories, transaction_type_list
+from utils.data import account_name_list, fund_categories, transaction_category_options, transaction_type_list
 from backend.transaction_backend import insert_transaction_data
 from models.transaction_models import Transaction
 
@@ -25,6 +25,12 @@ def render_transaction_section():
         )
         account_name = st.selectbox("Account", account_name_list, key=f"{key_prefix}_account_name")
         amount = st.number_input("Amount", min_value=0.0, key=f"{key_prefix}_amount")
+        transaction_category = st.selectbox(
+            "Transaction Category",
+            transaction_category_options,
+            index=transaction_category_options.index("Spending"),
+            key=f"{key_prefix}_transaction_category",
+        )
         source_notes = st.text_input("Notes (optional)", "", key=f"{key_prefix}_notes")
 
         transfer_to_account = None
@@ -47,6 +53,7 @@ def render_transaction_section():
                     transaction_type="Deposit",
                     amount=amount,
                     fund_category=fund_category,
+                    transaction_category=transaction_category,
                     source_notes=source_notes,
                 )
                 insert_transaction_data(txn.dict())
@@ -61,6 +68,7 @@ def render_transaction_section():
                     transaction_type="Withdrawal",
                     amount=-amount,
                     fund_category=fund_category,
+                    transaction_category=transaction_category,
                     source_notes=source_notes,
                 )
                 insert_transaction_data(txn.dict())
@@ -77,6 +85,7 @@ def render_transaction_section():
                     fund_category=fund_category,
                     source_notes=f"Transfer to {transfer_to_account} {source_notes}",
                     transfer_to_account=transfer_to_account,
+                    transaction_category="Account Balance",
                 )
                 txn_in = Transaction(
                     date=transaction_date,
@@ -85,6 +94,7 @@ def render_transaction_section():
                     amount=amount,
                     fund_category=fund_category,
                     source_notes=f"Transfer from {account_name} {source_notes}",
+                    transaction_category="Account Balance",
                 )
                 insert_transaction_data(txn_out.dict())
                 insert_transaction_data(txn_in.dict())

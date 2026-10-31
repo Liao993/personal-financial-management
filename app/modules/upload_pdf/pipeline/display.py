@@ -255,7 +255,7 @@ def display_editable_dataframe(dataframe):
             use_container_width=True,
             hide_index=True,
             num_rows="dynamic",
-            disabled=[column for column in ["payment_method", "statement_file"] if column in df.columns],
+            disabled=[column for column in ["payment_method", "statement_file", "injection_source"] if column in df.columns],
         )
 
         if st.button("Confirm your changes"):

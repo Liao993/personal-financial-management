@@ -44,6 +44,7 @@ def pipeline(pdf_files, source_by_filename):
 
         transformed_data["payment_method"] = source
         transformed_data["statement_file"] = pdf_file.name
+        transformed_data["injection_source"] = pdf_file.name  # persisted to DB
         transformed_frames.append(transformed_data)
 
     if not transformed_frames:

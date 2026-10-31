@@ -102,9 +102,10 @@ def insert_expense_data(validated_data: dict):
                     exclude_from_monthly,
                     target_fund_category,
                     split_fund_category_1,
-                    split_amount_1
+                    split_amount_1,
+                    injection_source
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 validated_data["date"],
@@ -122,6 +123,7 @@ def insert_expense_data(validated_data: dict):
                 validated_data.get("target_fund_category"),
                 validated_data.get("split_fund_category_1"),
                 validated_data.get("split_amount_1") or 0.0,
+                validated_data.get("injection_source"),
             )
             cursor.execute(query, values)
             conn.commit()
@@ -247,7 +249,8 @@ def fetch_last_expense_data():
         try:
             cursor = conn.cursor()
             query = """
-                SELECT date, items, amount, category, payment_method, exclude_from_monthly
+                SELECT date, items, amount, category, payment_method,
+                       exclude_from_monthly, injection_source
                 FROM expense
                 WHERE category != 'House'
                   AND house_category IS NULL

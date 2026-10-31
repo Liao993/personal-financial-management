@@ -14,6 +14,7 @@ def process_transactions_and_save(transactions):
                 transaction_type=transaction_data.get("Transaction Type"),
                 amount=transaction_data.get("Amount"),
                 fund_category=transaction_data.get("Usable Fund Category"),
+                transaction_category=transaction_data.get("Transaction Category", "Other"),
                 source_notes=transaction_data.get("Notes"),
                 transfer_to_account=transaction_data.get("Transfer To Account"),
             )
