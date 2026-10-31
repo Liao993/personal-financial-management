@@ -12,6 +12,7 @@ SCHEMA_FILES = [
     '04_portfolio_schema.sql',
     '05_expense_ingestion_dedupe.sql',
     '06_income_deposit_account.sql',
+    '07_transaction_category.sql',
 ]
 
 

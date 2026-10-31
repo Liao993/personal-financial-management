@@ -76,6 +76,7 @@ metrics:
     filters:
       - "fund_category = 'Traveling Funds'"
       - "transaction_type = 'Withdrawal'"
+      - "transaction_category = 'Spending'"
 
   emergency_fund_balance:
     description: "Net balance currently in Emergency Funds from deposits and withdrawals."

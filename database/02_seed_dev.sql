@@ -332,3 +332,19 @@ INSERT INTO transactions (date, account_name, transaction_type, amount, fund_cat
 ('2024-12-16', 'Main Chequing',    'Deposit',        4200.00,'Others',              'Salary deposit',                 NULL),
 ('2024-12-20', 'Main Chequing',    'Deposit',         650.00,'Others',              'Freelance income',               NULL),
 ('2024-12-31', 'TFSA Growth',  'Deposit',         160.00,'Retirement Saving',   'ETF dividend - year end',        NULL);
+
+-- Match the production migration's purpose classification for the seeded
+-- transactions so development reporting reflects the new semantics.
+UPDATE transactions
+SET transaction_category = CASE
+    WHEN transaction_type IN ('Transfer Out', 'Transfer In') THEN 'Account Balance'
+    WHEN source_notes ILIKE 'saved from%' THEN 'Monthly Saving'
+    WHEN transaction_type = 'Withdrawal' THEN 'Spending'
+    WHEN source_notes ILIKE '%salary%'
+      OR source_notes ILIKE '%income%'
+      OR source_notes ILIKE '%freelance%'
+      OR source_notes ILIKE '%bonus%'
+      OR source_notes ILIKE '%dividend%'
+      OR source_notes ILIKE '%refund%' THEN 'Income'
+    ELSE 'Other'
+END;

@@ -13,9 +13,9 @@ def insert_transaction_data(validated_data: dict):
             query = """
                 INSERT INTO transactions (
                     date, account_name, transaction_type, amount,
-                    fund_category, source_notes, transfer_to_account
+                    fund_category, transaction_category, source_notes, transfer_to_account
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 validated_data["date"],
@@ -23,6 +23,7 @@ def insert_transaction_data(validated_data: dict):
                 validated_data["transaction_type"],
                 validated_data["amount"],
                 validated_data["fund_category"],
+                validated_data["transaction_category"],
                 validated_data["source_notes"],
                 validated_data["transfer_to_account"],
             )

@@ -79,6 +79,7 @@ def transaction_btn():
                                             ON t.expense_id = e.id
                                         WHERE t.transaction_type = 'Withdrawal'
                                           AND t.fund_category = 'Traveling Funds'
+                                          AND t.transaction_category = 'Spending'
                                         ORDER BY t.date DESC, trip, t.transaction_id DESC
                                      """) 
     with query_buttons[5]:
