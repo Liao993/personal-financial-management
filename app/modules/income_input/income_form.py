@@ -12,7 +12,7 @@ def income_input_form(edit_mode_form_key, review_data_key):
         income_date = st.date_input("Date", value=date.today())
         income_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=fixed_income_data)
 
-        source_options = ["Gov", "Tax Return", "Other"]
+        source_options = ["Gov", "Tax Return", "Interest", "Other"]
         selected_source = st.selectbox("Source", source_options)
         income_source = selected_source
 
