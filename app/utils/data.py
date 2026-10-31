@@ -98,6 +98,7 @@ transaction_category_options = [
 # Change every year
 def _decimal_from_raw(raw_value, seen_names=None):
     seen_names = seen_names or set()
+    raw_value = str(raw_value).strip().strip("\"'")
     if not raw_value:
         return Decimal("0")
 
@@ -113,8 +114,9 @@ def _decimal_from_raw(raw_value, seen_names=None):
         return _decimal_from_raw(os.environ.get(raw_value, "").strip(), seen_names | {raw_value})
 
     try:
-        return Decimal(raw_value.replace(",", ""))
-    except InvalidOperation:
+        normalized_value = raw_value.replace(",", "").replace("$", "").strip()
+        return Decimal(normalized_value)
+    except (InvalidOperation, ValueError):
         return Decimal("0")
 
 

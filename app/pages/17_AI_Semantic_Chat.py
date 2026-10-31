@@ -1,4 +1,5 @@
 import streamlit as st  # type: ignore
+import pandas as pd  # type: ignore
 
 from modules.ai_semantic.router import METRICS, answer_question
 
@@ -31,8 +32,12 @@ def semantic_chat_page():
     for entry in st.session_state["semantic_chat_history"]:
         with st.chat_message(entry["role"]):
             st.write(entry["content"])
-            if entry.get("metric"):
+            if entry.get("rows"):
+                st.dataframe(pd.DataFrame(entry["rows"]), use_container_width=True)
+            if entry.get("metric") and entry.get("value") is not None:
                 st.caption(f"Metric: `{entry['metric']}` = {entry['value']:.2f}")
+            elif entry.get("metric"):
+                st.caption(f"Metric: `{entry['metric']}`")
 
     question = st.chat_input("Ask about income, spending, savings, or portfolio value")
     if not question:
@@ -46,8 +51,13 @@ def semantic_chat_page():
         with st.spinner("Routing through semantic layer..."):
             result = answer_question(question)
         st.write(result["answer"])
+        if result.get("rows"):
+            st.dataframe(pd.DataFrame(result["rows"]), use_container_width=True)
         if result["mode"] == "semantic_layer":
-            st.caption(f"Metric: `{result['metric']}` = {result['value']:.2f}")
+            if result.get("value") is not None:
+                st.caption(f"Metric: `{result['metric']}` = {result['value']:.2f}")
+            else:
+                st.caption(f"Metric: `{result['metric']}`")
 
     st.session_state["semantic_chat_history"].append(
         {
@@ -55,6 +65,7 @@ def semantic_chat_page():
             "content": result["answer"],
             "metric": result["metric"] if result["mode"] == "semantic_layer" else None,
             "value": result["value"] if result["mode"] == "semantic_layer" else None,
+            "rows": result.get("rows") if result["mode"] == "semantic_layer" else None,
         }
     )
 
