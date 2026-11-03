@@ -248,7 +248,12 @@ def fetch_linked_transactions(expense_id: int) -> pd.DataFrame:
             (expense_id,)
         )
         cols = [d[0] for d in cursor.description]
-        return pd.DataFrame(cursor.fetchall(), columns=cols)
+        linked_df = pd.DataFrame(cursor.fetchall(), columns=cols)
+        if not linked_df.empty:
+            linked_df["amount"] = pd.to_numeric(
+                linked_df["amount"], errors="coerce"
+            ).fillna(0.0).astype(float)
+        return linked_df
     except psycopg2.Error as e:
         st.error(f"Error fetching linked transactions: {e}")
         return pd.DataFrame()
