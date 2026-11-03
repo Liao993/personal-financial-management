@@ -19,6 +19,33 @@ st.set_page_config(page_title="Expense Editor", page_icon="✏️", layout="wide
 DBT_SCHEMA = os.environ.get("DBT_SCHEMA", "dbt_budget")
 
 
+def build_trip_options(trips, current_trip=None):
+    """Return consistently string-typed trip options for the selectbox."""
+    normalized_trips = {
+        str(trip).strip()
+        for trip in trips
+        if pd.notna(trip) and str(trip).strip()
+    }
+    normalized_current_trip = (
+        str(current_trip).strip()
+        if pd.notna(current_trip) and str(current_trip).strip()
+        else None
+    )
+    if normalized_current_trip:
+        normalized_trips.add(normalized_current_trip)
+    return [None] + sorted(normalized_trips)
+
+
+def safe_int(value, default):
+    """Convert nullable database values for integer widgets safely."""
+    if value is None or pd.isna(value):
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
 # ─────────────────────────────────────────────
 # Backend helpers
 # ─────────────────────────────────────────────
@@ -248,7 +275,12 @@ def fetch_linked_transactions(expense_id: int) -> pd.DataFrame:
             (expense_id,)
         )
         cols = [d[0] for d in cursor.description]
-        return pd.DataFrame(cursor.fetchall(), columns=cols)
+        linked_df = pd.DataFrame(cursor.fetchall(), columns=cols)
+        if not linked_df.empty:
+            linked_df["amount"] = pd.to_numeric(
+                linked_df["amount"], errors="coerce"
+            ).fillna(0.0).astype(float)
+        return linked_df
     except psycopg2.Error as e:
         st.error(f"Error fetching linked transactions: {e}")
         return pd.DataFrame()
@@ -428,15 +460,20 @@ def expense_editor_page():
                         "Traveling Category", [None] + traveling_category_options,
                         index=travel_idx, key=f"travel_category_{expense_id}",
                     )
-                    trip_options = [None] + sorted(set(trips + ([row["trip"]] if row["trip"] else [])))
-                    trip_idx = trip_options.index(row["trip"]) if row["trip"] in trip_options else 0
+                    trip_options = build_trip_options(trips, row["trip"])
+                    current_trip = (
+                        str(row["trip"]).strip()
+                        if pd.notna(row["trip"]) and str(row["trip"]).strip()
+                        else None
+                    )
+                    trip_idx = trip_options.index(current_trip) if current_trip in trip_options else 0
                     new_trip = st.selectbox("Trip", trip_options, index=trip_idx, key=f"trip_{expense_id}")
                     amount_travelers = st.number_input(
-                        "Amount of Travelers", min_value=1, value=int(row["amount_for_number_of_travelers"] or 1),
+                        "Amount of Travelers", min_value=1, value=safe_int(row["amount_for_number_of_travelers"], 1),
                         step=1, key=f"travelers_{expense_id}"
                     )
                     paid_travelers = st.number_input(
-                        "Amount of Travelers I Paid", min_value=0, value=int(row["paid_for_number_of_travlerers"] or 0),
+                        "Amount of Travelers I Paid", min_value=0, value=safe_int(row["paid_for_number_of_travlerers"], 0),
                         step=1, key=f"paid_travelers_{expense_id}"
                     )
 
