@@ -26,8 +26,8 @@ def TFSA(original_data, room):
 
   
 
-    total_contribution = tfsa_data[(tfsa_data['transaction_type'].isin(['Transfer In']))]['amount'].sum()
-    total_withdrawal = tfsa_data[(tfsa_data['transaction_type'].isin(['Transfer Out']))]['amount'].sum() 
+    total_contribution = float(tfsa_data[(tfsa_data['transaction_type'].isin(['Transfer In']))]['amount'].sum())
+    total_withdrawal = float(tfsa_data[(tfsa_data['transaction_type'].isin(['Transfer Out']))]['amount'].sum())
     total_amount = total_contribution + total_withdrawal
     # TFSA Contribution Room Re-built
     if current_month == 1 and current_day == 1:
@@ -35,7 +35,7 @@ def TFSA(original_data, room):
     else:
         total_contribution = total_contribution
 
-    selected_year_contribution = tfsa_data[(tfsa_data['date'].dt.year == selected_year)]['amount'].sum()
+    selected_year_contribution = float(tfsa_data[(tfsa_data['date'].dt.year == selected_year)]['amount'].sum())
     other_year_contribution = total_contribution - selected_year_contribution
     total_room = room
     total_left = total_room - total_contribution
