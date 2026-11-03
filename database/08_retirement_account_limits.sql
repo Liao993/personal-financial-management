@@ -53,7 +53,11 @@ CREATE OR REPLACE FUNCTION sync_retirement_account_limit_compatibility()
 RETURNS trigger AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        NEW.annual_limit := NEW.total_limit;
+        IF NEW.total_limit IS NULL AND NEW.annual_limit IS NOT NULL THEN
+            NEW.total_limit := NEW.annual_limit;
+        ELSE
+            NEW.annual_limit := NEW.total_limit;
+        END IF;
     ELSIF NEW.total_limit IS DISTINCT FROM OLD.total_limit THEN
         NEW.annual_limit := NEW.total_limit;
     ELSIF NEW.annual_limit IS DISTINCT FROM OLD.annual_limit THEN
