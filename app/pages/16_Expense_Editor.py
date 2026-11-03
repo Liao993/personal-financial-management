@@ -36,6 +36,16 @@ def build_trip_options(trips, current_trip=None):
     return [None] + sorted(normalized_trips)
 
 
+def safe_int(value, default):
+    """Convert nullable database values for integer widgets safely."""
+    if value is None or pd.isna(value):
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
 # ─────────────────────────────────────────────
 # Backend helpers
 # ─────────────────────────────────────────────
@@ -459,11 +469,11 @@ def expense_editor_page():
                     trip_idx = trip_options.index(current_trip) if current_trip in trip_options else 0
                     new_trip = st.selectbox("Trip", trip_options, index=trip_idx, key=f"trip_{expense_id}")
                     amount_travelers = st.number_input(
-                        "Amount of Travelers", min_value=1, value=int(row["amount_for_number_of_travelers"] or 1),
+                        "Amount of Travelers", min_value=1, value=safe_int(row["amount_for_number_of_travelers"], 1),
                         step=1, key=f"travelers_{expense_id}"
                     )
                     paid_travelers = st.number_input(
-                        "Amount of Travelers I Paid", min_value=0, value=int(row["paid_for_number_of_travlerers"] or 0),
+                        "Amount of Travelers I Paid", min_value=0, value=safe_int(row["paid_for_number_of_travlerers"], 0),
                         step=1, key=f"paid_travelers_{expense_id}"
                     )
 
