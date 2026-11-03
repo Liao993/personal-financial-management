@@ -13,6 +13,7 @@ SCHEMA_FILES = [
     '05_expense_ingestion_dedupe.sql',
     '06_income_deposit_account.sql',
     '07_transaction_category.sql',
+    '08_retirement_account_limits.sql',
 ]
 
 

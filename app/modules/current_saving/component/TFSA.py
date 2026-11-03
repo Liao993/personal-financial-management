@@ -6,6 +6,7 @@ import datetime
 from utils.data import years
 
 def TFSA(original_data, room):
+    room = float(room)
     color = '#69B41E'
     today = datetime.date.today()
     current_year = today.year
@@ -18,6 +19,7 @@ def TFSA(original_data, room):
     selected_year = st.selectbox("Select Year for TFSA Contribution:", years)
 
     tfsa_data = original_data[original_data['account_name'].str.contains('TFSA', case=False)].copy() # Create a copy to avoid modifying the original DataFrame
+    tfsa_data['amount'] = pd.to_numeric(tfsa_data['amount'], errors='coerce').fillna(0.0).astype(float)
     # Convert the 'date' column to datetime if it's not already
     if not pd.api.types.is_datetime64_any_dtype(tfsa_data['date']):
         tfsa_data['date'] = pd.to_datetime(tfsa_data['date'])
