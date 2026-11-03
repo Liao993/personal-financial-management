@@ -124,9 +124,6 @@ def env_decimal(name):
     return _decimal_from_raw(os.environ.get(name, "").strip(), {name})
 
 
-TFSA_room = env_decimal("TFSA_LIMIT")
-RRSP_room = env_decimal("RRSP_LIMIT")
-
 total_mortgage_loan = env_decimal("MORTGAGE_TOTAL")
 total_mortgage_left = env_decimal("MORTGAGE_LEFT")
 total_principal_paid = total_mortgage_loan - total_mortgage_left

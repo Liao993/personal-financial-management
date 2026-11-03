@@ -27,26 +27,48 @@ def load_new_house_data(df_clean):
         }
     )
     
-    # B. Upsert into main table (Matching 4 columns for unique check)
+    # B. Insert new house rows using the same dedupe key as
+    # `unique_expense_ingestion_entry` in the database schema. That index is a
+    # functional index (and includes payment_method), so it cannot be targeted
+    # by `ON CONFLICT (date, items, amount, source_notes)`.
     upsert_sql = """
         INSERT INTO expense (
             date, items, amount, category, traveling_category, 
             trip, source_notes, amount_for_number_of_travelers, 
             paid_for_number_of_travlerers, house_category
         )
-        SELECT 
-            date, 
-            items, 
-            amount, 
-            category, 
-            traveling_category, 
-            trip, 
-            source_notes, 
-            amount_for_number_of_travelers::INTEGER, -- Explicit Cast
-            paid_for_number_of_travlerers::INTEGER,   -- Explicit Cast
-            house_category
-        FROM stg_house
-        ON CONFLICT (date, items, amount, source_notes) DO NOTHING;
+        SELECT DISTINCT ON (
+            s.date,
+            lower(trim(s.items)),
+            s.amount,
+            coalesce(trim(s.source_notes), '')
+        )
+            s.date,
+            s.items,
+            s.amount,
+            s.category,
+            s.traveling_category,
+            s.trip,
+            s.source_notes,
+            s.amount_for_number_of_travelers::INTEGER,
+            s.paid_for_number_of_travlerers::INTEGER,
+            s.house_category
+        FROM stg_house AS s
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM expense AS e
+            WHERE e.date = s.date
+              AND coalesce(e.payment_method, '') = ''
+              AND lower(trim(e.items)) = lower(trim(s.items))
+              AND e.amount = s.amount
+              AND coalesce(trim(e.source_notes), '') = coalesce(trim(s.source_notes), '')
+        )
+        ORDER BY
+            s.date,
+            lower(trim(s.items)),
+            s.amount,
+            coalesce(trim(s.source_notes), '')
+        ;
     """
     
     with engine.begin() as conn:

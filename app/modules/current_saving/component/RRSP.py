@@ -4,6 +4,7 @@ import datetime
 from utils.data import years
 
 def RRSP(original_data, room):
+  room = float(room)
   color = '#F38701'  # Orange color for RRSP
   today = datetime.date.today()
   current_year = today.year
@@ -13,12 +14,13 @@ def RRSP(original_data, room):
   selected_year = st.selectbox("Select Year for RRSP Contribution:", years)
 
   rrsp_data = original_data[original_data['account_name'].str.contains('RRSP', case=False)].copy()
+  rrsp_data['amount'] = pd.to_numeric(rrsp_data['amount'], errors='coerce').fillna(0.0).astype(float)
   rrsp_data['date'] = pd.to_datetime(rrsp_data['date'])
-  rrsp_amount = rrsp_data['amount'].sum()
-  rrsp_contribution = rrsp_data[(rrsp_data['transaction_type'].isin(['Transfer In', 'Deposit']))]['amount'].sum()
-  selected_year_contribution = rrsp_data[rrsp_data['transaction_type'].isin(['Transfer In']) & (rrsp_data['date'].dt.year == selected_year)]['amount'].sum()
+  rrsp_amount = float(rrsp_data['amount'].sum())
+  rrsp_contribution = float(rrsp_data[(rrsp_data['transaction_type'].isin(['Transfer In', 'Deposit']))]['amount'].sum())
+  selected_year_contribution = float(rrsp_data[rrsp_data['transaction_type'].isin(['Transfer In']) & (rrsp_data['date'].dt.year == selected_year)]['amount'].sum())
   other_year_contribution = rrsp_contribution - selected_year_contribution
-  rrsp_withdrawal = rrsp_data[(rrsp_data['transaction_type'].isin(['Transfer Out']))]['amount'].sum() 
+  rrsp_withdrawal = float(rrsp_data[(rrsp_data['transaction_type'].isin(['Transfer Out']))]['amount'].sum())
   total_room = room
   total_left = total_room - rrsp_contribution
 
