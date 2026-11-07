@@ -1,63 +1,44 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
-from modules.current_saving.calculations import calculate_yearly_fund_summary
+from modules.current_saving.calculations import (
+    calculate_account_flow_summary,
+    calculate_fund_category_summary,
+)
 
 def saving_sum(transaction):
-    yearly_summary = calculate_yearly_fund_summary(transaction)
-    transaction.rename(columns={'fund_category' : 'category'}, inplace=True)
-    
-    # Ensure amount is numeric for calculations
-    transaction['amount'] = pd.to_numeric(transaction['amount'], errors='coerce').fillna(0)
+    category_summary = calculate_fund_category_summary(transaction)
+    account_summary = calculate_account_flow_summary(transaction)
 
-    # --- MONTHLY SUMMARY (DEPOSITS ONLY) ---
-    txn_monthly = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', 'Traveling Funds'])].copy()
-    txn_monthly = txn_monthly[txn_monthly['transaction_type'].isin(['Deposit'])]
-    txn_monthly['month'] = pd.to_datetime(txn_monthly['date']).dt.month
-    txn_monthly['year'] = pd.to_datetime(txn_monthly['date']).dt.year
-    
-    if not txn_monthly.empty:
-        summary_pivot = txn_monthly.pivot_table(
-            index=['year', 'month'],
-            columns='category',
-            values='amount',
-            aggfunc='sum'
-        ).reset_index().fillna(0)
-        
-        summary_pivot.columns.name = None # Remove the 'category' index name
-        
-        # Ensure targeted columns exist incase some categories have no deposits
-        for col in ['Retirement Saving', 'Medium-term Saving', 'Traveling Funds']:
-            if col not in summary_pivot.columns:
-                summary_pivot[col] = 0.0
-
-        summary_pivot['Monthly (R+M)'] = summary_pivot['Retirement Saving'] + summary_pivot['Medium-term Saving']
-        summary_pivot['Monthly (R+M+T)'] = summary_pivot['Retirement Saving'] + summary_pivot['Medium-term Saving'] + summary_pivot['Traveling Funds']
-        
-        # Add YTD (Yearly) tracking after sorting chronologically
-        summary_pivot = summary_pivot.sort_values(by=['year', 'month'], ascending=[True, True])
-        summary_pivot['Yearly Retirement Saving (YTD)'] = summary_pivot.groupby('year')['Retirement Saving'].cumsum()
-        summary_pivot['Yearly Medium-term Saving (YTD)'] = summary_pivot.groupby('year')['Medium-term Saving'].cumsum()
-
-        # Sort backwards for display
-        monthly_summary = summary_pivot.sort_values(by=['year', 'month'], ascending=[False, False])
+    st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Fund Category Saving Summary</h3>", unsafe_allow_html=True)
+    st.caption("R = Retirement Saving · M = Medium-term Saving · T = Traveling Funds · transfers are intentionally excluded because they reconcile within the fund category.")
+    if not category_summary.empty:
+        st.dataframe(
+            category_summary,
+            hide_index=True,
+            use_container_width=True,
+            column_config={
+                "Deposit": st.column_config.NumberColumn("Deposit", format="$%.2f"),
+                "Withdrawal": st.column_config.NumberColumn("Withdrawal", format="$%.2f"),
+                "Net Saving": st.column_config.NumberColumn("Net Saving", format="$%.2f"),
+            },
+        )
     else:
-        monthly_summary = pd.DataFrame()
+        st.info("No fund-category saving data available.")
 
-    # --- YEARLY SUMMARY (same net-activity definition as Historical Stats) ---
-    # --- UI DISPLAY ---
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Yearly Saving Summary</h3>", unsafe_allow_html=True)
-        st.caption("Net Activity includes deposits, withdrawals, and transfer in/out, excluding expense-linked withdrawals; this matches Historical Stats.")
-        if not yearly_summary.empty:
-            st.dataframe(yearly_summary, hide_index=True, use_container_width=True)
-        else:
-            st.info("No yearly data available.")
-            
-    with col2:
-        st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Monthly Saving Summary (All Deposit)</h3>", unsafe_allow_html=True)
-        if not monthly_summary.empty:
-            st.dataframe(monthly_summary, hide_index=True, use_container_width=True)
-        else:
-            st.info("No monthly data available.")
+    st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Account Monthly Flow</h3>", unsafe_allow_html=True)
+    st.caption("Account view includes transfers so money movement between physical accounts is visible.")
+    if not account_summary.empty:
+        st.dataframe(
+            account_summary,
+            hide_index=True,
+            use_container_width=True,
+            column_config={
+                "Deposit": st.column_config.NumberColumn("Deposit", format="$%.2f"),
+                "Withdrawal": st.column_config.NumberColumn("Withdrawal", format="$%.2f"),
+                "Transfer In": st.column_config.NumberColumn("Transfer In", format="$%.2f"),
+                "Transfer Out": st.column_config.NumberColumn("Transfer Out", format="$%.2f"),
+                "Net Account Flow": st.column_config.NumberColumn("Net Account Flow", format="$%.2f"),
+            },
+        )
+    else:
+        st.info("No account flow data available.")
