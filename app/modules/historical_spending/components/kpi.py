@@ -119,7 +119,7 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum(), "definition": "Offerings filter: summary_category = 'Donation and Gifts', covering Donation and Gifts categories."},
         {"name": "Grocery", "color": "#ff8fab", "sum": grocery_expense['amount'].sum(), "definition": grocery_note},
         {"name": "Retirement", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum(), "definition": "Retirement filter: fund_category = 'Retirement Saving' in the transaction summary."},
-        {"name": "Medium Saving", "color": "#8e44ad", "sum": transaction[(transaction['fund_category'] == 'Medium-term Saving')]['total_amount'].sum(), "definition": "Medium Saving filter: fund_category = 'Medium-term Saving' in the transaction summary."},
+        {"name": "Medium", "color": "#8e44ad", "sum": transaction[(transaction['fund_category'] == 'Medium-term Saving')]['total_amount'].sum(), "definition": "Medium filter: fund_category = 'Medium-term Saving' in the transaction summary."},
     ]
 
     # Render data for columns 2-9
