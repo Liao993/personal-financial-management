@@ -38,9 +38,14 @@ reload_sample_data() {
     run_db_sql /docker-entrypoint-initdb.d/06_income_deposit_account.sql
     run_db_sql /docker-entrypoint-initdb.d/07_transaction_category.sql
     run_db_sql /docker-entrypoint-initdb.d/08_retirement_account_limits.sql
+    run_db_sql /docker-entrypoint-initdb.d/09_traveling_category_update.sql
 
     echo "Reloading development sample data..."
     run_db_sql /docker-entrypoint-initdb.d/99_seed_dev.sql
+    run_db_sql /docker-entrypoint-initdb.d/10_reconcile_retirement_transfer.sql
+    run_db_sql /docker-entrypoint-initdb.d/11_fix_emergency_transfer_direction.sql
+    run_db_sql /docker-entrypoint-initdb.d/12_backfill_income_transactions.sql
+    run_db_sql /docker-entrypoint-initdb.d/13_remove_transaction_category_and_update_income_sources.sql
 
     echo "Refreshing dbt models..."
     $DC run --rm dbt dbt run
@@ -62,7 +67,7 @@ case "$CMD" in
         $DC up -d db
         wait_for_db
         reload_sample_data
-        $DC up -d app
+        $DC up -d app pgadmin
         echo ""
         echo "  budget_db_dev        → localhost:5433"
         echo "  budget_streamlit_dev → http://localhost:8502"

@@ -8,7 +8,7 @@ def main():
 
   <b style='color:#f1c40f; font-size: 24px;'>Income Rules</b>
   <ul style='font-size: 20px;'>
-    <li>Any <b style='color:#e74c3c;'>earning</b>, regular or sudden, should be recorded with <b style='color:#5dade2;'>Income Input</b>, then distributed with Monthly Calculations.</li>
+    <li>Any <b style='color:#e74c3c;'>earning</b>, regular or sudden, should be recorded with <b style='color:#5dade2;'>Earning Input</b>, then distributed with Monthly Saving Calculation.</li>
   </ul>
 
   <hr/>
@@ -29,14 +29,14 @@ def main():
     <li><b style='color:#e74c3c;'>Full refund:</b> Go to Page 16 Expense Editor and <b style='color:#5dade2;'>delete the expense</b>. Linked fund transactions delete automatically. Rerun Calculation on Page 6 if it was a regular expense affecting that month's saving.</li>
     <li><b style='color:#e74c3c;'>Partial refund:</b> Go to Page 16 and <b style='color:#5dade2;'>update the amount</b> to the final amount you actually paid. Add a note like "partial refund applied" in the Notes field. Linked fund transactions update automatically via trigger.</li>
     <li><b style='color:#e74c3c;'>Wrong category or amount entered:</b> Go to Page 16 to correct it. No need to delete and re-enter.</li>
-    <li><b style='color:#e74c3c;'>Month saving totals changed after editing:</b> Go to Page 6 Monthly Calculation, select the affected month, and click <b style='color:#5dade2;'>Rerun Calculation</b>. This deletes and recreates only the "saved from" deposit records for that month. Manually added deposits are untouched.</li>
+    <li><b style='color:#e74c3c;'>Month saving totals changed after editing:</b> Go to Page 6 Monthly Saving Calculation, select the affected month, and click <b style='color:#5dade2;'>Rerun Calculation</b>. This deletes and recreates only the "saved from" deposit records for that month. Manually added deposits are untouched.</li>
   </ul>
 
   <hr/>
 
   <b style='color:#f1c40f; font-size: 24px;'>Transaction Rules</b>
   <ul style='font-size: 20px;'>
-    <li>The <b style='color:#e74c3c;'>Monthly Saving and House</b> deposits should be recorded via <b style='color:#5dade2;'>Monthly Calculations</b>. They will have <b style='color:#e74c3c;'>saved from</b> in source_notes and <b style='color:#5dade2;'>Deposit</b> as transaction type.</li>
+    <li>The <b style='color:#e74c3c;'>Monthly Saving and House</b> deposits should be recorded via <b style='color:#5dade2;'>Monthly Saving Calculation</b>. They will have <b style='color:#e74c3c;'>saved from</b> in source_notes and <b style='color:#5dade2;'>Deposit</b> as transaction type.</li>
     <li>If extra money comes in from other sources <b style='color:#e74c3c;'>(not earning)</b>, such as Parents Support, record it as a <b style='color:#5dade2;'>Deposit</b> in Transaction directly.</li>
     <li>If spending from savings (Travel Funds, Medium-term Saving), record it as a <b style='color:#5dade2;'>Withdrawal</b> in Transaction directly. <b style='color:#e74c3c;'>Exception:</b> expenses marked Fund Withdrawal Required on the expense form auto-create this transaction — do not record it manually again.</li>
     <li>Record <b style='color:#5dade2;'>Transfer Between Accounts</b> after each Monthly Calculation to match amounts across different accounts.</li>

@@ -14,6 +14,11 @@ services:
       - ./database/06_income_deposit_account.sql:/docker-entrypoint-initdb.d/06_income_deposit_account.sql
       - ./database/07_transaction_category.sql:/docker-entrypoint-initdb.d/07_transaction_category.sql
       - ./database/08_retirement_account_limits.sql:/docker-entrypoint-initdb.d/08_retirement_account_limits.sql
+      - ./database/09_traveling_category_update.sql:/docker-entrypoint-initdb.d/09_traveling_category_update.sql
+      - ./database/10_reconcile_retirement_transfer.sql:/docker-entrypoint-initdb.d/10_reconcile_retirement_transfer.sql
+      - ./database/11_fix_emergency_transfer_direction.sql:/docker-entrypoint-initdb.d/11_fix_emergency_transfer_direction.sql
+      - ./database/12_backfill_income_transactions.sql:/docker-entrypoint-initdb.d/12_backfill_income_transactions.sql
+      - ./database/13_remove_transaction_category_and_update_income_sources.sql:/docker-entrypoint-initdb.d/13_remove_transaction_category_and_update_income_sources.sql
       - postgres_data:/var/lib/postgresql/data
     networks:
       - budget_network_prod
@@ -42,6 +47,12 @@ services:
     container_name: budget_dbt
     environment:
       APP_ENV: production
+    networks:
+      - budget_network_prod
+  pgadmin:
+    container_name: budget_pgadmin
+    ports:
+      - "127.0.0.1:5051:80"
     networks:
       - budget_network_prod
       

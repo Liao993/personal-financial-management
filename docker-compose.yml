@@ -66,3 +66,18 @@ services:
       DBT_SCHEMA: ${DBT_SCHEMA}
     volumes:
       - ./dbt:/dbt
+
+  pgadmin:
+    image: dpage/pgadmin4:9.19
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-change-me-before-use}
+      PGADMIN_DISABLE_POSTFIX: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  pgadmin_data:

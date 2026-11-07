@@ -99,8 +99,9 @@ def insert_income_data(validated_data: dict):
         cursor.execute(query, values)
         new_income_id = cursor.fetchone()[0]
 
-        # 2. For non-chequing accounts auto-create a linked Deposit transaction
-        if has_deposit_account and not _is_chequing_account(deposit_account):
+        # 2. Every income deposit gets a linked Deposit transaction. This keeps
+        # account-level flow complete regardless of which account receives it.
+        if has_deposit_account:
             fund_cat = _fund_category_for_account(deposit_account)
             source_label = validated_data.get("source", "income")
             source_notes = f"income deposit – {source_label}"
@@ -108,9 +109,9 @@ def insert_income_data(validated_data: dict):
                 """
                 INSERT INTO transactions (
                     date, account_name, transaction_type, amount,
-                    fund_category, transaction_category, source_notes, income_id
+                    fund_category, source_notes, income_id
                 )
-                VALUES (%s, %s, 'Deposit', %s, %s, 'Income', %s, %s)
+                VALUES (%s, %s, 'Deposit', %s, %s, %s, %s)
                 """,
                 (
                     validated_data["date"],
@@ -136,7 +137,7 @@ def insert_income_data(validated_data: dict):
 # Fetch helpers
 # ---------------------------------------------------------------------------
 
-def fetch_annual_income_by_month(year):
+def fetch_annual_income_by_month(year, excluded_sources=None):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -144,11 +145,17 @@ def fetch_annual_income_by_month(year):
             SELECT EXTRACT(MONTH FROM date) AS month, SUM(amount) As amount
             FROM income
             WHERE EXTRACT(YEAR FROM date) = %s
+        """
+        params = [year]
+        if excluded_sources:
+            query += " AND source <> ALL(%s)"
+            params.append(list(excluded_sources))
+        query += """
             GROUP BY EXTRACT(MONTH FROM date)
             ORDER BY month;
-    """
+        """
         try:
-            cursor.execute(query, (year,))
+            cursor.execute(query, params)
             columns = ['month', 'total_income']
             data = cursor.fetchall()
             if data:
@@ -168,7 +175,7 @@ def fetch_annual_income_by_month(year):
         return []
 
 
-def fetch_all_income_by_month():
+def fetch_all_income_by_month(excluded_sources=None):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -177,11 +184,17 @@ def fetch_all_income_by_month():
                    CAST(EXTRACT(MONTH FROM date) AS INTEGER) AS month,
                    SUM(amount) AS amount
             FROM income
+        """
+        params = []
+        if excluded_sources:
+            query += " WHERE source <> ALL(%s)"
+            params.append(list(excluded_sources))
+        query += """
             GROUP BY 1, 2
             ORDER BY year, month;
         """
         try:
-            cursor.execute(query)
+            cursor.execute(query, params)
             columns = ["year", "month", "total_income"]
             data = cursor.fetchall()
             if data:

@@ -20,7 +20,7 @@ def add_expense_withdrawals_to_transactions(
         return transaction_data
 
     expense_txn_for_sum = expense_withdrawals[
-        ["date", "account_name", "amount", "fund_category", "transaction_type"]
+        ["date", "account_name", "amount", "fund_category", "transaction_type", "expense_id"]
     ].copy()
 
     return pd.concat(

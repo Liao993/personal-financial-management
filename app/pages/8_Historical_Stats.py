@@ -18,6 +18,7 @@ import streamlit as st # type: ignore
 
 st.set_page_config(page_title="Historical Stats", page_icon="💰", layout="wide")
 
+HISTORICAL_EXCLUDED_EARNING_SOURCES = ("Interest Earning", "Capital Gain")
 
 def fetch_all_annual_expense_safe():
     if hasattr(expense_backend, "fetch_all_annual_expense"):
@@ -28,7 +29,7 @@ def fetch_all_annual_expense_safe():
         try:
             cursor = conn.cursor()
             query = f"""
-                SELECT date, amount, category, summary_category
+                SELECT date, items, amount, category, summary_category
                 FROM {expense_backend.DBT_SCHEMA}.intermediate_expenses_with_summary;
             """
             cursor.execute(query)
@@ -43,7 +44,9 @@ def fetch_all_annual_expense_safe():
 
 def fetch_all_income_by_month_safe():
     if hasattr(income_backend, "fetch_all_income_by_month"):
-        return income_backend.fetch_all_income_by_month()
+        return income_backend.fetch_all_income_by_month(
+            excluded_sources=HISTORICAL_EXCLUDED_EARNING_SOURCES
+        )
 
     conn = income_backend.get_db_connection()
     if conn:
@@ -54,6 +57,7 @@ def fetch_all_income_by_month_safe():
                        CAST(EXTRACT(MONTH FROM date) AS INTEGER) AS month,
                        SUM(amount) AS amount
                 FROM income
+                WHERE source NOT IN ('Interest Earning', 'Capital Gain')
                 GROUP BY 1, 2
                 ORDER BY year, month;
             """
@@ -156,22 +160,39 @@ def historical_spending():
             all_fetched_expense = fetch_all_annual_expense_safe()
             all_fetched_income = fetch_all_income_by_month_safe()
             all_fetched_transaction = fetch_all_transaction_data_by_year_safe() # Consider all transactions to reflect actual saving
+            all_fetched_fund_withdrawals = transaction_backend.fetch_fund_withdrawals_by_year()
+            all_fetched_fund_deposits = transaction_backend.fetch_fund_deposits_by_year()
             all_fetched_monthly_transaction = fetch_all_transaction_data_by_month_safe() # Only consider deposit
         else:
             all_fetched_expense = expense_backend.fetch_annual_expense(selected_year)
-            all_fetched_income = income_backend.fetch_annual_income_by_month(selected_year)
+            all_fetched_income = income_backend.fetch_annual_income_by_month(
+                selected_year,
+                excluded_sources=HISTORICAL_EXCLUDED_EARNING_SOURCES,
+            )
             all_fetched_transaction = transaction_backend.fetch_transaction_data_by_year(selected_year) # Consider all transactions to reflect actual saving
+            all_fetched_fund_withdrawals = transaction_backend.fetch_fund_withdrawals_by_year(selected_year)
+            all_fetched_fund_deposits = transaction_backend.fetch_fund_deposits_by_year(selected_year)
             all_fetched_monthly_transaction = transaction_backend.fetch_transaction_data_by_month(selected_year) # Only consider deposit
         if (len(all_fetched_expense) == 0) | (len(all_fetched_income) == 0):
             st.warning("No Spending or Annual Income in the selected period")
             #if st.button("Choose Again", key="choose_again"):
              #   selected_year_choice_form()
         else:
-            kpi(all_fetched_expense, all_fetched_income, all_fetched_transaction, all_year=is_all_year)
+            kpi(
+                all_fetched_expense,
+                all_fetched_income,
+                all_fetched_transaction,
+                all_year=is_all_year,
+                fund_withdrawals=all_fetched_fund_withdrawals,
+                fund_deposits=all_fetched_fund_deposits,
+            )
             st.write("---")
             
             # Show Income Source Distribution
             all_fetched_income_source = fetch_income_source_data_safe(selected_year if not is_all_year else None)
+            all_fetched_income_source = all_fetched_income_source[
+                ~all_fetched_income_source["source"].isin(HISTORICAL_EXCLUDED_EARNING_SOURCES)
+            ]
             inc_col1, inc_col2 = st.columns(2)
             with inc_col1:
                 if is_all_year:
@@ -184,7 +205,7 @@ def historical_spending():
                 else:
                     create_income_source_pie_chart(all_fetched_income_source, title=f"Total Earning by Source ({selected_year})")
             st.write("---")
-            
+
             col1, col2 = st.columns(2)
             with col1:
                  # Show All Monthly Expenses by Amount

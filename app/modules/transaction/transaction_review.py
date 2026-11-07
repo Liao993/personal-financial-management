@@ -10,7 +10,6 @@ def record_saving_transaction(
     fund_category=None,
     source_notes=None,
     transfer_to_account=None,
-    transaction_category="Other",
 ):
     st.subheader("Review Recorded Transaction")
 
@@ -22,7 +21,6 @@ def record_saving_transaction(
         "Amount":              amount,
         "Notes":               source_notes,
         "Transfer To Account": transfer_to_account,
-        "Transaction Category": transaction_category,
     }
     st.session_state["recorded_transactions"].append(transaction)
 

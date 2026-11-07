@@ -4,7 +4,7 @@ from backend.income_backend import insert_income_data, fetch_last_income_data
 from modules.income_input.income_form import income_input_form
 from modules.income_input.income_review import review_income_input
 
-st.set_page_config(page_title="Income Input", page_icon="💰", layout='wide')
+st.set_page_config(page_title="Earning Input", page_icon="💰", layout='wide')
 
 edit_mode_form = 'edit_mode_income'
 data_saved_key = 'data_saved_income'
@@ -21,7 +21,7 @@ def reset_income_input_state():
 
 
 def income_input_page():
-    st.markdown("<h1 style='color: #f39c12; text-align: center;'>Please Input Your Income</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: #f39c12; text-align: center;'>Earning Input</h1>", unsafe_allow_html=True)
    
     # form shown or not
     if edit_mode_form not in st.session_state:

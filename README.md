@@ -79,7 +79,7 @@ PDF extractors   + validation         extract/transform/          │
 
 | Page | What it does |
 |---|---|
-| Monthly Calculation | Applies a configurable savings formula to allocate income across funds; supports rerun/recalculation when past expenses change |
+| Monthly Saving Calculation | Calculates monthly saving from earnings deposited into Chequing; applies a configurable formula and supports rerun/recalculation when past expenses change |
 | Current Saving Status | Live pivot of fund balance × account, combining manual transactions and auto-generated withdrawals |
 | Historical Stats | Multi-year trend charts: spending mix, savings rate, category drift |
 | Portfolio Holdings | ETF/stock tracking with live price fetch, CAD-normalized valuation, allocation-by-category charts |
@@ -98,6 +98,14 @@ PDF extractors   + validation         extract/transform/          │
 
 ./prod.sh up          # start production stack (app :8501)
 ```
+
+pgAdmin 4 is also included for manual database inspection and one-off SQL updates:
+
+- Development: http://localhost:5050
+- Production: http://localhost:5051
+- Default local login: `admin@example.com` / `change-me-before-use`
+
+Set `PGADMIN_DEFAULT_EMAIL` and `PGADMIN_DEFAULT_PASSWORD` in the ignored `.env.dev` and `.env.prod` files before using it. Inside pgAdmin, register the database host as `db` on port `5432`; use the matching PostgreSQL credentials from the environment file. Prefer reviewed SQL migrations for repeatable data changes and pgAdmin for investigation or one-off corrections.
 
 Requires Docker, a `.env.dev` / `.env.prod` file with DB and account/fund config, and (for AI Semantic Chat) a local Ollama instance running `llama3.1:8b`.
 
