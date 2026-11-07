@@ -13,7 +13,7 @@ def income_input_form(edit_mode_form_key, review_data_key):
         income_amount = st.number_input("Earning Amount", min_value=0.0, format="%.2f", value=fixed_income_data)
 
         source_options = [
-            "Salary", "Tax Return", "Side Hustle", "Investment",
+            "Salary", "Tax Return", "Side Hustle", "Investment", "Credit Card Cash Back",
             "Interest Earning", "Capital Gain", "Other",
         ]
         selected_source = st.selectbox("Source", source_options)

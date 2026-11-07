@@ -19,7 +19,8 @@ def kpi(expense, income, transaction, all_year=False):
 
     # Financial Totals (Cast to float for math safety)
     total_income = float(income['total_income'].sum())
-    total_expense = float(expense['amount'].sum())
+    spending_expense = expense[expense["category"] != "Traveling"]
+    total_expense = float(spending_expense['amount'].sum())
     
     house_df = transaction[transaction['fund_category'] == 'House']
     house_sum = float(house_df['total_amount'].sum()) if not house_df.empty else 0.0
@@ -106,7 +107,7 @@ def kpi(expense, income, transaction, all_year=False):
     # Data configuration for the categories
     categories = [
         {"name": "Earning", "color": "orange", "sum": total_income, "definition": "Income filter: income table records for the selected period, excluding Interest Earning and Capital Gain."},
-        {"name": "All Spending", "color": "#e74c3c", "sum": total_spending, "definition": "Eligible expense records where exclude_from_monthly = FALSE, category != 'House', and house_category IS NULL, plus non-expense-linked House fund allocations (expense_id IS NULL). This includes Daily, Offerings, Grocery, Traveling, and other eligible categories; it is not just Daily + House."},
+        {"name": "All Spending", "color": "#e74c3c", "sum": total_spending, "definition": "Eligible expense records where exclude_from_monthly = FALSE, category != 'House', category != 'Traveling', and house_category IS NULL, plus non-expense-linked House fund allocations (expense_id IS NULL). This includes Daily, Offerings, Grocery, and other eligible non-travel categories; it is not just Daily + House."},
         {"name": "Daily", "color": "#f1c40f", "sum": expense[expense["summary_category"] == "Daily Expenses"]["amount"].sum(), "definition": "Expense filter: summary_category = 'Daily Expenses'. Donation/Gifts and House records are excluded."},
         {"name": "House", "color": "#bce784", "sum": house_sum, "definition": "House fund filter: fund_category = 'House'. This is the amount deposited/allocated from salary, not actual House spending."},
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum(), "definition": "Offerings filter: summary_category = 'Donation and Gifts', covering Donation and Gifts categories."},

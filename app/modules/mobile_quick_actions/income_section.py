@@ -6,7 +6,7 @@ from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data
 
 INCOME_SOURCE_OPTIONS = [
-    "Salary", "Tax Return", "Side Hustle", "Investment",
+    "Salary", "Tax Return", "Side Hustle", "Investment", "Credit Card Cash Back",
     "Interest Earning", "Capital Gain", "Other",
 ]
 
