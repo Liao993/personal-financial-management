@@ -18,30 +18,41 @@ import streamlit as st # type: ignore
 
 st.set_page_config(page_title="Historical Stats", page_icon="💰", layout="wide")
 
-SAVING_EARNING_SOURCES = ("Salary", "Tax Return", "Side Hustle")
-
-
-@st.dialog("Earnings Included in Monthly Saving")
-def show_saving_earnings_dialog(income_source_data):
-    saving_income = income_source_data[
-        income_source_data["source"].isin(SAVING_EARNING_SOURCES)
-    ].copy()
-    st.caption(
-        "This view includes Salary, Tax Return, and Side Hustle earnings. "
-        "Interest Earning and Capital Gain are excluded from monthly saving earnings."
-    )
-    if saving_income.empty:
-        st.info("No Salary, Tax Return, or Side Hustle earnings were recorded for this period.")
+@st.dialog("Earnings")
+def show_earnings_dialog(income_source_data):
+    earnings = income_source_data.copy()
+    if earnings.empty:
+        st.info("No earnings were recorded for this period.")
         return
-    saving_income["date"] = pd.to_datetime(saving_income["date"]).dt.date
-    saving_income["amount"] = pd.to_numeric(saving_income["amount"], errors="coerce").fillna(0.0)
-    st.metric("Included Earnings", f"${saving_income['amount'].sum():,.2f}")
+    earnings["date"] = pd.to_datetime(earnings["date"]).dt.date
+    earnings["amount"] = pd.to_numeric(earnings["amount"], errors="coerce").fillna(0.0)
+    st.metric("Total Earnings", f"${earnings['amount'].sum():,.2f}")
     st.dataframe(
-        saving_income.sort_values("date", ascending=False),
+        earnings.sort_values("date", ascending=False),
         hide_index=True,
         use_container_width=True,
         column_config={"amount": st.column_config.NumberColumn("Amount", format="$%.2f")},
     )
+
+
+@st.dialog("All Spending")
+def show_all_spending_dialog(expense_data, transaction_data):
+    expenses = expense_data.copy()
+    expenses["amount"] = pd.to_numeric(expenses["amount"], errors="coerce").fillna(0.0)
+    house = transaction_data[
+        transaction_data["fund_category"] == "House"
+    ].copy() if not transaction_data.empty and "fund_category" in transaction_data.columns else pd.DataFrame()
+    house_total = float(house["total_amount"].sum()) if not house.empty else 0.0
+    expense_total = float(expenses["amount"].sum()) if not expenses.empty else 0.0
+    st.metric("Total Spending", f"${expense_total + house_total:,.2f}")
+    if not expenses.empty:
+        st.subheader("Expenses")
+        st.dataframe(expenses.sort_values("date", ascending=False), hide_index=True, use_container_width=True)
+    if not house.empty:
+        st.subheader("House Allocations")
+        st.dataframe(house, hide_index=True, use_container_width=True)
+    if expenses.empty and house.empty:
+        st.info("No spending was recorded for this period.")
 
 
 def fetch_all_annual_expense_safe():
@@ -208,9 +219,15 @@ def historical_spending():
                     create_income_source_pie_chart(all_fetched_income_source, title="Total Earning by Source (All Years)")
                 else:
                     create_income_source_pie_chart(all_fetched_income_source, title=f"Total Earning by Source ({selected_year})")
-            if st.button("🔎 Show Earnings Used for Monthly Saving", use_container_width=True):
-                show_saving_earnings_dialog(all_fetched_income_source)
             st.write("---")
+
+            detail_col1, detail_col2 = st.columns(2)
+            with detail_col1:
+                if st.button("🔎 View Earnings", use_container_width=True):
+                    show_earnings_dialog(all_fetched_income_source)
+            with detail_col2:
+                if st.button("🔎 View All Spending", use_container_width=True):
+                    show_all_spending_dialog(all_fetched_expense, all_fetched_transaction)
             
             col1, col2 = st.columns(2)
             with col1:
