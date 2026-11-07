@@ -32,13 +32,13 @@ class SavingCalculationTests(unittest.TestCase):
             & (summary["Month"] == "January")
             & (summary["Fund Category"] == "Retirement Saving")
         ].iloc[0]
-        self.assertEqual(retirement_month["Net Saving"], 600.0)
+        self.assertEqual(retirement_month["Net Saving"], 100.0)
         self.assertEqual(retirement_month["Transfer In"], 500.0)
         self.assertEqual(retirement_month["Transfer Out"], 0.0)
-        self.assertEqual(retirement_month["Annual Net Saving"], 600.0)
-        self.assertEqual(retirement_month["Annual Net Saving (Retire+Medium)"], 650.0)
-        self.assertEqual(retirement_month["Annual Net Saving (R+M+T)"], 640.0)
-        self.assertEqual(retirement_month["Annual Net Saving (All)"], 640.0)
+        self.assertEqual(retirement_month["Annual Net Saving"], 100.0)
+        self.assertEqual(retirement_month["Annual Net Saving (Retire+Medium)"], 150.0)
+        self.assertEqual(retirement_month["Annual Net Saving (R+M+T)"], 140.0)
+        self.assertEqual(retirement_month["Annual Net Saving (All)"], 140.0)
 
     def test_fund_category_summary_keeps_transfer_in_and_out_by_period(self):
         transactions = pd.DataFrame(
@@ -54,10 +54,10 @@ class SavingCalculationTests(unittest.TestCase):
         february = summary[(summary["Month"] == "February")].iloc[0]
         self.assertEqual(january["Transfer In"], 500.0)
         self.assertEqual(january["Transfer Out"], 0.0)
-        self.assertEqual(january["Net Saving"], 500.0)
+        self.assertEqual(january["Net Saving"], 0.0)
         self.assertEqual(february["Transfer In"], 0.0)
         self.assertEqual(february["Transfer Out"], 125.0)
-        self.assertEqual(february["Net Saving"], -125.0)
+        self.assertEqual(february["Net Saving"], 0.0)
 
     def test_account_flow_summary_keeps_transfer_columns(self):
         transactions = pd.DataFrame(

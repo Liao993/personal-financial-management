@@ -12,7 +12,7 @@ def saving_sum(transaction):
     account_summary = calculate_account_flow_summary(transaction, hidden_accounts=hidden_accounts)
 
     st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Fund Category Saving Summary</h3>", unsafe_allow_html=True)
-    st.caption("Transfer In and Transfer Out are shown as positive activity amounts. Net Saving applies the outflow direction internally, and annual columns provide yearly context for each monthly fund row.")
+    st.caption("Transfer In and Transfer Out are shown as positive activity details. Fund-category Net Saving and annual totals use Deposit minus Withdrawal; transfers do not change saving.")
     if not category_summary.empty:
         st.dataframe(
             category_summary,

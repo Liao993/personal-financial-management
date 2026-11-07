@@ -148,12 +148,9 @@ def calculate_fund_category_summary(transaction: pd.DataFrame) -> pd.DataFrame:
         .sum()
         .rename(columns={"fund_category": "Fund Category"})
     )
-    monthly["Net Saving"] = (
-        monthly["Deposit"]
-        - monthly["Withdrawal"]
-        + monthly["Transfer In"]
-        - monthly["Transfer Out"]
-    )
+    # Transfers are movements between accounts within the same fund category,
+    # so they remain visible as activity but do not change fund-category saving.
+    monthly["Net Saving"] = monthly["Deposit"] - monthly["Withdrawal"]
 
     annual_by_category = monthly.groupby(["Year", "Fund Category"], as_index=False)["Net Saving"].sum()
     annual_totals = monthly.groupby("Year", as_index=False)["Net Saving"].sum().rename(
