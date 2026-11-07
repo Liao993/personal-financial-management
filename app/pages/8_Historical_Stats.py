@@ -27,7 +27,7 @@ def fetch_all_annual_expense_safe():
         try:
             cursor = conn.cursor()
             query = f"""
-                SELECT date, amount, category, summary_category
+                SELECT date, items, amount, category, summary_category
                 FROM {expense_backend.DBT_SCHEMA}.intermediate_expenses_with_summary;
             """
             cursor.execute(query)

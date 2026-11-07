@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import html
 
 def kpi(expense, income, transaction, all_year=False):
 
@@ -25,6 +26,64 @@ def kpi(expense, income, transaction, all_year=False):
     
     total_spending = total_expense + house_sum
 
+    grocery_expense = expense[expense["category"] == "Grocery"].copy()
+    grocery_items = grocery_expense.get(
+        "items", pd.Series("", index=grocery_expense.index)
+    ).fillna("").astype(str).str.upper()
+    grocery_store = pd.Series("OTHERS", index=grocery_expense.index)
+    grocery_store = grocery_store.mask(grocery_items.str.contains("SUPER", na=False), "Loblaws")
+    grocery_store = grocery_store.mask(grocery_items.str.contains("NOFRILL", na=False), "Loblaws")
+    grocery_store = grocery_store.mask(grocery_items.str.contains("MIKE & ANDREEA'S", na=False), "Loblaws")
+    grocery_store = grocery_store.mask(grocery_items.str.contains("COSTCO", na=False), "Costco")
+    grocery_store = grocery_store.mask(grocery_items.str.contains("SOBEY", na=False), "Sobeys")
+    grocery_breakdown = grocery_expense.assign(store=grocery_store).groupby("store")["amount"].sum()
+    grocery_note = "Grocery filter: category = 'Grocery'.\n" + (
+        "\n".join(f"- {store}: ${amount:,.2f}" for store, amount in grocery_breakdown.sort_values(ascending=False).items())
+        if not grocery_breakdown.empty else "- No grocery records"
+    )
+
+    st.markdown(
+        """
+        <style>
+        .kpi-info {
+            position: relative;
+            display: inline-block;
+            color: #888;
+            font-size: 14px;
+            cursor: help;
+        }
+        .kpi-info::after {
+            content: attr(data-tooltip);
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            z-index: 9999;
+            left: 50%;
+            bottom: 150%;
+            transform: translateX(-50%);
+            width: 280px;
+            padding: 10px;
+            border-radius: 6px;
+            background: #222;
+            color: #fff;
+            text-align: left;
+            white-space: pre-line;
+            font-size: 13px;
+            font-weight: normal;
+            line-height: 1.35;
+            box-shadow: 0 2px 8px rgba(0,0,0,.35);
+            pointer-events: none;
+            transition: opacity .15s ease;
+        }
+        .kpi-info:hover::after {
+            visibility: visible;
+            opacity: 1;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
     # Helper function for data processing
     def get_stats(current_sum, total_inc, div):
         current_sum = float(current_sum)
@@ -46,13 +105,13 @@ def kpi(expense, income, transaction, all_year=False):
 
     # Data configuration for the categories
     categories = [
-        {"name": "Earning", "color": "orange", "sum": total_income, "definition": "Total income recorded in the selected period."},
-        {"name": "All Spending", "color": "#e74c3c", "sum": total_spending, "definition": "Daily expenses plus House allocations."},
-        {"name": "Daily", "color": "#f1c40f", "sum": expense[expense["summary_category"] == "Daily Expenses"]["amount"].sum(), "definition": "Regular expenses included in monthly spending; House and fund-withdrawal expenses are shown separately."},
-        {"name": "House", "color": "#bce784", "sum": house_sum},
-        {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum()},
-        {"name": "Grocery", "color": "#ff8fab", "sum": expense[expense["category"] == "Grocery"]['amount'].sum()},
-        {"name": "Retirement", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum()},
+        {"name": "Earning", "color": "orange", "sum": total_income, "definition": "Income filter: all records from the income table for the selected period."},
+        {"name": "All Spending", "color": "#e74c3c", "sum": total_spending, "definition": "Daily expenses plus the amount allocated/deposited to the House fund. This is not actual House spending."},
+        {"name": "Daily", "color": "#f1c40f", "sum": expense[expense["summary_category"] == "Daily Expenses"]["amount"].sum(), "definition": "Expense filter: summary_category = 'Daily Expenses'. Donation/Gifts and House records are excluded."},
+        {"name": "House", "color": "#bce784", "sum": house_sum, "definition": "House fund filter: fund_category = 'House'. This is the amount deposited/allocated from salary, not actual House spending."},
+        {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum(), "definition": "Offerings filter: summary_category = 'Donation and Gifts', covering Donation and Gifts categories."},
+        {"name": "Grocery", "color": "#ff8fab", "sum": grocery_expense['amount'].sum(), "definition": grocery_note},
+        {"name": "Retirement", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum(), "definition": "Retirement filter: fund_category = 'Retirement Saving' in the transaction summary."},
     ]
 
     # Render data for columns 2-8
@@ -61,9 +120,10 @@ def kpi(expense, income, transaction, all_year=False):
         categories[i]['pct'] = c_pct # Save for bottom row
         
         with cols[i+1]:
+            definition = html.escape(cat.get("definition", ""))
             st.markdown(
                 f"<p style='font-size: 20px; color: {cat['color']}; text-align: center;'><b>{cat['name']}"
-                f" <span title=\"{cat.get('definition', '')}\" style=\"font-size:14px; color:#888; cursor:help;\">ⓘ</span></b></p>"
+                f" <span class=\"kpi-info\" title=\"{definition}\" data-tooltip=\"{definition}\">ⓘ</span></b></p>"
                 f"<p style='font-size: 22px; text-align: center;'>${c_sum:,.0f}</p>"
                 f"<p style='font-size: 22px; text-align: center;'>${c_avg:,.0f}</p>",
                 unsafe_allow_html=True,
