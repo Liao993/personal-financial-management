@@ -4,6 +4,12 @@ import pandas as pd
 
 
 SAVING_CATEGORIES = ("Retirement Saving", "Medium-term Saving", "Traveling Funds")
+DISPLAY_FUND_CATEGORIES = (
+    "Retirement Saving",
+    "Medium-term Saving",
+    "Traveling Funds",
+    "Emergency Funds",
+)
 TRANSACTION_TYPES = ("Deposit", "Withdrawal", "Transfer In", "Transfer Out")
 FUND_CATEGORY_GROUPS = {
     "R": ("Retirement Saving",),
@@ -108,46 +114,72 @@ def _fund_category_period_rows(transaction: pd.DataFrame) -> pd.DataFrame:
 
 
 def calculate_fund_category_summary(transaction: pd.DataFrame) -> pd.DataFrame:
-    """Return one monthly-detail table with annual total rows by fund category."""
-    monthly = _fund_category_period_rows(transaction)
-    if monthly.empty:
+    """Return monthly fund rows with annual net-saving reference columns."""
+    data = transaction.copy()
+    data = data[
+        data["fund_category"].isin(DISPLAY_FUND_CATEGORIES)
+        & data["transaction_type"].isin(("Deposit", "Withdrawal"))
+    ].copy()
+    if data.empty:
         return pd.DataFrame(
-            columns=["Year", "Month", "Deposit", "Withdrawal", "Net Monthly Saving", "R", "M", "T", "R+M", "R+M+T"]
+            columns=[
+                "Year", "Month", "Fund Category", "Deposit", "Withdrawal", "Net Saving",
+                "Annual Net Saving", "Annual Net Saving (Retire+Medium)",
+                "Annual Net Saving (R+M+T)", "Annual Net Saving (All)",
+            ]
         )
 
-    category_order = ("R", "M", "T", "R+M", "R+M+T")
-    monthly_values = monthly.pivot_table(
-        index=["Year", "Month"], columns="Fund Category", values="Net Saving", aggfunc="sum", fill_value=0.0
-    ).reset_index()
-    for category in category_order:
-        if category not in monthly_values.columns:
-            monthly_values[category] = 0.0
+    data["amount"] = pd.to_numeric(data["amount"], errors="coerce").fillna(0.0)
+    dates = pd.to_datetime(data["date"], errors="coerce")
+    data["Year"] = dates.dt.year.astype("Int64")
+    data["Month Number"] = dates.dt.month.astype("Int64")
+    data["Deposit"] = data["amount"].where(data["transaction_type"] == "Deposit", 0.0)
+    data["Withdrawal"] = (-data["amount"]).where(data["transaction_type"] == "Withdrawal", 0.0)
+    data = data.dropna(subset=["Year", "Month Number"])
 
-    totals = (
-        monthly[monthly["Fund Category"].isin(("R", "M", "T"))]
-        .groupby(["Year", "Month"], as_index=False)[["Deposit", "Withdrawal"]]
+    monthly = (
+        data.groupby(["Year", "Month Number", "fund_category"], as_index=False)[["Deposit", "Withdrawal"]]
         .sum()
+        .rename(columns={"fund_category": "Fund Category"})
     )
-    monthly_values = monthly_values.drop(columns=["Deposit", "Withdrawal"], errors="ignore").merge(
-        totals, on=["Year", "Month"], how="left"
+    monthly["Net Saving"] = monthly["Deposit"] - monthly["Withdrawal"]
+
+    annual_by_category = monthly.groupby(["Year", "Fund Category"], as_index=False)["Net Saving"].sum()
+    annual_totals = monthly.groupby("Year", as_index=False)["Net Saving"].sum().rename(
+        columns={"Net Saving": "Annual Net Saving (All)"}
     )
-    monthly_values["Net Monthly Saving"] = monthly_values["Deposit"] - monthly_values["Withdrawal"]
-    monthly_values["_sort_month"] = monthly_values["Month"]
-    monthly_values["Month"] = monthly_values["Month"].map(
+    annual_r_m = (
+        monthly[monthly["Fund Category"].isin(("Retirement Saving", "Medium-term Saving"))]
+        .groupby("Year", as_index=False)["Net Saving"]
+        .sum()
+        .rename(columns={"Net Saving": "Annual Net Saving (Retire+Medium)"})
+    )
+    annual_r_m_t = (
+        monthly[monthly["Fund Category"].isin(SAVING_CATEGORIES)]
+        .groupby("Year", as_index=False)["Net Saving"]
+        .sum()
+        .rename(columns={"Net Saving": "Annual Net Saving (R+M+T)"})
+    )
+    summary = monthly.merge(
+        annual_by_category.rename(columns={"Net Saving": "Annual Net Saving"}),
+        on=["Year", "Fund Category"],
+        how="left",
+    ).merge(annual_r_m, on="Year", how="left").merge(annual_r_m_t, on="Year", how="left").merge(
+        annual_totals, on="Year", how="left"
+    )
+    summary["Month"] = summary["Month Number"].map(
         lambda month: pd.Timestamp(2000, int(month), 1).strftime("%B")
     )
-
-    annual_values = monthly_values.groupby("Year", as_index=False)[
-        ["Deposit", "Withdrawal", *category_order]
-    ].sum()
-    annual_values["Net Monthly Saving"] = annual_values["Deposit"] - annual_values["Withdrawal"]
-    annual_values["Month"] = "Annual Total"
-    annual_values["_sort_month"] = 13
-
-    summary = pd.concat([annual_values, monthly_values], ignore_index=True, sort=False)
+    summary["_category_order"] = summary["Fund Category"].map(
+        {category: index for index, category in enumerate(DISPLAY_FUND_CATEGORIES)}
+    )
     return (
-        summary.sort_values(["Year", "_sort_month"], ascending=[False, False])
-        [["Year", "Month", "Deposit", "Withdrawal", "Net Monthly Saving", *category_order]]
+        summary.sort_values(["Year", "Month Number", "_category_order"], ascending=[False, False, True])
+        [[
+            "Year", "Month", "Fund Category", "Deposit", "Withdrawal", "Net Saving",
+            "Annual Net Saving", "Annual Net Saving (Retire+Medium)",
+            "Annual Net Saving (R+M+T)", "Annual Net Saving (All)",
+        ]]
         .reset_index(drop=True)
     )
 
@@ -190,7 +222,11 @@ def calculate_account_flow_summary(
     summary = summary.merge(yearly_net, on=["Year", "Account"], how="left")
     if hidden_accounts:
         summary = summary[~summary["Account"].isin(hidden_accounts)].copy()
-    summary = summary.sort_values(["Year", "Month", "Account"], ascending=[False, False, True]).reset_index(drop=True)
+    summary["_account_order"] = summary["Account"].map(lambda account: 0 if account == "All Accounts" else 1)
+    summary = summary.sort_values(
+        ["Year", "_account_order", "Account", "Month"],
+        ascending=[False, True, True, False],
+    ).reset_index(drop=True)
     summary["Month"] = summary["Month"].map(lambda month: pd.Timestamp(2000, int(month), 1).strftime("%B"))
     return summary[
         ["Year", "Month", "Account", "Deposit", "Withdrawal", "Transfer In", "Transfer Out", "Net Account Flow", "Yearly Net Account Flow"]

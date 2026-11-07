@@ -12,7 +12,7 @@ def saving_sum(transaction):
     account_summary = calculate_account_flow_summary(transaction, hidden_accounts=hidden_accounts)
 
     st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Fund Category Saving Summary</h3>", unsafe_allow_html=True)
-    st.caption("Monthly rows show total deposits, withdrawals, and net monthly saving. R/M/T columns show net saving by fund; Annual Total rows aggregate the year.")
+    st.caption("Transfers are excluded from the fund-category view because paired transfers reconcile within the fund category. Annual columns provide yearly context for each monthly fund row.")
     if not category_summary.empty:
         st.dataframe(
             category_summary,
@@ -21,7 +21,11 @@ def saving_sum(transaction):
             column_config={
                 "Deposit": st.column_config.NumberColumn("Deposit", format="$%.2f"),
                 "Withdrawal": st.column_config.NumberColumn("Withdrawal", format="$%.2f"),
-                "Net Monthly Saving": st.column_config.NumberColumn("Net Monthly Saving", format="$%.2f"),
+                "Net Saving": st.column_config.NumberColumn("Net Saving", format="$%.2f"),
+                "Annual Net Saving": st.column_config.NumberColumn("Annual Net Saving", format="$%.2f"),
+                "Annual Net Saving (Retire+Medium)": st.column_config.NumberColumn("Annual Net Saving (Retire+Medium)", format="$%.2f"),
+                "Annual Net Saving (R+M+T)": st.column_config.NumberColumn("Annual Net Saving (R+M+T)", format="$%.2f"),
+                "Annual Net Saving (All)": st.column_config.NumberColumn("Annual Net Saving (All)", format="$%.2f"),
             },
         )
     else:
