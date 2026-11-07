@@ -99,7 +99,7 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
         return current_sum, avg, pct
 
     # --- 2. Render Top Section (Headers, Totals, Averages) ---
-    cols = st.columns(10)
+    cols = st.columns(8)
 
     # Column 1: Row Labels
     with cols[0]:
@@ -113,18 +113,16 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
     # Data configuration for the categories
     categories = [
         {"name": "Earning", "color": "orange", "sum": total_income, "definition": "Income filter: income table records for the selected period, excluding Interest Earning and Capital Gain."},
-        {"name": "All Spending", "color": "#e74c3c", "sum": total_spending, "definition": "Eligible expense records where exclude_from_monthly = FALSE, category != 'House', category != 'Traveling', and house_category IS NULL, plus non-expense-linked House fund allocations (expense_id IS NULL). This includes Daily, Offerings, Grocery, and other eligible non-travel categories; it is not just Daily + House."},
-        {"name": "Daily", "color": "#f1c40f", "sum": expense[expense["summary_category"] == "Daily Expenses"]["amount"].sum(), "definition": "Expense filter: summary_category = 'Daily Expenses'. Donation/Gifts and House records are excluded."},
+        {"name": "All Spending", "color": "#e74c3c", "sum": total_spending, "definition": "Daily + House + Other All Spending, such as Education and other eligible categories. Traveling is excluded. House is the amount allocated to the House fund, not actual House spending."},
+        {"name": "Daily", "color": "#f1c40f", "sum": expense[expense["summary_category"] == "Daily Expenses"]["amount"].sum(), "definition": "Daily-life maintenance spending such as car, grocery, household goods, cell phone, and transportation. House and Donation/Gifts are excluded."},
         {"name": "House", "color": "#bce784", "sum": house_sum, "definition": "House fund filter: fund_category = 'House'. This is the amount deposited/allocated from salary, not actual House spending."},
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum(), "definition": "Offerings filter: summary_category = 'Donation and Gifts', covering Donation and Gifts categories."},
         {"name": "Grocery", "color": "#ff8fab", "sum": grocery_expense['amount'].sum(), "definition": grocery_note},
         {"name": "Retirement", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum(), "definition": "Retirement filter: fund_category = 'Retirement Saving' in the transaction summary."},
-        {"name": "Medium Withdrawal", "color": "#9b59b6", "sum": medium_withdrawal, "definition": "Withdrawal filter: transaction_type = 'Withdrawal' and fund_category = 'Medium-term Saving'. Expense-linked and manual withdrawals are included."},
-        {"name": "Traveling Withdrawal", "color": "#e67e22", "sum": traveling_withdrawal, "definition": "Withdrawal filter: transaction_type = 'Withdrawal' and fund_category = 'Traveling Funds'. Expense-linked and manual withdrawals are included."},
     ]
 
     # Render data for columns 2-8
-    for i, cat in enumerate(categories):
+    for i, cat in enumerate(categories[:7]):
         c_sum, c_avg, c_pct = get_stats(cat['sum'], total_income, divisor)
         categories[i]['pct'] = c_pct # Save for bottom row
         
@@ -138,15 +136,21 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
                 unsafe_allow_html=True,
             )
 
+    withdrawal_cols = st.columns(2)
+    with withdrawal_cols[0]:
+        st.metric("Medium Withdrawal", f"${medium_withdrawal:,.2f}")
+    with withdrawal_cols[1]:
+        st.metric("Traveling Withdrawal", f"${traveling_withdrawal:,.2f}")
+
     # --- 3. The Whole-Width Dashed Line ---
     st.markdown("<hr style='margin: 0px; border: none; border-top: 2px dashed #bbb;'>", unsafe_allow_html=True)
     # --- 4. Render Bottom Section (% by Income) ---
-    bcols = st.columns(10)
+    bcols = st.columns(8)
 
     with bcols[0]:
         st.markdown("<p style='font-size: 22px; text-align: center; font-weight: bold;'>% of Income</p>", unsafe_allow_html=True)
 
-    for i in range(len(categories)):
+    for i in range(7):
         with bcols[i+1]:
             # Earning (index 0) is 100%, others use their calculated %
             display_pct = 100.0 if i == 0 else categories[i]['pct']
