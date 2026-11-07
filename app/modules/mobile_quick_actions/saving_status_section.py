@@ -21,7 +21,7 @@ def _combine_expense_withdrawals(
     if expense_withdrawals.empty:
         return transaction_data
     expense_txn_for_sum = expense_withdrawals[
-        ["date", "account_name", "amount", "fund_category", "transaction_type"]
+        ["date", "account_name", "amount", "fund_category", "transaction_type", "expense_id"]
     ].copy()
     return pd.concat([transaction_data, expense_txn_for_sum], ignore_index=True)
 

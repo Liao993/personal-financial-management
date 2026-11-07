@@ -13,9 +13,9 @@ def insert_transaction_data(validated_data: dict):
             query = """
                 INSERT INTO transactions (
                     date, account_name, transaction_type, amount,
-                    fund_category, transaction_category, source_notes, transfer_to_account
+                    fund_category, source_notes, transfer_to_account
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 validated_data["date"],
@@ -23,7 +23,6 @@ def insert_transaction_data(validated_data: dict):
                 validated_data["transaction_type"],
                 validated_data["amount"],
                 validated_data["fund_category"],
-                validated_data["transaction_category"],
                 validated_data["source_notes"],
                 validated_data["transfer_to_account"],
             )
@@ -114,6 +113,68 @@ def fetch_transaction_data_by_year(year):
     else:
         st.info("Database connection failed, cannot retrieve data.")
         return pd.DataFrame()
+
+
+def fetch_fund_withdrawals_by_year(year=None):
+    """Return positive withdrawal totals for Medium-term and Traveling funds."""
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT fund_category, SUM(ABS(amount)) AS total_withdrawal
+            FROM transactions
+            WHERE transaction_type = 'Withdrawal'
+              AND fund_category IN ('Medium-term Saving', 'Traveling Funds')
+        """
+        params = []
+        if year is not None:
+            query += " AND EXTRACT(YEAR FROM date) = %s"
+            params.append(year)
+        query += " GROUP BY fund_category ORDER BY fund_category;"
+        try:
+            cursor.execute(query, params)
+            return pd.DataFrame(
+                cursor.fetchall(),
+                columns=["fund_category", "total_withdrawal"],
+            )
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving fund withdrawals: {e}")
+            return pd.DataFrame(columns=["fund_category", "total_withdrawal"])
+        finally:
+            cursor.close()
+            conn.close()
+    return pd.DataFrame(columns=["fund_category", "total_withdrawal"])
+
+
+def fetch_fund_deposits_by_year(year=None):
+    """Return positive deposit totals for the Retirement, Medium, and Travel funds."""
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT fund_category, SUM(ABS(amount)) AS total_deposit
+            FROM transactions
+            WHERE transaction_type = 'Deposit'
+              AND fund_category IN ('Retirement Saving', 'Medium-term Saving', 'Traveling Funds')
+        """
+        params = []
+        if year is not None:
+            query += " AND EXTRACT(YEAR FROM date) = %s"
+            params.append(year)
+        query += " GROUP BY fund_category;"
+        try:
+            cursor.execute(query, params)
+            return pd.DataFrame(
+                cursor.fetchall(),
+                columns=["fund_category", "total_deposit"],
+            )
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving fund deposits: {e}")
+            return pd.DataFrame(columns=["fund_category", "total_deposit"])
+        finally:
+            cursor.close()
+            conn.close()
+    return pd.DataFrame(columns=["fund_category", "total_deposit"])
 
 
 def fetch_all_transaction_data_by_month():

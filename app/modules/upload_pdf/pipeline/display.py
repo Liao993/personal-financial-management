@@ -27,8 +27,8 @@ def _row_numbers(frame: pd.DataFrame, mask: pd.Series) -> str:
 
 def validate_statement_review_data(
     edited_df: pd.DataFrame,
-    single_trip: bool,
-    trip_input: str | None,
+    single_trip: bool = False,
+    trip_input: str | None = None,
 ) -> bool:
     travel_mask = (
         edited_df["category"].eq("Traveling")
@@ -42,6 +42,14 @@ def validate_statement_review_data(
 
     if single_trip and _is_blank(trip_input):
         issues.append("Select a trip or add a new trip before confirming traveling rows.")
+
+    if not single_trip:
+        missing_trip = travel_rows["trip"].apply(_is_blank)
+        if missing_trip.any():
+            issues.append(
+                "Every traveling row must have a Trip selected. Check row(s): "
+                + _row_numbers(travel_rows, missing_trip)
+            )
 
     missing_category = travel_rows["traveling_category"].isna()
     if missing_category.any():
@@ -115,10 +123,9 @@ def build_statement_review_table(dataframe: pd.DataFrame) -> pd.DataFrame:
     )
     review_df["secondary_fund_amount"] = np.where(has_secondary, secondary_amount, 0.0)
 
+    # Keep the amount, trip, and withdrawal allocation fields together so the
+    # common editing path does not require horizontal scrolling.
     columns = [
-        "payment_method",
-        "date",
-        "items",
         "amount",
         "category",
         "traveling_category",
@@ -128,6 +135,9 @@ def build_statement_review_table(dataframe: pd.DataFrame) -> pd.DataFrame:
         "primary_fund_amount",
         "split_fund_category_1",
         "secondary_fund_amount",
+        "date",
+        "items",
+        "payment_method",
         "statement_file",
         "source_notes",
     ]
@@ -161,21 +171,8 @@ def display_editable_dataframe(dataframe):
             unsafe_allow_html=True,
         )
 
-        st.markdown(
-            '<div style="font-size:22px; color: #ff9900; padding: 6px; border-radius: 5px;">📍 Traveling Section</div>',
-            unsafe_allow_html=True,
-        )
-        st.write("Please input your trip below!")
-        single_trip = st.checkbox("Single Trip", value=True)
-
-        existing_trips = fetch_all_trips()
-        trip_options   = existing_trips + ["Add New Trip"]
-        selected_trip  = st.selectbox("Select Trip", options=[None] + trip_options)
-
-        if selected_trip == "Add New Trip":
-            trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-012025)")
-        else:
-            trip_input = selected_trip
+        existing_trips = sorted({str(trip).strip() for trip in fetch_all_trips() if not _is_blank(trip)})
+        trip_options = existing_trips
 
         st.markdown(
             '<div style="font-size:28px; color: #ff9900; padding: 10px; border-radius: 5px;">📊 PDF Data Editor</div>',
@@ -225,6 +222,12 @@ def display_editable_dataframe(dataframe):
                     options=[None] + traveling_category_options,
                     required=False,
                 ),
+                "trip": st.column_config.SelectboxColumn(
+                    "Trip",
+                    options=[None] + trip_options,
+                    required=False,
+                    help="Choose a trip for each traveling row.",
+                ),
                 "exclude_from_monthly": st.column_config.CheckboxColumn(
                     "Fund Withdrawal Required",
                     help="Check this to auto-create a withdrawal from the Target Fund. "
@@ -259,11 +262,9 @@ def display_editable_dataframe(dataframe):
         )
 
         if st.button("Confirm your changes"):
-            if not validate_statement_review_data(edited_df, single_trip, trip_input):
+            if not validate_statement_review_data(edited_df):
                 st.stop()
-            if single_trip:
-                edited_df.loc[edited_df["category"] == "Traveling", "trip"] = trip_input
-                edited_df.loc[edited_df["category"] != "Traveling", "trip"] = None
+            edited_df.loc[edited_df["category"] != "Traveling", "trip"] = None
             st.info("Loading your information...")
             st.session_state[review_data]    = edited_df
             st.session_state[edit_mode_form] = False

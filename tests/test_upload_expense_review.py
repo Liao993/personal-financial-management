@@ -16,6 +16,13 @@ from modules.upload_pdf.pipeline.common import exclude_payment_credits  # noqa: 
 
 
 class UploadExpenseReviewTests(unittest.TestCase):
+    def test_aviva_pc_insurance_is_a_common_item_not_a_category(self):
+        from utils.data import common_store_list, expense_category_options, traveling_category_options
+
+        self.assertIn("Aviva- PC Insurance", common_store_list)
+        self.assertNotIn("Aviva- PC Insurance", expense_category_options)
+        self.assertNotIn("Aviva- PC Insurance", traveling_category_options)
+
     def test_primary_fund_amount_uses_total_when_no_secondary_split(self):
         data = pd.DataFrame(
             [
@@ -82,6 +89,40 @@ class UploadExpenseReviewTests(unittest.TestCase):
                 edited_df=data,
                 single_trip=True,
                 trip_input="Toronto-082026",
+            )
+        )
+
+    def test_multiple_trip_mode_requires_a_trip_on_each_traveling_row(self):
+        data = pd.DataFrame(
+            [
+                {
+                    "amount": 120.00,
+                    "category": "Traveling",
+                    "traveling_category": "Food",
+                    "trip": "Toronto-082026",
+                    "exclude_from_monthly": True,
+                    "target_fund_category": "Traveling Funds",
+                    "split_fund_category_1": None,
+                    "split_amount_1": 0.00,
+                },
+                {
+                    "amount": 90.00,
+                    "category": "Traveling",
+                    "traveling_category": "Hotel",
+                    "trip": None,
+                    "exclude_from_monthly": True,
+                    "target_fund_category": "Traveling Funds",
+                    "split_fund_category_1": None,
+                    "split_amount_1": 0.00,
+                },
+            ]
+        )
+
+        self.assertFalse(
+            validate_statement_review_data(
+                edited_df=data,
+                single_trip=False,
+                trip_input=None,
             )
         )
 

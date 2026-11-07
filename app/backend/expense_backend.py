@@ -186,7 +186,7 @@ def fetch_annual_expense(year):
             cursor = conn.cursor()
             if isinstance(year, int):
                 query = f"""
-                    SELECT date, amount, category, summary_category
+                    SELECT date, items, amount, category, summary_category
                     FROM {DBT_SCHEMA}.intermediate_expenses_with_summary
                     WHERE EXTRACT(YEAR FROM date) = %s;
                 """
@@ -218,7 +218,7 @@ def fetch_all_annual_expense():
         try:
             cursor = conn.cursor()
             query = f"""
-                SELECT date, amount, category, summary_category
+                    SELECT date, items, amount, category, summary_category
                 FROM {DBT_SCHEMA}.intermediate_expenses_with_summary;
             """
             cursor.execute(query)

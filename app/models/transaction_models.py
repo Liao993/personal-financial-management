@@ -4,7 +4,6 @@ from typing import Optional
 from utils.data import (
     account_name_list,
     fund_categories,
-    transaction_category_options,
     transaction_type_database,
 )
 
@@ -15,7 +14,6 @@ class Transaction(BaseModel):
     transaction_type: str
     amount: float
     fund_category: str
-    transaction_category: str = "Other"
     source_notes: Optional[str] = None
     transfer_to_account: Optional[str] = None
 
@@ -68,14 +66,6 @@ class Transaction(BaseModel):
             float(value)
         except (TypeError, ValueError):
             raise ValueError("Amount must be a valid number")
-        return value
-
-    @validator("transaction_category")
-    def transaction_category_is_valid(cls, value):
-        if value not in transaction_category_options:
-            raise ValueError(
-                f"Transaction category must be one of: {transaction_category_options}"
-            )
         return value
 
     @validator("transfer_to_account", pre=True)

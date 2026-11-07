@@ -4,7 +4,7 @@ from utils.data import account_name_list
 
 def review_income_input(review_data_key):
     reviewed_data = st.session_state.get(review_data_key, {})
-    st.subheader("Your Income Input Information:")
+    st.subheader("Your Earning Input Information:")
 
     income_date         = reviewed_data.get('date', '')
     income_amount       = f"${reviewed_data.get('amount', 0.00):,.2f}"

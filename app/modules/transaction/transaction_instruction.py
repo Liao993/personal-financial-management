@@ -4,36 +4,25 @@ import streamlit as st  # type: ignore
 def instruction():
     st.markdown(
         "<p style='font-size: 20px;'>"
-        "If money balance moves <b style='color:#e74c3c;'>BETWEEN DIFFERENT FUNDS</b>, "
-        "choose <b style='color:#e74c3c;'>Deposit</b> or <b style='color:#e74c3c;'>Withdrawal</b>.",
+        "This page records <b style='color:#e74c3c;'>account transfers only</b>. "
+        "Incoming money must first be recorded as an earning on the <b style='color:yellow;'>Earning Input</b> page.",
         unsafe_allow_html=True,
     )
     st.markdown(
-        "<p style='font-size: 20px;'>Example: From Medium-term Saving to Traveling Funds — "
-        "make <b style='color:orange'>TWO</b> transactions. "
-        "<b style='color:#e74c3c;'>Withdrawal</b> from Medium-term, "
-        "<b style='color:#e74c3c;'>Deposit</b> to Traveling Funds.</p>",
-        unsafe_allow_html=True,
-    )
-    st.write("___")
-    st.markdown(
-        "<p style='font-size: 20px;'>"
-        "If it is the <b style='color:yellow;'>same fund</b> but in different accounts, "
-        "choose <b style='color:yellow;'>Transfer Between Accounts</b>.</p>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<p style='font-size: 20px;'>Example: Retirement Saving from Main Chequing to TFSA Growth — "
-        "make <b style='color:orange'>ONE</b> transaction. "
-        "Choose <b style='color:yellow;'>Transfer Between Accounts</b>.</p>",
+        "<p style='font-size: 20px;'>If interest or another earning arrives in TFSA, record it as an earning deposited into TFSA first. "
+        "If you then move it to Chequing, record one transfer from TFSA to Chequing under the same fund category.</p>",
         unsafe_allow_html=True,
     )
     st.write("___")
     st.markdown(
         "<p style='font-size: 20px;'>"
-        "If you want to withdraw from TFSA <b style='color:orange'>more</b> than you deposited, "
-        "first record a <b style='color:orange'>Deposit</b> to that TFSA account to match the total. "
-        "Interest earnings do not need to be recorded as income.</p>",
+        "If you need to correct a fund balance, record the missing earning first, then transfer it between accounts if needed. "
+        "Expense-funded withdrawals are created automatically from the expense record.</p>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<p style='font-size: 20px;'>There is no separate Deposit or Withdrawal action here. For an expense amount or fund allocation change, "
+        "use <b style='color:yellow;'>Expense Editor (Page 16)</b>; linked fund transactions update automatically.</p>",
         unsafe_allow_html=True,
     )
     st.write("___")
