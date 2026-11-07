@@ -163,13 +163,13 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None, fun
     with withdrawal_cols[0]:
         st.markdown(
             f"<p style='font-size: 19px; color: #9b59b6; text-align: center; margin-bottom: 0;'><b>Medium Withdrawal</b></p>"
-            f"<p style='font-size: 24px; color: #9b59b6; text-align: center;'><b>${medium_withdrawal:,.2f}</b> ({medium_withdrawal / income_base:.1%})</p>",
+            f"<p style='font-size: 24px; color: #9b59b6; text-align: center;'><b>${medium_withdrawal:,.2f}</b></p>",
             unsafe_allow_html=True,
         )
     with withdrawal_cols[1]:
         st.markdown(
             f"<p style='font-size: 19px; color: #e67e22; text-align: center; margin-bottom: 0;'><b>Traveling Withdrawal</b></p>"
-            f"<p style='font-size: 24px; color: #e67e22; text-align: center;'><b>${traveling_withdrawal:,.2f}</b> ({traveling_withdrawal / income_base:.1%})</p>",
+            f"<p style='font-size: 24px; color: #e67e22; text-align: center;'><b>${traveling_withdrawal:,.2f}</b></p>",
             unsafe_allow_html=True,
         )
     with withdrawal_cols[2]:
