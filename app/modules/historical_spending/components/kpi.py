@@ -52,7 +52,7 @@ def kpi(expense, income, transaction, all_year=False):
         {"name": "House", "color": "#bce784", "sum": house_sum},
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum()},
         {"name": "Grocery", "color": "#ff8fab", "sum": expense[expense["category"] == "Grocery"]['amount'].sum()},
-        {"name": "Retirement Net Activity", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum()},
+        {"name": "Retirement Saving", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum()},
     ]
 
     # Render data for columns 2-8
