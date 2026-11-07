@@ -1,5 +1,6 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
+import os
 from modules.current_saving.calculations import (
     calculate_account_flow_summary,
     calculate_fund_category_summary,
@@ -7,10 +8,11 @@ from modules.current_saving.calculations import (
 
 def saving_sum(transaction):
     category_summary = calculate_fund_category_summary(transaction)
-    account_summary = calculate_account_flow_summary(transaction)
+    hidden_accounts = {"Main Chequing"} if os.environ.get("APP_ENV") == "production" else set()
+    account_summary = calculate_account_flow_summary(transaction, hidden_accounts=hidden_accounts)
 
     st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Fund Category Saving Summary</h3>", unsafe_allow_html=True)
-    st.caption("R = Retirement Saving · M = Medium-term Saving · T = Traveling Funds · transfers are intentionally excluded because they reconcile within the fund category.")
+    st.caption("Monthly rows show total deposits, withdrawals, and net monthly saving. R/M/T columns show net saving by fund; Annual Total rows aggregate the year.")
     if not category_summary.empty:
         st.dataframe(
             category_summary,
@@ -19,7 +21,7 @@ def saving_sum(transaction):
             column_config={
                 "Deposit": st.column_config.NumberColumn("Deposit", format="$%.2f"),
                 "Withdrawal": st.column_config.NumberColumn("Withdrawal", format="$%.2f"),
-                "Net Saving": st.column_config.NumberColumn("Net Saving", format="$%.2f"),
+                "Net Monthly Saving": st.column_config.NumberColumn("Net Monthly Saving", format="$%.2f"),
             },
         )
     else:
@@ -38,6 +40,7 @@ def saving_sum(transaction):
                 "Transfer In": st.column_config.NumberColumn("Transfer In", format="$%.2f"),
                 "Transfer Out": st.column_config.NumberColumn("Transfer Out", format="$%.2f"),
                 "Net Account Flow": st.column_config.NumberColumn("Net Account Flow", format="$%.2f"),
+                "Yearly Net Account Flow": st.column_config.NumberColumn("Yearly Net Account Flow", format="$%.2f"),
             },
         )
     else:

@@ -27,15 +27,14 @@ class SavingCalculationTests(unittest.TestCase):
 
         summary = calculate_fund_category_summary(transactions)
 
-        retirement_year = summary[
-            (summary["Period"] == "Yearly") & (summary["Fund Category"] == "R")
-        ].iloc[0]
+        retirement_year = summary[summary["Month"] == "Annual Total"].iloc[0]
         retirement_month = summary[
-            (summary["Period"] == "Monthly") & (summary["Fund Category"] == "R")
+            (summary["Year"] == 2026) & (summary["Month"] == "January")
         ].iloc[0]
-        self.assertEqual(retirement_year["Net Saving"], 100.0)
-        self.assertEqual(retirement_month["Net Saving"], 100.0)
-        self.assertIn("R+M+T", summary["Fund Category"].tolist())
+        self.assertEqual(retirement_year["R"], 100.0)
+        self.assertEqual(retirement_month["R"], 100.0)
+        self.assertEqual(retirement_month["Net Monthly Saving"], 140.0)
+        self.assertIn("R+M+T", summary.columns)
 
     def test_account_flow_summary_keeps_transfer_columns(self):
         transactions = pd.DataFrame(
@@ -50,6 +49,7 @@ class SavingCalculationTests(unittest.TestCase):
         self.assertEqual(total["Transfer In"], 100.0)
         self.assertEqual(total["Transfer Out"], 100.0)
         self.assertEqual(total["Net Account Flow"], 0.0)
+        self.assertEqual(total["Yearly Net Account Flow"], 0.0)
 
     def test_yearly_net_activity_matches_historical_definition(self):
         transactions = pd.DataFrame(
