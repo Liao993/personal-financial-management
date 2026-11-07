@@ -31,7 +31,7 @@ case "$CMD" in
         $DC up -d db
         wait_for_db
         "$SCRIPT_DIR/prod.sh" schema
-        $DC up -d app dbt
+        $DC up -d app dbt pgadmin
         echo ""
         echo "  budget_db        → internal only"
         echo "  budget_streamlit → http://localhost:8501"
@@ -44,7 +44,7 @@ case "$CMD" in
         $DC up -d db
         wait_for_db
         "$SCRIPT_DIR/prod.sh" schema
-        $DC up -d app dbt ;;
+        $DC up -d app dbt pgadmin ;;
     build)
         $DC build app dbt ;;
     logs)

@@ -1,7 +1,9 @@
 import streamlit as st # type: ignore
 import pandas as pd # type: ignore
+from modules.current_saving.calculations import calculate_yearly_fund_summary
 
 def saving_sum(transaction):
+    yearly_summary = calculate_yearly_fund_summary(transaction)
     transaction.rename(columns={'fund_category' : 'category'}, inplace=True)
     
     # Ensure amount is numeric for calculations
@@ -41,68 +43,13 @@ def saving_sum(transaction):
     else:
         monthly_summary = pd.DataFrame()
 
-    # --- YEARLY SUMMARY (DEPOSIT, WITHDRAWAL, BALANCE) ---
-    txn_yearly = transaction[transaction['category'].isin(['Retirement Saving', 'Medium-term Saving', 'Traveling Funds'])].copy()
-    txn_yearly = txn_yearly[txn_yearly['transaction_type'].isin(['Deposit', 'Withdrawal'])]
-    txn_yearly['year'] = pd.to_datetime(txn_yearly['date']).dt.year
-    txn_yearly['month'] = pd.to_datetime(txn_yearly['date']).dt.month
-    
-    final_data = []
-    if not txn_yearly.empty:
-        # Group by unique years, sorting smallest to largest for left-to-right intuitive reading
-        for year in sorted(txn_yearly['year'].unique(), reverse=False):
-            year_df = txn_yearly[txn_yearly['year'] == year]
-            
-            def get_sums(categories):
-                cat_df = year_df[year_df['category'].isin(categories)]
-                deposit = cat_df[cat_df['transaction_type'] == 'Deposit']['amount'].sum()
-                withdrawal = cat_df[cat_df['transaction_type'] == 'Withdrawal']['amount'].sum()
-                balance = deposit + withdrawal
-                return deposit, withdrawal, balance
-                
-            r_dep, r_wth, r_bal = get_sums(['Retirement Saving'])
-            m_dep, m_wth, m_bal = get_sums(['Medium-term Saving'])
-            t_dep, t_wth, t_bal = get_sums(['Traveling Funds'])
-            rm_dep, rm_wth, rm_bal = get_sums(['Retirement Saving', 'Medium-term Saving'])
-            rmt_dep, rmt_wth, rmt_bal = get_sums(['Retirement Saving', 'Medium-term Saving', 'Traveling Funds'])
-            
-            row = {
-                'Year': str(year),
-                
-                'R - Yearly Deposit': float(r_dep),
-                'R - Yearly Withdrawal': float(r_wth),
-                'R - Balance': float(r_bal),
-
-                'M - Yearly Deposit': float(m_dep),
-                'M - Yearly Withdrawal': float(m_wth),
-                'M - Balance': float(m_bal),
-
-                'T - Yearly Deposit': float(t_dep),
-                'T - Yearly Withdrawal': float(t_wth),
-                'T - Balance': float(t_bal),
-
-                '(R+M) - Yearly Deposit': float(rm_dep),
-                '(R+M) - Yearly Withdrawal': float(rm_wth),
-                '(R+M) - Balance': float(rm_bal),
-
-                '(R+M+T) - Yearly Deposit': float(rmt_dep),
-                '(R+M+T) - Yearly Withdrawal': float(rmt_wth),
-                '(R+M+T) - Balance': float(rmt_bal),
-            }
-            final_data.append(row)
-            
-    yearly_summary = pd.DataFrame(final_data)
-    if not yearly_summary.empty:
-        # Transpose dataframe so Years are columns and Metrics are rows
-        yearly_summary.set_index('Year', inplace=True)
-        yearly_summary = yearly_summary.T.reset_index()
-        yearly_summary.rename(columns={'index': 'Metrics'}, inplace=True)
-
+    # --- YEARLY SUMMARY (same net-activity definition as Historical Stats) ---
     # --- UI DISPLAY ---
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Yearly Saving Summary</h3>", unsafe_allow_html=True)
+        st.caption("Net Activity includes deposits, withdrawals, and transfer in/out, excluding expense-linked withdrawals; this matches Historical Stats.")
         if not yearly_summary.empty:
             st.dataframe(yearly_summary, hide_index=True, use_container_width=True)
         else:

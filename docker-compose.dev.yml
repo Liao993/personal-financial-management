@@ -50,6 +50,12 @@ services:
       APP_ENV: development
     networks:
       - budget_network_dev
+  pgadmin:
+    container_name: budget_pgadmin_dev
+    ports:
+      - "127.0.0.1:5050:80"
+    networks:
+      - budget_network_dev
 
 networks:
   budget_network_dev:

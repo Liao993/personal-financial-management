@@ -63,7 +63,7 @@ case "$CMD" in
         $DC up -d db
         wait_for_db
         reload_sample_data
-        $DC up -d app
+        $DC up -d app pgadmin
         echo ""
         echo "  budget_db_dev        → localhost:5433"
         echo "  budget_streamlit_dev → http://localhost:8502"
