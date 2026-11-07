@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import html
 
-def kpi(expense, income, transaction, all_year=False):
+def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
 
 
     # --- 1. Calculations ---
@@ -42,6 +42,12 @@ def kpi(expense, income, transaction, all_year=False):
         "\n".join(f"- {store}: ${amount:,.2f}" for store, amount in grocery_breakdown.sort_values(ascending=False).items())
         if not grocery_breakdown.empty else "- No grocery records"
     )
+    fund_withdrawals = fund_withdrawals if fund_withdrawals is not None else pd.DataFrame()
+    withdrawal_totals = {}
+    if not fund_withdrawals.empty:
+        withdrawal_totals = fund_withdrawals.set_index("fund_category")["total_withdrawal"].to_dict()
+    medium_withdrawal = float(withdrawal_totals.get("Medium-term Saving", 0.0))
+    traveling_withdrawal = float(withdrawal_totals.get("Traveling Funds", 0.0))
 
     st.markdown(
         """
@@ -93,7 +99,7 @@ def kpi(expense, income, transaction, all_year=False):
         return current_sum, avg, pct
 
     # --- 2. Render Top Section (Headers, Totals, Averages) ---
-    cols = st.columns(8)
+    cols = st.columns(10)
 
     # Column 1: Row Labels
     with cols[0]:
@@ -113,6 +119,8 @@ def kpi(expense, income, transaction, all_year=False):
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum(), "definition": "Offerings filter: summary_category = 'Donation and Gifts', covering Donation and Gifts categories."},
         {"name": "Grocery", "color": "#ff8fab", "sum": grocery_expense['amount'].sum(), "definition": grocery_note},
         {"name": "Retirement", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum(), "definition": "Retirement filter: fund_category = 'Retirement Saving' in the transaction summary."},
+        {"name": "Medium Withdrawal", "color": "#9b59b6", "sum": medium_withdrawal, "definition": "Withdrawal filter: transaction_type = 'Withdrawal' and fund_category = 'Medium-term Saving'. Expense-linked and manual withdrawals are included."},
+        {"name": "Traveling Withdrawal", "color": "#e67e22", "sum": traveling_withdrawal, "definition": "Withdrawal filter: transaction_type = 'Withdrawal' and fund_category = 'Traveling Funds'. Expense-linked and manual withdrawals are included."},
     ]
 
     # Render data for columns 2-8
@@ -133,12 +141,12 @@ def kpi(expense, income, transaction, all_year=False):
     # --- 3. The Whole-Width Dashed Line ---
     st.markdown("<hr style='margin: 0px; border: none; border-top: 2px dashed #bbb;'>", unsafe_allow_html=True)
     # --- 4. Render Bottom Section (% by Income) ---
-    bcols = st.columns(8)
+    bcols = st.columns(10)
 
     with bcols[0]:
         st.markdown("<p style='font-size: 22px; text-align: center; font-weight: bold;'>% of Income</p>", unsafe_allow_html=True)
 
-    for i in range(7):
+    for i in range(len(categories)):
         with bcols[i+1]:
             # Earning (index 0) is 100%, others use their calculated %
             display_pct = 100.0 if i == 0 else categories[i]['pct']
