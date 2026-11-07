@@ -125,7 +125,7 @@ def calculate_fund_category_summary(transaction: pd.DataFrame) -> pd.DataFrame:
     if data.empty:
         return pd.DataFrame(
             columns=[
-                "Year", "Month", "Fund Category", "Deposit", "Withdrawal", "Net Saving",
+                "Year", "Month", "Fund Category", "Deposit", "Withdrawal", "Transfer In", "Transfer Out", "Net Saving",
                 "Annual Net Saving", "Annual Net Saving (Retire+Medium)",
                 "Annual Net Saving (R+M+T)", "Annual Net Saving (All)",
             ]
@@ -187,7 +187,7 @@ def calculate_fund_category_summary(transaction: pd.DataFrame) -> pd.DataFrame:
     return (
         summary.sort_values(["Year", "Month Number", "_category_order"], ascending=[False, False, True])
         [[
-            "Year", "Month", "Fund Category", "Deposit", "Withdrawal", "Net Saving",
+            "Year", "Month", "Fund Category", "Deposit", "Withdrawal", "Transfer In", "Transfer Out", "Net Saving",
             "Annual Net Saving", "Annual Net Saving (Retire+Medium)",
             "Annual Net Saving (R+M+T)", "Annual Net Saving (All)",
         ]]
