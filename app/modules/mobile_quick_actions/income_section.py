@@ -5,7 +5,10 @@ from utils.data import fixed_income_data, account_name_list
 from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data
 
-INCOME_SOURCE_OPTIONS = ["Gov", "Tax Return", "Other"]
+INCOME_SOURCE_OPTIONS = [
+    "Salary", "Tax Return", "Side Hustle", "Investment",
+    "Interest Earning", "Capital Gain", "Other",
+]
 
 
 def render_income_section():

@@ -209,8 +209,8 @@ def update_expense(
                     """
                     INSERT INTO transactions
                         (date, account_name, transaction_type, amount,
-                         fund_category, transaction_category, source_notes, expense_id, trip)
-                    VALUES (%s, %s, 'Withdrawal', %s, %s, 'Spending', %s, %s, %s)
+                         fund_category, source_notes, expense_id, trip)
+                    VALUES (%s, %s, 'Withdrawal', %s, %s, %s, %s, %s)
                     """,
                     (new_date, "Main Chequing", -primary_amount, target_fund_category,
                      source_notes.strip() or None, expense_id, new_trip),
@@ -220,8 +220,8 @@ def update_expense(
                     """
                     INSERT INTO transactions
                         (date, account_name, transaction_type, amount,
-                         fund_category, transaction_category, source_notes, expense_id, trip)
-                    VALUES (%s, %s, 'Withdrawal', %s, %s, 'Spending', %s, %s, %s)
+                         fund_category, source_notes, expense_id, trip)
+                    VALUES (%s, %s, 'Withdrawal', %s, %s, %s, %s, %s)
                     """,
                     (new_date, "Main Chequing", -secondary_amount, split_fund_category_1,
                      source_notes.strip() or None, expense_id, new_trip),

@@ -60,12 +60,12 @@ common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Bell Canada', 'S
                      'Dollarama', 'A&W', 'Shoppers Drug Mart', 'Global Grocery', 'Costco', 
                      'Take Sushi', 'Petro', 'Starbucks', 'Irving', 'Shell',
                      'Hopspot', 'Mike & Andreea', 'Tim Hortons', 'Panda Mart', 'Eastlink', 'Pho Vietnam Rest', 
-                     'Saigon Pho', 'Receiver Coffee', 'Wal-Mart', 'Hong Mall', 'Liquor', 'Cows', 'Alambe', 'Mucho Burrito']
+                     'Saigon Pho', 'Receiver Coffee', 'Wal-Mart', 'Hong Mall', 'Liquor', 'Cows', 'Alambe', 'Mucho Burrito', 'Aviva- PC Insurance']
 
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
                      "Medicine", "Exercise", "Saved For Love", "Transportation", "Education", "Traveling" , 
-                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car", "Technology", "Aviva- PC Insurance"]
+                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car", "Technology"]
 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
@@ -86,15 +86,6 @@ transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer 
 
 # A transaction's purpose is separate from its direction.  For example, a
 # withdrawal can be either real spending or an account-to-account movement.
-transaction_category_options = [
-    "Account Balance",
-    "Spending",
-    "Monthly Saving",
-    "Investment",
-    "Income",
-    "Other",
-]
-
 # Change every year
 def _decimal_from_raw(raw_value, seen_names=None):
     seen_names = seen_names or set()

@@ -16,7 +16,7 @@ WHERE deposit_account IS NULL;
 
 INSERT INTO transactions (
     date, account_name, transaction_type, amount,
-    fund_category, transaction_category, source_notes, income_id
+    fund_category, source_notes, income_id
 )
 SELECT
     i.date,
@@ -33,7 +33,6 @@ SELECT
           OR i.deposit_account ILIKE '%Home%' THEN 'House'
         ELSE 'Others'
     END,
-    'Income',
     'income deposit – ' || i.source,
     i.id
 FROM income i

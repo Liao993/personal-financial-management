@@ -19,6 +19,7 @@ services:
       - ./database/10_reconcile_retirement_transfer.sql:/docker-entrypoint-initdb.d/10_reconcile_retirement_transfer.sql
       - ./database/11_fix_emergency_transfer_direction.sql:/docker-entrypoint-initdb.d/11_fix_emergency_transfer_direction.sql
       - ./database/12_backfill_income_transactions.sql:/docker-entrypoint-initdb.d/12_backfill_income_transactions.sql
+      - ./database/13_remove_transaction_category_and_update_income_sources.sql:/docker-entrypoint-initdb.d/13_remove_transaction_category_and_update_income_sources.sql
       - ./database/02_seed_dev.sql:/docker-entrypoint-initdb.d/99_seed_dev.sql
       - postgres_data_dev:/var/lib/postgresql/data
     networks:

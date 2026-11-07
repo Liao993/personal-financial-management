@@ -59,13 +59,11 @@ def transaction_form():
                 -amount, fund_category,
                 source_notes=f"Transfer to {transfer_to_account} {source_notes}",
                 transfer_to_account=transfer_to_account,
-                transaction_category="Account Balance",
             )
             record_saving_transaction(
                 transaction_date, transfer_to_account, "Transfer In",
                 amount, fund_category,
                 source_notes=f"Transfer from {account_name} {source_notes}",
-                transaction_category="Account Balance",
             )
             st.session_state["show_the_form"] = False
             st.rerun()

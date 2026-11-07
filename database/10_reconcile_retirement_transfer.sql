@@ -3,7 +3,6 @@
 -- the tracked accounts, so classify it as a Deposit instead.
 UPDATE transactions
 SET transaction_type = 'Deposit',
-    transaction_category = 'Other',
     source_notes = COALESCE(
         NULLIF(source_notes, ''),
         'External retirement deposit; original transfer source was not recorded'

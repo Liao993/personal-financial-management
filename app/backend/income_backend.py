@@ -109,9 +109,9 @@ def insert_income_data(validated_data: dict):
                 """
                 INSERT INTO transactions (
                     date, account_name, transaction_type, amount,
-                    fund_category, transaction_category, source_notes, income_id
+                    fund_category, source_notes, income_id
                 )
-                VALUES (%s, %s, 'Deposit', %s, %s, 'Income', %s, %s)
+                VALUES (%s, %s, 'Deposit', %s, %s, %s, %s)
                 """,
                 (
                     validated_data["date"],

@@ -28,7 +28,6 @@ def monthly_savings_data_handling(
             transaction_type="Deposit",
             amount=travel_saving,
             fund_category="Traveling Funds",
-            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
         Transaction(
@@ -37,7 +36,6 @@ def monthly_savings_data_handling(
             transaction_type="Deposit",
             amount=retirement_saving,
             fund_category="Retirement Saving",
-            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
         Transaction(
@@ -46,7 +44,6 @@ def monthly_savings_data_handling(
             transaction_type="Deposit",
             amount=medium_term_saving,
             fund_category="Medium-term Saving",
-            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
         Transaction(
@@ -55,7 +52,6 @@ def monthly_savings_data_handling(
             transaction_type="Deposit",
             amount=emergency_funds,
             fund_category="Emergency Funds",
-            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
         Transaction(
@@ -64,7 +60,6 @@ def monthly_savings_data_handling(
             transaction_type="Deposit",
             amount=home_deposit,
             fund_category="House",
-            transaction_category="Monthly Saving",
             source_notes=source_notes,
         ),
     ]

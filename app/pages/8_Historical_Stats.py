@@ -18,6 +18,31 @@ import streamlit as st # type: ignore
 
 st.set_page_config(page_title="Historical Stats", page_icon="💰", layout="wide")
 
+SAVING_EARNING_SOURCES = ("Salary", "Tax Return", "Side Hustle")
+
+
+@st.dialog("Earnings Included in Monthly Saving")
+def show_saving_earnings_dialog(income_source_data):
+    saving_income = income_source_data[
+        income_source_data["source"].isin(SAVING_EARNING_SOURCES)
+    ].copy()
+    st.caption(
+        "This view includes Salary, Tax Return, and Side Hustle earnings. "
+        "Interest Earning and Capital Gain are excluded from monthly saving earnings."
+    )
+    if saving_income.empty:
+        st.info("No Salary, Tax Return, or Side Hustle earnings were recorded for this period.")
+        return
+    saving_income["date"] = pd.to_datetime(saving_income["date"]).dt.date
+    saving_income["amount"] = pd.to_numeric(saving_income["amount"], errors="coerce").fillna(0.0)
+    st.metric("Included Earnings", f"${saving_income['amount'].sum():,.2f}")
+    st.dataframe(
+        saving_income.sort_values("date", ascending=False),
+        hide_index=True,
+        use_container_width=True,
+        column_config={"amount": st.column_config.NumberColumn("Amount", format="$%.2f")},
+    )
+
 
 def fetch_all_annual_expense_safe():
     if hasattr(expense_backend, "fetch_all_annual_expense"):
@@ -183,6 +208,8 @@ def historical_spending():
                     create_income_source_pie_chart(all_fetched_income_source, title="Total Earning by Source (All Years)")
                 else:
                     create_income_source_pie_chart(all_fetched_income_source, title=f"Total Earning by Source ({selected_year})")
+            if st.button("🔎 Show Earnings Used for Monthly Saving", use_container_width=True):
+                show_saving_earnings_dialog(all_fetched_income_source)
             st.write("---")
             
             col1, col2 = st.columns(2)

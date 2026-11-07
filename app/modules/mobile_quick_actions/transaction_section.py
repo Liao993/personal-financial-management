@@ -49,7 +49,6 @@ def render_transaction_section():
                     fund_category=fund_category,
                     source_notes=f"Transfer to {transfer_to_account} {source_notes}",
                     transfer_to_account=transfer_to_account,
-                    transaction_category="Account Balance",
                 )
                 txn_in = Transaction(
                     date=transaction_date,
@@ -58,7 +57,6 @@ def render_transaction_section():
                     amount=amount,
                     fund_category=fund_category,
                     source_notes=f"Transfer from {account_name} {source_notes}",
-                    transaction_category="Account Balance",
                 )
                 insert_transaction_data(txn_out.dict())
                 insert_transaction_data(txn_in.dict())
