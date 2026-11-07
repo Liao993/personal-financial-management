@@ -171,41 +171,6 @@ def historical_spending():
             
             # Show Income Source Distribution
             all_fetched_income_source = fetch_income_source_data_safe(selected_year if not is_all_year else None)
-            earnings = all_fetched_income_source.copy()
-            earnings["amount"] = pd.to_numeric(earnings["amount"], errors="coerce").fillna(0.0)
-            earnings_by_source = earnings.groupby("source")["amount"].sum().sort_values(ascending=False)
-            earning_help = "\n".join(
-                f"- {source}: ${amount:,.2f}" for source, amount in earnings_by_source.items()
-            ) or "No earnings recorded."
-
-            expenses_for_help = all_fetched_expense.copy()
-            expenses_for_help["amount"] = pd.to_numeric(expenses_for_help["amount"], errors="coerce").fillna(0.0)
-            spending_by_category = expenses_for_help.groupby("category")["amount"].sum().sort_values(ascending=False)
-            house_help = all_fetched_transaction[
-                all_fetched_transaction["fund_category"] == "House"
-            ] if not all_fetched_transaction.empty and "fund_category" in all_fetched_transaction.columns else pd.DataFrame()
-            if not house_help.empty:
-                spending_by_category.loc["House"] = float(house_help["total_amount"].sum())
-            spending_help = "\n".join(
-                f"- {category}: ${amount:,.2f}" for category, amount in spending_by_category.sort_values(ascending=False).items()
-            ) or "No spending recorded."
-
-            info_col1, info_col2 = st.columns(2)
-            with info_col1:
-                st.metric(
-                    "Earnings",
-                    f"${earnings['amount'].sum():,.2f}",
-                    help=f"Earnings breakdown for this period:\n{earning_help}",
-                )
-            with info_col2:
-                total_spending = float(expenses_for_help["amount"].sum()) + (
-                    float(house_help["total_amount"].sum()) if not house_help.empty else 0.0
-                )
-                st.metric(
-                    "All Spending",
-                    f"${total_spending:,.2f}",
-                    help=f"Spending breakdown for this period:\n{spending_help}",
-                )
             inc_col1, inc_col2 = st.columns(2)
             with inc_col1:
                 if is_all_year:

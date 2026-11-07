@@ -46,9 +46,9 @@ def kpi(expense, income, transaction, all_year=False):
 
     # Data configuration for the categories
     categories = [
-        {"name": "Earning", "color": "orange", "sum": total_income},
-        {"name": "All Spending", "color": "#e74c3c", "sum": total_spending},
-        {"name": "Daily", "color": "#f1c40f", "sum": expense[expense["summary_category"] == "Daily Expenses"]["amount"].sum()},
+        {"name": "Earning", "color": "orange", "sum": total_income, "definition": "Total income recorded in the selected period."},
+        {"name": "All Spending", "color": "#e74c3c", "sum": total_spending, "definition": "Daily expenses plus House allocations."},
+        {"name": "Daily", "color": "#f1c40f", "sum": expense[expense["summary_category"] == "Daily Expenses"]["amount"].sum(), "definition": "Regular expenses included in monthly spending; House and fund-withdrawal expenses are shown separately."},
         {"name": "House", "color": "#bce784", "sum": house_sum},
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum()},
         {"name": "Grocery", "color": "#ff8fab", "sum": expense[expense["category"] == "Grocery"]['amount'].sum()},
@@ -62,7 +62,8 @@ def kpi(expense, income, transaction, all_year=False):
         
         with cols[i+1]:
             st.markdown(
-                f"<p style='font-size: 20px; color: {cat['color']}; text-align: center;'><b>{cat['name']}</b></p>"
+                f"<p style='font-size: 20px; color: {cat['color']}; text-align: center;'><b>{cat['name']}"
+                f" <span title=\"{cat.get('definition', '')}\" style=\"font-size:14px; color:#888; cursor:help;\">ⓘ</span></b></p>"
                 f"<p style='font-size: 22px; text-align: center;'>${c_sum:,.0f}</p>"
                 f"<p style='font-size: 22px; text-align: center;'>${c_avg:,.0f}</p>",
                 unsafe_allow_html=True,
