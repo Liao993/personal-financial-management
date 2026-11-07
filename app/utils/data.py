@@ -69,7 +69,7 @@ expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell 
 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
-traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Gas/Parking/Tolls", "Food", "Tickets", "Others"]
+traveling_category_options = ["Flight", "Hotel", "Public Transportation", "Gift", "Rental/Gas/Parking/Tolls", "Food", "Tickets", "Others"]
 payment_method = ["PC", "Scotia_Red", "RBC", "Simplii", "eTransfer", "Debit Card", "Cash", "Account Deduction"]
 
 # transaction

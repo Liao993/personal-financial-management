@@ -39,7 +39,12 @@ case "$CMD" in
     down)
         $DC down ;;
     restart)
-        $DC down && $DC up -d ;;
+        echo "Restarting PROD environment and applying schema migrations..."
+        $DC down
+        $DC up -d db
+        wait_for_db
+        "$SCRIPT_DIR/prod.sh" schema
+        $DC up -d app dbt ;;
     build)
         $DC build app dbt ;;
     logs)
@@ -52,7 +57,8 @@ case "$CMD" in
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/05_expense_ingestion_dedupe.sql
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/06_income_deposit_account.sql
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/07_transaction_category.sql
-        $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/08_retirement_account_limits.sql ;;
+        $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/08_retirement_account_limits.sql
+        $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/09_traveling_category_update.sql ;;
     dbt)
         $DC run --rm dbt dbt run ;;
     backup)

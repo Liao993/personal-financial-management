@@ -38,6 +38,7 @@ reload_sample_data() {
     run_db_sql /docker-entrypoint-initdb.d/06_income_deposit_account.sql
     run_db_sql /docker-entrypoint-initdb.d/07_transaction_category.sql
     run_db_sql /docker-entrypoint-initdb.d/08_retirement_account_limits.sql
+    run_db_sql /docker-entrypoint-initdb.d/09_traveling_category_update.sql
 
     echo "Reloading development sample data..."
     run_db_sql /docker-entrypoint-initdb.d/99_seed_dev.sql

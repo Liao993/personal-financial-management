@@ -35,9 +35,6 @@ def categorize_items(df, common_store_directory):
     df['trip'] = None
     df['amount_for_number_of_travelers'] = None
     df['paid_for_number_of_travlerers'] = None
-    # if category is traveling then amount_for_number_of_travelers and paid_for_number_of_travlerers should be 2
-    df.loc[df['category'] == 'Traveling', 'amount_for_number_of_travelers'] = 2
-    df.loc[df['category'] == 'Traveling', 'paid_for_number_of_travlerers'] = 2
     return df
 
 def rbc_transformed(extracted_data):
