@@ -99,7 +99,7 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
         return current_sum, avg, pct
 
     # --- 2. Render Top Section (Headers, Totals, Averages) ---
-    cols = st.columns(8)
+    cols = st.columns(9)
 
     # Column 1: Row Labels
     with cols[0]:
@@ -119,10 +119,11 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum(), "definition": "Offerings filter: summary_category = 'Donation and Gifts', covering Donation and Gifts categories."},
         {"name": "Grocery", "color": "#ff8fab", "sum": grocery_expense['amount'].sum(), "definition": grocery_note},
         {"name": "Retirement", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum(), "definition": "Retirement filter: fund_category = 'Retirement Saving' in the transaction summary."},
+        {"name": "Medium Saving", "color": "#8e44ad", "sum": transaction[(transaction['fund_category'] == 'Medium-term Saving')]['total_amount'].sum(), "definition": "Medium Saving filter: fund_category = 'Medium-term Saving' in the transaction summary."},
     ]
 
-    # Render data for columns 2-8
-    for i, cat in enumerate(categories[:7]):
+    # Render data for columns 2-9
+    for i, cat in enumerate(categories):
         c_sum, c_avg, c_pct = get_stats(cat['sum'], total_income, divisor)
         categories[i]['pct'] = c_pct # Save for bottom row
         
@@ -139,12 +140,12 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
     # --- 3. The Whole-Width Dashed Line ---
     st.markdown("<hr style='margin: 0px; border: none; border-top: 2px dashed #bbb;'>", unsafe_allow_html=True)
     # --- 4. Render Bottom Section (% by Income) ---
-    bcols = st.columns(8)
+    bcols = st.columns(9)
 
     with bcols[0]:
         st.markdown("<p style='font-size: 22px; text-align: center; font-weight: bold;'>% of Income</p>", unsafe_allow_html=True)
 
-    for i in range(7):
+    for i in range(len(categories)):
         with bcols[i+1]:
             # Earning (index 0) is 100%, others use their calculated %
             display_pct = 100.0 if i == 0 else categories[i]['pct']
