@@ -146,6 +146,37 @@ def fetch_fund_withdrawals_by_year(year=None):
     return pd.DataFrame(columns=["fund_category", "total_withdrawal"])
 
 
+def fetch_fund_deposits_by_year(year=None):
+    """Return positive deposit totals for the Medium-term fund."""
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        query = """
+            SELECT fund_category, SUM(ABS(amount)) AS total_deposit
+            FROM transactions
+            WHERE transaction_type = 'Deposit'
+              AND fund_category = 'Medium-term Saving'
+        """
+        params = []
+        if year is not None:
+            query += " AND EXTRACT(YEAR FROM date) = %s"
+            params.append(year)
+        query += " GROUP BY fund_category;"
+        try:
+            cursor.execute(query, params)
+            return pd.DataFrame(
+                cursor.fetchall(),
+                columns=["fund_category", "total_deposit"],
+            )
+        except psycopg2.Error as e:
+            st.error(f"Error retrieving fund deposits: {e}")
+            return pd.DataFrame(columns=["fund_category", "total_deposit"])
+        finally:
+            cursor.close()
+            conn.close()
+    return pd.DataFrame(columns=["fund_category", "total_deposit"])
+
+
 def fetch_all_transaction_data_by_month():
     """
     Used by Historical Stats All Year charts.

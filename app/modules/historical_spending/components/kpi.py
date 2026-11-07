@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import html
 
-def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
+def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None, fund_deposits=None):
 
 
     # --- 1. Calculations ---
@@ -48,6 +48,11 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
         withdrawal_totals = fund_withdrawals.set_index("fund_category")["total_withdrawal"].to_dict()
     medium_withdrawal = float(withdrawal_totals.get("Medium-term Saving", 0.0))
     traveling_withdrawal = float(withdrawal_totals.get("Traveling Funds", 0.0))
+    fund_deposits = fund_deposits if fund_deposits is not None else pd.DataFrame()
+    medium_deposit = (
+        float(fund_deposits["total_deposit"].sum())
+        if not fund_deposits.empty else 0.0
+    )
 
     st.markdown(
         """
@@ -119,7 +124,7 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum(), "definition": "Offerings filter: summary_category = 'Donation and Gifts', covering Donation and Gifts categories."},
         {"name": "Grocery", "color": "#ff8fab", "sum": grocery_expense['amount'].sum(), "definition": grocery_note},
         {"name": "Retirement", "color": "#1AA7EC", "sum": transaction[(transaction['fund_category'] == 'Retirement Saving')]['total_amount'].sum(), "definition": "Retirement filter: fund_category = 'Retirement Saving' in the transaction summary."},
-        {"name": "Medium", "color": "#8e44ad", "sum": transaction[(transaction['fund_category'] == 'Medium-term Saving')]['total_amount'].sum(), "definition": "Medium filter: fund_category = 'Medium-term Saving' in the transaction summary."},
+        {"name": "Medium", "color": "#8e44ad", "sum": medium_deposit, "definition": "Medium filter: transaction_type = 'Deposit' and fund_category = 'Medium-term Saving'. Transfers and withdrawals are excluded."},
     ]
 
     # Render data for columns 2-9

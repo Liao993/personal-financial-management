@@ -161,6 +161,7 @@ def historical_spending():
             all_fetched_income = fetch_all_income_by_month_safe()
             all_fetched_transaction = fetch_all_transaction_data_by_year_safe() # Consider all transactions to reflect actual saving
             all_fetched_fund_withdrawals = transaction_backend.fetch_fund_withdrawals_by_year()
+            all_fetched_fund_deposits = transaction_backend.fetch_fund_deposits_by_year()
             all_fetched_monthly_transaction = fetch_all_transaction_data_by_month_safe() # Only consider deposit
         else:
             all_fetched_expense = expense_backend.fetch_annual_expense(selected_year)
@@ -170,6 +171,7 @@ def historical_spending():
             )
             all_fetched_transaction = transaction_backend.fetch_transaction_data_by_year(selected_year) # Consider all transactions to reflect actual saving
             all_fetched_fund_withdrawals = transaction_backend.fetch_fund_withdrawals_by_year(selected_year)
+            all_fetched_fund_deposits = transaction_backend.fetch_fund_deposits_by_year(selected_year)
             all_fetched_monthly_transaction = transaction_backend.fetch_transaction_data_by_month(selected_year) # Only consider deposit
         if (len(all_fetched_expense) == 0) | (len(all_fetched_income) == 0):
             st.warning("No Spending or Annual Income in the selected period")
@@ -182,6 +184,7 @@ def historical_spending():
                 all_fetched_transaction,
                 all_year=is_all_year,
                 fund_withdrawals=all_fetched_fund_withdrawals,
+                fund_deposits=all_fetched_fund_deposits,
             )
             st.write("---")
             
