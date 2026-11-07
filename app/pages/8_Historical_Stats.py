@@ -18,43 +18,6 @@ import streamlit as st # type: ignore
 
 st.set_page_config(page_title="Historical Stats", page_icon="💰", layout="wide")
 
-@st.dialog("Earnings")
-def show_earnings_dialog(income_source_data):
-    earnings = income_source_data.copy()
-    if earnings.empty:
-        st.info("No earnings were recorded for this period.")
-        return
-    earnings["date"] = pd.to_datetime(earnings["date"]).dt.date
-    earnings["amount"] = pd.to_numeric(earnings["amount"], errors="coerce").fillna(0.0)
-    st.metric("Total Earnings", f"${earnings['amount'].sum():,.2f}")
-    st.dataframe(
-        earnings.sort_values("date", ascending=False),
-        hide_index=True,
-        use_container_width=True,
-        column_config={"amount": st.column_config.NumberColumn("Amount", format="$%.2f")},
-    )
-
-
-@st.dialog("All Spending")
-def show_all_spending_dialog(expense_data, transaction_data):
-    expenses = expense_data.copy()
-    expenses["amount"] = pd.to_numeric(expenses["amount"], errors="coerce").fillna(0.0)
-    house = transaction_data[
-        transaction_data["fund_category"] == "House"
-    ].copy() if not transaction_data.empty and "fund_category" in transaction_data.columns else pd.DataFrame()
-    house_total = float(house["total_amount"].sum()) if not house.empty else 0.0
-    expense_total = float(expenses["amount"].sum()) if not expenses.empty else 0.0
-    st.metric("Total Spending", f"${expense_total + house_total:,.2f}")
-    if not expenses.empty:
-        st.subheader("Expenses")
-        st.dataframe(expenses.sort_values("date", ascending=False), hide_index=True, use_container_width=True)
-    if not house.empty:
-        st.subheader("House Allocations")
-        st.dataframe(house, hide_index=True, use_container_width=True)
-    if expenses.empty and house.empty:
-        st.info("No spending was recorded for this period.")
-
-
 def fetch_all_annual_expense_safe():
     if hasattr(expense_backend, "fetch_all_annual_expense"):
         return expense_backend.fetch_all_annual_expense()
@@ -208,6 +171,41 @@ def historical_spending():
             
             # Show Income Source Distribution
             all_fetched_income_source = fetch_income_source_data_safe(selected_year if not is_all_year else None)
+            earnings = all_fetched_income_source.copy()
+            earnings["amount"] = pd.to_numeric(earnings["amount"], errors="coerce").fillna(0.0)
+            earnings_by_source = earnings.groupby("source")["amount"].sum().sort_values(ascending=False)
+            earning_help = "\n".join(
+                f"- {source}: ${amount:,.2f}" for source, amount in earnings_by_source.items()
+            ) or "No earnings recorded."
+
+            expenses_for_help = all_fetched_expense.copy()
+            expenses_for_help["amount"] = pd.to_numeric(expenses_for_help["amount"], errors="coerce").fillna(0.0)
+            spending_by_category = expenses_for_help.groupby("category")["amount"].sum().sort_values(ascending=False)
+            house_help = all_fetched_transaction[
+                all_fetched_transaction["fund_category"] == "House"
+            ] if not all_fetched_transaction.empty and "fund_category" in all_fetched_transaction.columns else pd.DataFrame()
+            if not house_help.empty:
+                spending_by_category.loc["House"] = float(house_help["total_amount"].sum())
+            spending_help = "\n".join(
+                f"- {category}: ${amount:,.2f}" for category, amount in spending_by_category.sort_values(ascending=False).items()
+            ) or "No spending recorded."
+
+            info_col1, info_col2 = st.columns(2)
+            with info_col1:
+                st.metric(
+                    "Earnings",
+                    f"${earnings['amount'].sum():,.2f}",
+                    help=f"Earnings breakdown for this period:\n{earning_help}",
+                )
+            with info_col2:
+                total_spending = float(expenses_for_help["amount"].sum()) + (
+                    float(house_help["total_amount"].sum()) if not house_help.empty else 0.0
+                )
+                st.metric(
+                    "All Spending",
+                    f"${total_spending:,.2f}",
+                    help=f"Spending breakdown for this period:\n{spending_help}",
+                )
             inc_col1, inc_col2 = st.columns(2)
             with inc_col1:
                 if is_all_year:
@@ -221,14 +219,6 @@ def historical_spending():
                     create_income_source_pie_chart(all_fetched_income_source, title=f"Total Earning by Source ({selected_year})")
             st.write("---")
 
-            detail_col1, detail_col2 = st.columns(2)
-            with detail_col1:
-                if st.button("🔎 View Earnings", use_container_width=True):
-                    show_earnings_dialog(all_fetched_income_source)
-            with detail_col2:
-                if st.button("🔎 View All Spending", use_container_width=True):
-                    show_all_spending_dialog(all_fetched_expense, all_fetched_transaction)
-            
             col1, col2 = st.columns(2)
             with col1:
                  # Show All Monthly Expenses by Amount
