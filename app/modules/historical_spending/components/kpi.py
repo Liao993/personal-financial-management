@@ -54,6 +54,8 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None, fun
         deposit_totals = fund_deposits.set_index("fund_category")["total_deposit"].to_dict()
     retirement_deposit = float(deposit_totals.get("Retirement Saving", 0.0))
     medium_deposit = float(deposit_totals.get("Medium-term Saving", 0.0))
+    traveling_deposit = float(deposit_totals.get("Traveling Funds", 0.0))
+    income_base = total_income if total_income > 0 else 1.0
 
     st.markdown(
         """
@@ -157,16 +159,22 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None, fun
             display_pct = 100.0 if i == 0 else categories[i]['pct']
             st.markdown(f"<p style='font-size: 22px; text-align: center;'><b>{display_pct:.1f}%</b></p>", unsafe_allow_html=True)
 
-    withdrawal_cols = st.columns(2)
+    withdrawal_cols = st.columns(3)
     with withdrawal_cols[0]:
         st.markdown(
             f"<p style='font-size: 19px; color: #9b59b6; text-align: center; margin-bottom: 0;'><b>Medium Withdrawal</b></p>"
-            f"<p style='font-size: 24px; color: #9b59b6; text-align: center;'><b>${medium_withdrawal:,.2f}</b></p>",
+            f"<p style='font-size: 24px; color: #9b59b6; text-align: center;'><b>${medium_withdrawal:,.2f}</b> ({medium_withdrawal / income_base:.1%})</p>",
             unsafe_allow_html=True,
         )
     with withdrawal_cols[1]:
         st.markdown(
             f"<p style='font-size: 19px; color: #e67e22; text-align: center; margin-bottom: 0;'><b>Traveling Withdrawal</b></p>"
-            f"<p style='font-size: 24px; color: #e67e22; text-align: center;'><b>${traveling_withdrawal:,.2f}</b></p>",
+            f"<p style='font-size: 24px; color: #e67e22; text-align: center;'><b>${traveling_withdrawal:,.2f}</b> ({traveling_withdrawal / income_base:.1%})</p>",
+            unsafe_allow_html=True,
+        )
+    with withdrawal_cols[2]:
+        st.markdown(
+            f"<p style='font-size: 19px; color: #27ae60; text-align: center; margin-bottom: 0;'><b>Traveling Deposit</b></p>"
+            f"<p style='font-size: 24px; color: #27ae60; text-align: center;'><b>${traveling_deposit:,.2f}</b> ({traveling_deposit / income_base:.1%})</p>",
             unsafe_allow_html=True,
         )

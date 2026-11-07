@@ -147,7 +147,7 @@ def fetch_fund_withdrawals_by_year(year=None):
 
 
 def fetch_fund_deposits_by_year(year=None):
-    """Return positive deposit totals for the Retirement and Medium funds."""
+    """Return positive deposit totals for the Retirement, Medium, and Travel funds."""
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -155,7 +155,7 @@ def fetch_fund_deposits_by_year(year=None):
             SELECT fund_category, SUM(ABS(amount)) AS total_deposit
             FROM transactions
             WHERE transaction_type = 'Deposit'
-              AND fund_category IN ('Retirement Saving', 'Medium-term Saving')
+              AND fund_category IN ('Retirement Saving', 'Medium-term Saving', 'Traveling Funds')
         """
         params = []
         if year is not None:
