@@ -136,12 +136,6 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
                 unsafe_allow_html=True,
             )
 
-    withdrawal_cols = st.columns(2)
-    with withdrawal_cols[0]:
-        st.metric("Medium Withdrawal", f"${medium_withdrawal:,.2f}")
-    with withdrawal_cols[1]:
-        st.metric("Traveling Withdrawal", f"${traveling_withdrawal:,.2f}")
-
     # --- 3. The Whole-Width Dashed Line ---
     st.markdown("<hr style='margin: 0px; border: none; border-top: 2px dashed #bbb;'>", unsafe_allow_html=True)
     # --- 4. Render Bottom Section (% by Income) ---
@@ -155,3 +149,17 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None):
             # Earning (index 0) is 100%, others use their calculated %
             display_pct = 100.0 if i == 0 else categories[i]['pct']
             st.markdown(f"<p style='font-size: 22px; text-align: center;'><b>{display_pct:.1f}%</b></p>", unsafe_allow_html=True)
+
+    withdrawal_cols = st.columns(2)
+    with withdrawal_cols[0]:
+        st.markdown(
+            f"<p style='font-size: 19px; color: #9b59b6; text-align: center; margin-bottom: 0;'><b>Medium Withdrawal</b></p>"
+            f"<p style='font-size: 24px; color: #9b59b6; text-align: center;'><b>${medium_withdrawal:,.2f}</b></p>",
+            unsafe_allow_html=True,
+        )
+    with withdrawal_cols[1]:
+        st.markdown(
+            f"<p style='font-size: 19px; color: #e67e22; text-align: center; margin-bottom: 0;'><b>Traveling Withdrawal</b></p>"
+            f"<p style='font-size: 24px; color: #e67e22; text-align: center;'><b>${traveling_withdrawal:,.2f}</b></p>",
+            unsafe_allow_html=True,
+        )
