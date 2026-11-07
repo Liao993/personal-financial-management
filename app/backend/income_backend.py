@@ -137,7 +137,7 @@ def insert_income_data(validated_data: dict):
 # Fetch helpers
 # ---------------------------------------------------------------------------
 
-def fetch_annual_income_by_month(year):
+def fetch_annual_income_by_month(year, excluded_sources=None):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -145,11 +145,17 @@ def fetch_annual_income_by_month(year):
             SELECT EXTRACT(MONTH FROM date) AS month, SUM(amount) As amount
             FROM income
             WHERE EXTRACT(YEAR FROM date) = %s
+        """
+        params = [year]
+        if excluded_sources:
+            query += " AND source <> ALL(%s)"
+            params.append(list(excluded_sources))
+        query += """
             GROUP BY EXTRACT(MONTH FROM date)
             ORDER BY month;
-    """
+        """
         try:
-            cursor.execute(query, (year,))
+            cursor.execute(query, params)
             columns = ['month', 'total_income']
             data = cursor.fetchall()
             if data:
@@ -169,7 +175,7 @@ def fetch_annual_income_by_month(year):
         return []
 
 
-def fetch_all_income_by_month():
+def fetch_all_income_by_month(excluded_sources=None):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -178,11 +184,17 @@ def fetch_all_income_by_month():
                    CAST(EXTRACT(MONTH FROM date) AS INTEGER) AS month,
                    SUM(amount) AS amount
             FROM income
+        """
+        params = []
+        if excluded_sources:
+            query += " WHERE source <> ALL(%s)"
+            params.append(list(excluded_sources))
+        query += """
             GROUP BY 1, 2
             ORDER BY year, month;
         """
         try:
-            cursor.execute(query)
+            cursor.execute(query, params)
             columns = ["year", "month", "total_income"]
             data = cursor.fetchall()
             if data:
