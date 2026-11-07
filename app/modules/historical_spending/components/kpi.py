@@ -124,8 +124,8 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None, fun
         {"name": "House", "color": "#bce784", "sum": house_sum, "definition": "House fund filter: fund_category = 'House'. This is the amount deposited/allocated from salary, not actual House spending."},
         {"name": "Offerings", "color": "#989fce", "sum": expense[expense["summary_category"] == "Donation and Gifts"]["amount"].sum(), "definition": "Offerings filter: summary_category = 'Donation and Gifts', covering Donation and Gifts categories."},
         {"name": "Grocery", "color": "#ff8fab", "sum": grocery_expense['amount'].sum(), "definition": grocery_note},
-        {"name": "Retirement", "color": "#1AA7EC", "sum": retirement_deposit, "definition": "Retirement filter: transaction_type = 'Deposit' and fund_category = 'Retirement Saving'. Transfers and withdrawals are excluded."},
-        {"name": "Medium", "color": "#8e44ad", "sum": medium_deposit, "definition": "Medium filter: transaction_type = 'Deposit' and fund_category = 'Medium-term Saving'. Transfers and withdrawals are excluded."},
+        {"name": "Retirement", "color": "#1AA7EC", "sum": retirement_deposit, "definition": "Retirement filter: transaction_type = 'Deposit' and fund_category = 'Retirement Saving'. Transfers and withdrawals are excluded. Deposits may include salary savings, Interest Earning, and Capital Gain."},
+        {"name": "Medium", "color": "#8e44ad", "sum": medium_deposit, "definition": "Medium filter: transaction_type = 'Deposit' and fund_category = 'Medium-term Saving'. Transfers and withdrawals are excluded. Deposits may include salary savings, Interest Earning, and Capital Gain."},
     ]
 
     # Render data for columns 2-9
