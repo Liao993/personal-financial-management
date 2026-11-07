@@ -16,6 +16,12 @@ from modules.upload_pdf.pipeline.common import exclude_payment_credits  # noqa: 
 
 
 class UploadExpenseReviewTests(unittest.TestCase):
+    def test_aviva_pc_insurance_is_an_expense_category_not_a_travel_category(self):
+        from utils.data import expense_category_options, traveling_category_options
+
+        self.assertIn("Aviva- PC Insurance", expense_category_options)
+        self.assertNotIn("Aviva- PC Insurance", traveling_category_options)
+
     def test_primary_fund_amount_uses_total_when_no_secondary_split(self):
         data = pd.DataFrame(
             [

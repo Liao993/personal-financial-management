@@ -27,8 +27,8 @@ def _row_numbers(frame: pd.DataFrame, mask: pd.Series) -> str:
 
 def validate_statement_review_data(
     edited_df: pd.DataFrame,
-    single_trip: bool,
-    trip_input: str | None,
+    single_trip: bool = False,
+    trip_input: str | None = None,
 ) -> bool:
     travel_mask = (
         edited_df["category"].eq("Traveling")
@@ -171,33 +171,8 @@ def display_editable_dataframe(dataframe):
             unsafe_allow_html=True,
         )
 
-        st.markdown(
-            '<div style="font-size:22px; color: #ff9900; padding: 6px; border-radius: 5px;">📍 Traveling Section</div>',
-            unsafe_allow_html=True,
-        )
-        st.write("Choose one trip for all traveling rows, or select trips row by row.")
-        single_trip = st.checkbox("Apply one trip to all traveling rows", value=False)
-
         existing_trips = sorted({str(trip).strip() for trip in fetch_all_trips() if not _is_blank(trip)})
-        selected_trip = None
-        trip_input = None
-        if single_trip:
-            trip_options = existing_trips + ["Add New Trip"]
-            selected_trip = st.selectbox("Select Trip", options=[None] + trip_options)
-
-            if selected_trip == "Add New Trip":
-                trip_input = st.text_input("Trip-MonthYear (e.g., Vancouver-012025)")
-            else:
-                trip_input = selected_trip
-        else:
-            additional_trips = st.text_input(
-                "Additional trip names (comma-separated, optional)",
-                help="These names become available in the Trip column below.",
-            )
-            additional_trip_options = [
-                trip.strip() for trip in additional_trips.split(",") if trip.strip()
-            ]
-            trip_options = sorted(set(existing_trips + additional_trip_options))
+        trip_options = existing_trips
 
         st.markdown(
             '<div style="font-size:28px; color: #ff9900; padding: 10px; border-radius: 5px;">📊 PDF Data Editor</div>',
@@ -287,10 +262,8 @@ def display_editable_dataframe(dataframe):
         )
 
         if st.button("Confirm your changes"):
-            if not validate_statement_review_data(edited_df, single_trip, trip_input):
+            if not validate_statement_review_data(edited_df):
                 st.stop()
-            if single_trip:
-                edited_df.loc[edited_df["category"] == "Traveling", "trip"] = trip_input
             edited_df.loc[edited_df["category"] != "Traveling", "trip"] = None
             st.info("Loading your information...")
             st.session_state[review_data]    = edited_df

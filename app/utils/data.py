@@ -65,7 +65,7 @@ common_store_list = ['Not Common Store', 'Tsengdok Monastery', 'Bell Canada', 'S
 
 expense_category_options = ["Grocery", "Food Outside", "Household Goods", "Cell Phone", "Gas", "Donation", "Gifts", 
                      "Medicine", "Exercise", "Saved For Love", "Transportation", "Education", "Traveling" , 
-                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car", "Technology"]
+                    "Fun/Tickets", "Clothing", "Liquor", "Others", "Car", "Technology", "Aviva- PC Insurance"]
 
 # travel expense
 hotel_booking = ["AGODA", "BOOKING", "EXPEDIA", "AIRBNB"]
