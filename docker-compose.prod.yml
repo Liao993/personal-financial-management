@@ -15,6 +15,7 @@ services:
       - ./database/07_transaction_category.sql:/docker-entrypoint-initdb.d/07_transaction_category.sql
       - ./database/08_retirement_account_limits.sql:/docker-entrypoint-initdb.d/08_retirement_account_limits.sql
       - ./database/09_traveling_category_update.sql:/docker-entrypoint-initdb.d/09_traveling_category_update.sql
+      - ./database/10_reconcile_retirement_transfer.sql:/docker-entrypoint-initdb.d/10_reconcile_retirement_transfer.sql
       - postgres_data:/var/lib/postgresql/data
     networks:
       - budget_network_prod

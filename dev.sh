@@ -42,6 +42,7 @@ reload_sample_data() {
 
     echo "Reloading development sample data..."
     run_db_sql /docker-entrypoint-initdb.d/99_seed_dev.sql
+    run_db_sql /docker-entrypoint-initdb.d/10_reconcile_retirement_transfer.sql
 
     echo "Refreshing dbt models..."
     $DC run --rm dbt dbt run
