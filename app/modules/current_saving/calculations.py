@@ -84,7 +84,7 @@ def _fund_category_period_rows(transaction: pd.DataFrame) -> pd.DataFrame:
     data = transaction.copy()
     data = data[
         data["fund_category"].isin(SAVING_CATEGORIES)
-        & data["transaction_type"].isin(("Deposit", "Withdrawal"))
+        & data["transaction_type"].isin(("Deposit", "Withdrawal", "Transfer In", "Transfer Out"))
     ].copy()
     if data.empty:
         return pd.DataFrame(
@@ -95,8 +95,10 @@ def _fund_category_period_rows(transaction: pd.DataFrame) -> pd.DataFrame:
     dates = pd.to_datetime(data["date"], errors="coerce")
     data["Year"] = dates.dt.year.astype("Int64")
     data["Month"] = dates.dt.month.astype("Int64")
-    data["Deposit"] = data["amount"].where(data["transaction_type"] == "Deposit", 0.0)
-    data["Withdrawal"] = (-data["amount"]).where(data["transaction_type"] == "Withdrawal", 0.0)
+    data["Deposit"] = data["amount"].abs().where(data["transaction_type"] == "Deposit", 0.0)
+    data["Withdrawal"] = data["amount"].abs().where(data["transaction_type"] == "Withdrawal", 0.0)
+    data["Transfer In"] = data["amount"].abs().where(data["transaction_type"] == "Transfer In", 0.0)
+    data["Transfer Out"] = data["amount"].abs().where(data["transaction_type"] == "Transfer Out", 0.0)
     data = data.dropna(subset=["Year", "Month"])
 
     rows = []
@@ -118,7 +120,7 @@ def calculate_fund_category_summary(transaction: pd.DataFrame) -> pd.DataFrame:
     data = transaction.copy()
     data = data[
         data["fund_category"].isin(DISPLAY_FUND_CATEGORIES)
-        & data["transaction_type"].isin(("Deposit", "Withdrawal"))
+        & data["transaction_type"].isin(("Deposit", "Withdrawal", "Transfer In", "Transfer Out"))
     ].copy()
     if data.empty:
         return pd.DataFrame(
@@ -133,16 +135,25 @@ def calculate_fund_category_summary(transaction: pd.DataFrame) -> pd.DataFrame:
     dates = pd.to_datetime(data["date"], errors="coerce")
     data["Year"] = dates.dt.year.astype("Int64")
     data["Month Number"] = dates.dt.month.astype("Int64")
-    data["Deposit"] = data["amount"].where(data["transaction_type"] == "Deposit", 0.0)
-    data["Withdrawal"] = (-data["amount"]).where(data["transaction_type"] == "Withdrawal", 0.0)
+    data["Deposit"] = data["amount"].abs().where(data["transaction_type"] == "Deposit", 0.0)
+    data["Withdrawal"] = data["amount"].abs().where(data["transaction_type"] == "Withdrawal", 0.0)
+    data["Transfer In"] = data["amount"].abs().where(data["transaction_type"] == "Transfer In", 0.0)
+    data["Transfer Out"] = data["amount"].abs().where(data["transaction_type"] == "Transfer Out", 0.0)
     data = data.dropna(subset=["Year", "Month Number"])
 
     monthly = (
-        data.groupby(["Year", "Month Number", "fund_category"], as_index=False)[["Deposit", "Withdrawal"]]
+        data.groupby(["Year", "Month Number", "fund_category"], as_index=False)[
+            ["Deposit", "Withdrawal", "Transfer In", "Transfer Out"]
+        ]
         .sum()
         .rename(columns={"fund_category": "Fund Category"})
     )
-    monthly["Net Saving"] = monthly["Deposit"] - monthly["Withdrawal"]
+    monthly["Net Saving"] = (
+        monthly["Deposit"]
+        - monthly["Withdrawal"]
+        + monthly["Transfer In"]
+        - monthly["Transfer Out"]
+    )
 
     annual_by_category = monthly.groupby(["Year", "Fund Category"], as_index=False)["Net Saving"].sum()
     annual_totals = monthly.groupby("Year", as_index=False)["Net Saving"].sum().rename(
@@ -198,10 +209,10 @@ def calculate_account_flow_summary(
     data["Year"] = dates.dt.year.astype("Int64")
     data["Month"] = dates.dt.month.astype("Int64")
     data = data.dropna(subset=["Year", "Month", "account_name"])
-    data["Deposit"] = data["amount"].where(data["transaction_type"] == "Deposit", 0.0)
-    data["Withdrawal"] = (-data["amount"]).where(data["transaction_type"] == "Withdrawal", 0.0)
-    data["Transfer In"] = data["amount"].where(data["transaction_type"] == "Transfer In", 0.0)
-    data["Transfer Out"] = (-data["amount"]).where(data["transaction_type"] == "Transfer Out", 0.0)
+    data["Deposit"] = data["amount"].abs().where(data["transaction_type"] == "Deposit", 0.0)
+    data["Withdrawal"] = data["amount"].abs().where(data["transaction_type"] == "Withdrawal", 0.0)
+    data["Transfer In"] = data["amount"].abs().where(data["transaction_type"] == "Transfer In", 0.0)
+    data["Transfer Out"] = data["amount"].abs().where(data["transaction_type"] == "Transfer Out", 0.0)
 
     account_rows = data.groupby(["Year", "Month", "account_name"], as_index=False)[
         ["Deposit", "Withdrawal", "Transfer In", "Transfer Out"]

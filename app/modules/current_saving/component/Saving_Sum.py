@@ -12,7 +12,7 @@ def saving_sum(transaction):
     account_summary = calculate_account_flow_summary(transaction, hidden_accounts=hidden_accounts)
 
     st.markdown("<h3 style='text-align: center; color: #f1c40f;'>Fund Category Saving Summary</h3>", unsafe_allow_html=True)
-    st.caption("Transfers are excluded from the fund-category view because paired transfers reconcile within the fund category. Annual columns provide yearly context for each monthly fund row.")
+    st.caption("Transfer columns are hidden, but transfer in/out are included in Net Saving with direction applied internally. Annual columns provide yearly context for each monthly fund row.")
     if not category_summary.empty:
         st.dataframe(
             category_summary,
