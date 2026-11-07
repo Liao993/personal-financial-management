@@ -103,7 +103,7 @@ pgAdmin 4 is also included for manual database inspection and one-off SQL update
 
 - Development: http://localhost:5050
 - Production: http://localhost:5051
-- Default local login: `admin@localhost` / `change-me-before-use`
+- Default local login: `admin@example.com` / `change-me-before-use`
 
 Set `PGADMIN_DEFAULT_EMAIL` and `PGADMIN_DEFAULT_PASSWORD` in the ignored `.env.dev` and `.env.prod` files before using it. Inside pgAdmin, register the database host as `db` on port `5432`; use the matching PostgreSQL credentials from the environment file. Prefer reviewed SQL migrations for repeatable data changes and pgAdmin for investigation or one-off corrections.
 
