@@ -22,3 +22,16 @@ SET source = 'Interest Earning',
         ELSE notes || ' (Interest)'
     END
 WHERE lower(trim(source)) = 'interest';
+
+-- Normalize legacy labels to the current earning-source vocabulary.
+UPDATE income
+SET source = 'Tax Return'
+WHERE lower(trim(source)) = 'tax refund';
+
+UPDATE income
+SET source = 'Side Hustle'
+WHERE lower(trim(source)) = 'freelance';
+
+UPDATE income
+SET source = 'Investment'
+WHERE lower(trim(source)) = 'dividend';
