@@ -4,7 +4,7 @@ from modules.transaction.transaction_review import display_recorded_transactions
 from modules.transaction.transaction_saving import transaction_savings_action
 from backend.transaction_backend import fetch_last_transaction_data
 
-st.set_page_config(page_title="Transaction", page_icon="💰", layout="wide")
+st.set_page_config(page_title="Account Transfers", page_icon="🔁", layout="wide")
 
 
 def reset_transaction_page_state():
@@ -16,7 +16,8 @@ def reset_transaction_page_state():
 
 
 def transaction_actions_page():
-    st.markdown("<h1 style='text-align: center; color: #16a085'>Fund Category Transaction</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #16a085'>Account Transfers</h1>", unsafe_allow_html=True)
+    st.caption("Use this page only for moving money between accounts within the same fund category. Enter earnings on Earning Input and record fund withdrawals through Expense Input.")
 
     if 'show_the_form' not in st.session_state:
         st.session_state['show_the_form'] = True

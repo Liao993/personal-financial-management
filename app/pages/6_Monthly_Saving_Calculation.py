@@ -11,7 +11,7 @@ from modules.monthly_stats.calculation.saving_calculation import expense_and_sav
 from backend.transaction_backend import fetch_transaction_deposit_check, insert_transaction_data
 from models.transaction_models import Transaction
 import os
-st.set_page_config(page_title="Monthly Stats", page_icon="💰", layout="wide")
+st.set_page_config(page_title="Monthly Saving Calculation", page_icon="💰", layout="wide")
 
 
 # ─────────────────────────────────────────────
@@ -146,10 +146,10 @@ def rerun_monthly_saving(
 
 def monthly_stats_page():
     st.markdown(
-        "<h1 style='color: #5e548e; text-align: center;'>Monthly Stats</h1>",
+        "<h1 style='color: #5e548e; text-align: center;'>Monthly Saving Calculation</h1>",
         unsafe_allow_html=True,
     )
-    st.caption("ℹ️ Note: Only income deposited into a Chequing account is included in this calculation. Income deposited into other accounts (like TFSA or House) are excluded to prevent double-counting savings.")
+    st.caption("ℹ️ Purpose: calculate monthly saving from earnings deposited into a Chequing account. Earnings deposited directly into savings, investment, or other accounts are excluded from this calculation because they are already savings movements. Use Earning Input to record earnings, Expense Input for spending, and Account Transfers for account-to-account movements.")
 
     if st.session_state.get("monthly_rerun_success_message"):
         st.success(st.session_state.pop("monthly_rerun_success_message"))

@@ -4,22 +4,20 @@ import streamlit as st  # type: ignore
 def instruction():
     st.markdown(
         "<p style='font-size: 20px;'>"
-        "If money balance moves <b style='color:#e74c3c;'>BETWEEN DIFFERENT FUNDS</b>, "
-        "choose <b style='color:#e74c3c;'>Deposit</b> or <b style='color:#e74c3c;'>Withdrawal</b>.",
+        "Use this page only when money moves <b style='color:#e74c3c;'>BETWEEN ACCOUNTS</b> "
+        "within the same fund category.",
         unsafe_allow_html=True,
     )
     st.markdown(
-        "<p style='font-size: 20px;'>Example: From Medium-term Saving to Traveling Funds — "
-        "make <b style='color:orange'>TWO</b> transactions. "
-        "<b style='color:#e74c3c;'>Withdrawal</b> from Medium-term, "
-        "<b style='color:#e74c3c;'>Deposit</b> to Traveling Funds.</p>",
+        "<p style='font-size: 20px;'>Example: Retirement Saving from Chequing to TFSA Growth — "
+        "choose the fund category once and record one account transfer.</p>",
         unsafe_allow_html=True,
     )
     st.write("___")
     st.markdown(
         "<p style='font-size: 20px;'>"
-        "If it is the <b style='color:yellow;'>same fund</b> but in different accounts, "
-        "choose <b style='color:yellow;'>Transfer Between Accounts</b>.</p>",
+        "Income deposits are entered on the <b style='color:yellow;'>Earning Input</b> page, "
+        "and expense-funded withdrawals are created automatically from the expense record.</p>",
         unsafe_allow_html=True,
     )
     st.markdown(

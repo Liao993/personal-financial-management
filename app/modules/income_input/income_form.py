@@ -10,7 +10,7 @@ def income_input_form(edit_mode_form_key, review_data_key):
     form_version = st.session_state.get("income_form_version", 0)
     with st.form(f"income_form_{form_version}"):
         income_date = st.date_input("Date", value=date.today())
-        income_amount = st.number_input("Amount", min_value=0.0, format="%.2f", value=fixed_income_data)
+        income_amount = st.number_input("Earning Amount", min_value=0.0, format="%.2f", value=fixed_income_data)
 
         source_options = ["Gov", "Tax Return", "Interest", "Other"]
         selected_source = st.selectbox("Source", source_options)
@@ -30,9 +30,9 @@ def income_input_form(edit_mode_form_key, review_data_key):
             options=account_name_list if account_name_list else [default_account],
             index=default_index,
             help=(
-                "Choose which account this income is deposited into. "
-                "Chequing deposits are tracked in your monthly savings calculation. "
-                "Non-chequing deposits automatically create a linked transaction."
+                "Choose which account receives this earning. Every earning creates a linked "
+                "Deposit transaction for account-flow reporting. Only chequing earnings are "
+                "included in Monthly Saving Calculation."
             ),
         )
 

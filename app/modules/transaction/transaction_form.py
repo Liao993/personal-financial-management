@@ -4,7 +4,6 @@ from utils.css import drop_down_list
 from utils.data import (
     account_name_list,
     fund_categories,
-    transaction_category_options,
     transaction_type_list,
 )
 from modules.transaction.transaction_review import record_saving_transaction
@@ -14,7 +13,7 @@ from modules.transaction.transaction_instruction import instruction
 def transaction_form():
     form_version = st.session_state.get("transaction_form_version", 0)
     st.subheader(
-        "Record New Transaction: Track all money flow between accounts."
+        "Record Account Transfer: Move money between accounts within a fund category."
     )
 
     drop_down_list()
@@ -44,37 +43,10 @@ def transaction_form():
     amount            = st.number_input(
         "Amount", min_value=0.0, key=f"transaction_amount_{form_version}"
     )
-    transaction_category = st.selectbox(
-        "Transaction Category",
-        transaction_category_options,
-        index=transaction_category_options.index("Spending"),
-        key=f"transaction_category_{form_version}",
-        help="Classifies the purpose of this money movement. Transfers are always Account Balance.",
-    )
     source_notes      = st.text_input("Notes (Optional)", key=f"transaction_notes_{form_version}")
     transfer_to_account = None
 
-    if action_type == "Deposit (between funds or savings)":
-        if st.button("Record Deposit"):
-            record_saving_transaction(
-                transaction_date, account_name, "Deposit",
-                amount, fund_category, source_notes,
-                transaction_category=transaction_category,
-            )
-            st.session_state["show_the_form"] = False
-            st.rerun()
-
-    elif action_type == "Withdrawal (between funds or spending)":
-        if st.button("Record Withdrawal"):
-            record_saving_transaction(
-                transaction_date, account_name, "Withdrawal",
-                -amount, fund_category, source_notes,
-                transaction_category=transaction_category,
-            )
-            st.session_state["show_the_form"] = False
-            st.rerun()
-
-    elif action_type == "Transfer Between Accounts":
+    if action_type == "Transfer Between Accounts":
         transfer_to_account = st.selectbox(
             "Transfer To Account (Different Accounts)",
             account_name_list,

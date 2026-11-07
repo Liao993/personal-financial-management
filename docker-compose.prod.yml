@@ -17,6 +17,7 @@ services:
       - ./database/09_traveling_category_update.sql:/docker-entrypoint-initdb.d/09_traveling_category_update.sql
       - ./database/10_reconcile_retirement_transfer.sql:/docker-entrypoint-initdb.d/10_reconcile_retirement_transfer.sql
       - ./database/11_fix_emergency_transfer_direction.sql:/docker-entrypoint-initdb.d/11_fix_emergency_transfer_direction.sql
+      - ./database/12_backfill_income_transactions.sql:/docker-entrypoint-initdb.d/12_backfill_income_transactions.sql
       - postgres_data:/var/lib/postgresql/data
     networks:
       - budget_network_prod

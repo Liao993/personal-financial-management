@@ -9,7 +9,7 @@ INCOME_SOURCE_OPTIONS = ["Gov", "Tax Return", "Other"]
 
 
 def render_income_section():
-    st.subheader("💰 Quick Income")
+    st.subheader("💰 Quick Earning")
     if st.session_state.pop("mobile_income_success_message", None):
         st.success("Income saved.")
 
@@ -34,8 +34,8 @@ def render_income_section():
             index=0,
             key=f"mobile_income_deposit_account_{form_version}",
             help=(
-                "Chequing → tracked in monthly savings. "
-                "Other accounts → a linked deposit transaction is created automatically."
+                "Every earning creates a linked Deposit transaction. "
+                "Only chequing earnings are included in Monthly Saving Calculation."
             ),
         )
         submitted = st.form_submit_button("Save Income")

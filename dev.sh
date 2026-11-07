@@ -44,6 +44,7 @@ reload_sample_data() {
     run_db_sql /docker-entrypoint-initdb.d/99_seed_dev.sql
     run_db_sql /docker-entrypoint-initdb.d/10_reconcile_retirement_transfer.sql
     run_db_sql /docker-entrypoint-initdb.d/11_fix_emergency_transfer_direction.sql
+    run_db_sql /docker-entrypoint-initdb.d/12_backfill_income_transactions.sql
 
     echo "Refreshing dbt models..."
     $DC run --rm dbt dbt run

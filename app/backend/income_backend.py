@@ -99,8 +99,9 @@ def insert_income_data(validated_data: dict):
         cursor.execute(query, values)
         new_income_id = cursor.fetchone()[0]
 
-        # 2. For non-chequing accounts auto-create a linked Deposit transaction
-        if has_deposit_account and not _is_chequing_account(deposit_account):
+        # 2. Every income deposit gets a linked Deposit transaction. This keeps
+        # account-level flow complete regardless of which account receives it.
+        if has_deposit_account:
             fund_cat = _fund_category_for_account(deposit_account)
             source_label = validated_data.get("source", "income")
             source_notes = f"income deposit – {source_label}"

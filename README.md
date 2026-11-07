@@ -79,7 +79,7 @@ PDF extractors   + validation         extract/transform/          │
 
 | Page | What it does |
 |---|---|
-| Monthly Calculation | Applies a configurable savings formula to allocate income across funds; supports rerun/recalculation when past expenses change |
+| Monthly Saving Calculation | Calculates monthly saving from earnings deposited into Chequing; applies a configurable formula and supports rerun/recalculation when past expenses change |
 | Current Saving Status | Live pivot of fund balance × account, combining manual transactions and auto-generated withdrawals |
 | Historical Stats | Multi-year trend charts: spending mix, savings rate, category drift |
 | Portfolio Holdings | ETF/stock tracking with live price fetch, CAD-normalized valuation, allocation-by-category charts |

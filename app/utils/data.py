@@ -75,11 +75,11 @@ payment_method = ["PC", "Scotia_Red", "RBC", "Simplii", "eTransfer", "Debit Card
 # transaction
 _raw_fund_categories = os.environ.get("FUND_CATEGORIES", "")
 fund_categories = [a.strip() for a in _raw_fund_categories.split(",") if a.strip()]
-transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
+transaction_type_list = ["Transfer Between Accounts"]
 
 _raw_accounts = os.environ.get("ACCOUNT_NAMES", "")
 account_name_list = [a.strip() for a in _raw_accounts.split(",") if a.strip()]
-transaction_type_list = ["Deposit (between funds or savings)", "Withdrawal (between funds or spending)", "Transfer Between Accounts"]
+transaction_type_list = ["Transfer Between Accounts"]
 
 # the one used for database for both transactions and cashflow
 transaction_type_database = ["Deposit", "Withdrawal", "Transfer Out", "Transfer In"]
