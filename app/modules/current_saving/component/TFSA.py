@@ -1,52 +1,132 @@
-
-import streamlit as st # type: ignore
+import streamlit as st  # type: ignore
 import pandas as pd
 import datetime
 
 from utils.data import years
 
+
 def TFSA(original_data, room):
     room = float(room)
     color = '#69B41E'
-    today = datetime.date.today()
-    current_year = today.year
-    current_month = today.month
-    current_day = today.day
+    current_year = datetime.date.today().year
 
-    st.markdown(f"<h3 style='text-align: center; color:{color};'>TFSA Contribution Status</h3>", unsafe_allow_html=True)
+    st.markdown(
+        f"<h3 style='text-align: center; color:{color};'>"
+        "TFSA Contribution Status</h3>",
+        unsafe_allow_html=True
+    )
 
-    
-    selected_year = st.selectbox("Select Year for TFSA Contribution:", years)
+    selected_year = st.selectbox(
+    "Select Year for TFSA Contribution:",
+    years,
+    index=years.index(datetime.date.today().year)
+)
 
-    tfsa_data = original_data[original_data['account_name'].str.contains('TFSA', case=False)].copy() # Create a copy to avoid modifying the original DataFrame
-    tfsa_data['amount'] = pd.to_numeric(tfsa_data['amount'], errors='coerce').fillna(0.0).astype(float)
-    # Convert the 'date' column to datetime if it's not already
-    if not pd.api.types.is_datetime64_any_dtype(tfsa_data['date']):
-        tfsa_data['date'] = pd.to_datetime(tfsa_data['date'])
+    # --------------------------------------------------
+    # 1. Filter TFSA accounts
+    # --------------------------------------------------
+    tfsa_data = original_data[
+        original_data['account_name']
+        .str.contains('TFSA', case=False, na=False)
+    ].copy()
 
-  
+    # --------------------------------------------------
+    # 2. Normalize data types
+    # --------------------------------------------------
+    tfsa_data['amount'] = pd.to_numeric(
+        tfsa_data['amount'],
+        errors='coerce'
+    ).fillna(0.0)
 
-    total_contribution = float(tfsa_data[(tfsa_data['transaction_type'].isin(['Transfer In']))]['amount'].sum())
-    total_withdrawal = float(tfsa_data[(tfsa_data['transaction_type'].isin(['Transfer Out']))]['amount'].sum())
-    total_amount = total_contribution + total_withdrawal
-    # TFSA Contribution Room Re-built
-    if current_month == 1 and current_day == 1:
-        total_contribution = total_amount
-    else:
-        total_contribution = total_contribution
+    tfsa_data['date'] = pd.to_datetime(
+        tfsa_data['date'],
+        errors='coerce'
+    )
 
-    selected_year_contribution = float(tfsa_data[(tfsa_data['date'].dt.year == selected_year)]['amount'].sum())
-    other_year_contribution = total_contribution - selected_year_contribution
+    tfsa_data['transaction_type'] = (
+        tfsa_data['transaction_type']
+        .astype(str)
+        .str.strip()
+        .str.lower()
+    )
+
+    # --------------------------------------------------
+    # 3. Filter cash flow transactions only
+    # --------------------------------------------------
+    transfer_in = tfsa_data[
+        tfsa_data['transaction_type'] == 'transfer in'
+    ].copy()
+
+    transfer_out = tfsa_data[
+        tfsa_data['transaction_type'] == 'transfer out'
+    ].copy()
+
+    # --------------------------------------------------
+    # 4. Calculate contributions
+    # --------------------------------------------------
+    total_contribution = float(
+        transfer_in['amount'].sum()
+    )
+
+    selected_year_contribution = float(
+        transfer_in[
+            transfer_in['date'].dt.year == selected_year
+        ]['amount'].sum()
+    )
+
+    other_year_contribution = (
+        total_contribution - selected_year_contribution
+    )
+
+    # --------------------------------------------------
+    # 5. Calculate withdrawals
+    # --------------------------------------------------
+    total_withdrawal = float(
+        transfer_out['amount'].abs().sum()
+    )
+
+    # Net cash flow from transfers only
+    total_amount = total_contribution - total_withdrawal
+
+    # --------------------------------------------------
+    # 6. Calculate contribution room
+    # --------------------------------------------------
     total_room = room
     total_left = total_room - total_contribution
-    
-    # Create a dictionary to hold the data
+
+    # --------------------------------------------------
+    # 7. Create summary DataFrame
+    # --------------------------------------------------
     tfsa_summary_data = {
-        'action': [f"{selected_year} Contribution", "Other Year Contribution", 'Total Contribution', 'Total Withdrawal','Total Amount in TFSA',f'Total Room in {current_year}', f'Room Left in {current_year}'],
-        'amount': [selected_year_contribution, other_year_contribution, total_contribution, total_withdrawal, total_amount, total_room, total_left]
+        'action': [
+            f"{selected_year} Contribution",
+            "Other Year Contribution",
+            "Total Contribution",
+            "Total Withdrawal",
+            "Net Cash Flow",
+            f'Total Room in {current_year}',
+            f'Room Left in {current_year}'
+        ],
+        'amount': [
+            selected_year_contribution,
+            other_year_contribution,
+            total_contribution,
+            total_withdrawal,
+            total_amount,
+            total_room,
+            total_left
+        ]
     }
 
-    # Create a Pandas DataFrame from the dictionary
-    tfsa_summary_df = pd.DataFrame(tfsa_summary_data).set_index('action')
-    
-    st.dataframe(tfsa_summary_df)
+    tfsa_summary_df = (
+        pd.DataFrame(tfsa_summary_data)
+        .set_index('action')
+    )
+
+    # --------------------------------------------------
+    # 8. Display dashboard
+    # --------------------------------------------------
+    st.dataframe(
+        tfsa_summary_df,
+        use_container_width=True
+    )
