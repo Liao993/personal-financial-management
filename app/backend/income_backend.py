@@ -24,6 +24,9 @@ def _fund_category_for_account(account_name: str) -> str:
     """Auto-map an account name to the closest fund_category label.
     Falls back to 'Others' when no known keyword is found.
     """
+    # Special handling: RBC Chequing should map to fund_category '0'
+    if "rbc chequing" in account_name.lower():
+        return "0"
     for keyword, category in _ACCOUNT_FUND_MAP.items():
         if keyword.lower() in account_name.lower():
             return category
