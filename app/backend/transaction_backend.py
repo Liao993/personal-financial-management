@@ -124,7 +124,7 @@ def fetch_fund_withdrawals_by_year(year=None):
             SELECT fund_category, SUM(ABS(amount)) AS total_withdrawal
             FROM transactions
             WHERE transaction_type = 'Withdrawal'
-              AND fund_category IN ('Medium-term Saving', 'Traveling Funds')
+              AND fund_category IN ('Medium-term Saving', 'Traveling Funds', 'Emergency Funds')
         """
         params = []
         if year is not None:
@@ -155,7 +155,7 @@ def fetch_fund_deposits_by_year(year=None):
             SELECT fund_category, SUM(ABS(amount)) AS total_deposit
             FROM transactions
             WHERE transaction_type = 'Deposit'
-              AND fund_category IN ('Retirement Saving', 'Medium-term Saving', 'Traveling Funds')
+              AND fund_category IN ('Retirement Saving', 'Medium-term Saving', 'Traveling Funds', 'Emergency Funds')
         """
         params = []
         if year is not None:
