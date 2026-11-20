@@ -18,6 +18,7 @@ def kpi(expense, income, transaction, all_year=False, fund_withdrawals=None, fun
 
     # Financial Totals (Cast to float for math safety)
     earned_income = float(income['total_income'].sum())
+    # Exclude "Traveling" category from total spending calculation
     spending_expense = expense[expense["category"] != "Traveling"]
     total_expense = float(spending_expense['amount'].sum())
     
