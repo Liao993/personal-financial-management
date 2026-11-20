@@ -62,8 +62,9 @@ case "$CMD" in
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/10_reconcile_retirement_transfer.sql
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/11_fix_emergency_transfer_direction.sql
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/12_backfill_income_transactions.sql
-        $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/13_remove_transaction_category_and_update_income_sources.sql ;;
-    dbt)
+        # Removed extra migrations beyond the original 12 scripts
+
+        ;;    dbt)
         $DC run --rm dbt dbt run ;;
     backup)
         /Users/henry/Desktop/personal_finance_management_backup/backup.sh ;;
