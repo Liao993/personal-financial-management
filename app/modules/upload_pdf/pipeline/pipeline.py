@@ -30,7 +30,11 @@ def pipeline(pdf_files, source_by_filename):
         if source == AI_SOURCE:
             payment_method = source
             try:
-                transformed_data = extract_expenses_with_ai(pdf_file, payment_method)
+                transformed_data = extract_expenses_with_ai(
+                    pdf_file,
+                    payment_method,
+                    filename=pdf_file.name,
+                )
             except Exception as exc:
                 st.error(f"Could not process {pdf_file.name} with AI/OCR: {exc}")
                 continue

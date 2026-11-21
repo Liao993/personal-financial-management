@@ -85,6 +85,10 @@ def upload_expense():
             if not st.session_state.get("uploaded_pdf_files_list"):
                 st.warning("Upload at least one statement before submitting.")
             else:
+                # A new upload must never reuse the previous review table.
+                st.session_state.pop("review_expense_data", None)
+                st.session_state["edit_mode_expense"] = True
+                st.session_state["data_saved_expense"] = False
                 st.session_state['upload_pdf_state'] = False
                 st.rerun()
     else:

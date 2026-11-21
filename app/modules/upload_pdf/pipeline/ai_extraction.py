@@ -24,6 +24,18 @@ class AIExtractionError(RuntimeError):
     """Raised when the AI/OCR extraction route cannot produce review rows."""
 
 
+def _statement_year(text: str, filename: str | None = None) -> str | None:
+    for line in text.splitlines():
+        match = re.search(r"\b(20\d{2})\b", line)
+        if match:
+            return match.group(1)
+    if filename:
+        match = re.search(r"\b(20\d{2})\b", filename)
+        if match:
+            return match.group(1)
+    return None
+
+
 def _docling_markdown(pdf_file) -> str:
     """Convert a PDF to layout-aware Markdown using Docling + OCR."""
     try:
@@ -139,7 +151,12 @@ def _category_for_description(description: str, proposed_category: str | None) -
     return "Not Categorized", None
 
 
-def _normalize_transactions(payload, payment_method: str) -> pd.DataFrame:
+def _normalize_transactions(
+    payload,
+    payment_method: str,
+    source_text: str | None = None,
+    statement_year: str | None = None,
+) -> pd.DataFrame:
     rows = _transaction_rows(payload)
     if not rows:
         raise AIExtractionError(
@@ -160,6 +177,14 @@ def _normalize_transactions(payload, payment_method: str) -> pd.DataFrame:
         ).strip()
         if not item:
             continue
+        if source_text:
+            source_words = set(re.findall(r"[a-z]{4,}", source_text.lower()))
+            item_words = [word for word in re.findall(r"[a-z]{4,}", item.lower())
+                          if word not in {"store", "purchase", "merchant", "unknown"}]
+            if item_words and not any(word in source_words for word in item_words):
+                # Prevent the local model from inventing familiar merchants
+                # that are not present anywhere in the uploaded statement.
+                continue
         try:
             amount = float(
                 row.get("amount")
@@ -180,6 +205,11 @@ def _normalize_transactions(payload, payment_method: str) -> pd.DataFrame:
             row.get("date") or row.get("transaction_date") or row.get("purchase_date"),
             errors="coerce",
         )
+        if statement_year and not pd.isna(parsed_date):
+            try:
+                parsed_date = parsed_date.replace(year=int(statement_year))
+            except ValueError:
+                pass
         normalized_date = None if pd.isna(parsed_date) else parsed_date.date()
         normalized.append(
             {
@@ -196,11 +226,21 @@ def _normalize_transactions(payload, payment_method: str) -> pd.DataFrame:
             }
         )
 
+    if not normalized:
+        raise AIExtractionError(
+            "No supported purchase rows remained after validating the model output "
+            "against the uploaded statement."
+        )
     return pd.DataFrame(normalized)
 
 
-def extract_expenses_with_ai(pdf_file, payment_method: str) -> pd.DataFrame:
+def extract_expenses_with_ai(
+    pdf_file,
+    payment_method: str,
+    filename: str | None = None,
+) -> pd.DataFrame:
     markdown = _extract_document_markdown(pdf_file)
+    statement_year = _statement_year(markdown, filename)
     # Keep prompts bounded while retaining the beginning and end of statements,
     # where headers and closing transactions commonly appear.
     if len(markdown) > 80000:
@@ -216,7 +256,9 @@ Return JSON only with this shape:
 
 Rules:
 - Extract purchases/charges only; omit payments, credits, balances, fees without a purchase description, headers, and totals.
-- Amount must be a positive number. Preserve the transaction date and infer the statement year from the document.
+- Amount must be a positive number. Use only dates and merchants supported by the document.
+- The statement year is {statement_year or "unknown"}; never invent a different year.
+- If a purchase cannot be supported by the document, omit it rather than guessing.
 - category must be one of: {categories}, or "Not Categorized" when uncertain.
 - Existing store mappings are authoritative where the merchant text matches: {store_rules}
 - Use Traveling for travel merchants/locations only when clearly supported; otherwise use the best category or Not Categorized.
@@ -235,7 +277,12 @@ Rules:
 
     parsed_response = _parse_json_response(response)
     try:
-        return _normalize_transactions(parsed_response, payment_method)
+        return _normalize_transactions(
+            parsed_response,
+            payment_method,
+            source_text=markdown,
+            statement_year=statement_year,
+        )
     except AIExtractionError as first_error:
         # A short repair call handles models that returned valid JSON with the
         # wrong top-level shape, without reprocessing the PDF.
@@ -254,7 +301,12 @@ Previous response:
                 repair_prompt,
                 expect_json=True,
             )
-            return _normalize_transactions(_parse_json_response(repaired), payment_method)
+            return _normalize_transactions(
+                _parse_json_response(repaired),
+                payment_method,
+                source_text=markdown,
+                statement_year=statement_year,
+            )
         except Exception as repair_error:
             raise AIExtractionError(
                 f"{first_error} Repair attempt also failed: {repair_error}"

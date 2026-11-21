@@ -56,6 +56,19 @@ class AIPdfExtractionTests(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result.iloc[0]["items"], "Coffee shop PE")
 
+    def test_normalization_rejects_merchants_not_supported_by_statement_text(self):
+        with self.assertRaises(Exception):
+            _normalize_transactions(
+                {"transactions": [{
+                    "date": "2022-11-03",
+                    "items": "STARBUCKS",
+                    "amount": 8.00,
+                }]},
+                "Other (AI/OCR)",
+                source_text="Statement date: November 2026\nGROCERY STORE 12.00",
+                statement_year="2026",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
