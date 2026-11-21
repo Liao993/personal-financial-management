@@ -17,6 +17,8 @@ def reset_upload_expense_state():
         "review_expense_data",
         "edit_mode_expense",
         "data_saved_expense",
+        "upload_pipeline_batch_key",
+        "upload_pipeline_data",
     ]:
         st.session_state.pop(key, None)
     st.session_state["upload_pdf_state"] = True
@@ -110,6 +112,8 @@ def upload_expense():
             else:
                 # A new upload must never reuse the previous review table.
                 st.session_state.pop("review_expense_data", None)
+                st.session_state.pop("upload_pipeline_batch_key", None)
+                st.session_state.pop("upload_pipeline_data", None)
                 st.session_state["edit_mode_expense"] = True
                 st.session_state["data_saved_expense"] = False
                 st.session_state['upload_pdf_state'] = False

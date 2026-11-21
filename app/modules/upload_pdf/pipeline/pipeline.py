@@ -22,8 +22,30 @@ PIPELINES = {
 }
 
 
+def _batch_key(pdf_files, source_by_filename, payment_method_by_filename):
+    """Identify one upload batch so Streamlit reruns do not re-extract PDFs."""
+    return tuple(
+        (
+            pdf_file.name,
+            getattr(pdf_file, "size", None),
+            source_by_filename.get(pdf_file.name, SOURCE_OPTIONS[0]),
+            payment_method_by_filename.get(pdf_file.name, ""),
+        )
+        for pdf_file in pdf_files
+    )
+
+
 def pipeline(pdf_files, source_by_filename, payment_method_by_filename=None):
     payment_method_by_filename = payment_method_by_filename or {}
+
+    batch_key = _batch_key(
+        pdf_files, source_by_filename, payment_method_by_filename
+    )
+    cached_key = st.session_state.get("upload_pipeline_batch_key")
+    cached_data = st.session_state.get("upload_pipeline_data")
+    if cached_key == batch_key and cached_data is not None:
+        return display_editable_dataframe(cached_data)
+
     transformed_frames = []
 
     for pdf_file in pdf_files:
@@ -69,4 +91,6 @@ def pipeline(pdf_files, source_by_filename, payment_method_by_filename=None):
         return False
 
     combined_data = pd.concat(transformed_frames, ignore_index=True)
+    st.session_state["upload_pipeline_batch_key"] = batch_key
+    st.session_state["upload_pipeline_data"] = combined_data
     return display_editable_dataframe(combined_data)
