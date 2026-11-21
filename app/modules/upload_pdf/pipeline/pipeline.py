@@ -22,14 +22,13 @@ PIPELINES = {
 }
 
 
-def pipeline(pdf_files, source_by_filename, card_name_by_filename=None):
-    card_name_by_filename = card_name_by_filename or {}
+def pipeline(pdf_files, source_by_filename):
     transformed_frames = []
 
     for pdf_file in pdf_files:
         source = source_by_filename.get(pdf_file.name, SOURCE_OPTIONS[0])
         if source == AI_SOURCE:
-            payment_method = card_name_by_filename.get(pdf_file.name) or "Other Credit Card"
+            payment_method = source
             try:
                 transformed_data = extract_expenses_with_ai(pdf_file, payment_method)
             except Exception as exc:
@@ -53,9 +52,7 @@ def pipeline(pdf_files, source_by_filename, card_name_by_filename=None):
             st.warning(f"No expense rows found in {pdf_file.name}.")
             continue
 
-        transformed_data["payment_method"] = card_name_by_filename.get(pdf_file.name) or (
-            "Other Credit Card" if source == AI_SOURCE else source
-        )
+        transformed_data["payment_method"] = source
         transformed_data["statement_file"] = pdf_file.name
         transformed_data["injection_source"] = pdf_file.name  # persisted to DB
         transformed_frames.append(transformed_data)

@@ -35,6 +35,7 @@ class AIPdfExtractionTests(unittest.TestCase):
         self.assertEqual(result.iloc[0]["category"], "Grocery")
         self.assertEqual(result.iloc[0]["payment_method"], "My New Card")
         self.assertEqual(result.iloc[0]["amount"], 45.20)
+        self.assertEqual(str(result.iloc[0]["date"]), "2026-11-01")
 
 
 if __name__ == "__main__":

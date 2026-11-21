@@ -182,6 +182,10 @@ def display_editable_dataframe(dataframe):
 
         # Initialise columns if missing
         df = st.session_state[review_data]
+        # AI extraction returns dates as strings; Streamlit DateColumn requires
+        # Python date values for editable data.
+        if "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"], errors="coerce").dt.date
         sort_columns = [column for column in ["payment_method", "date"] if column in df.columns]
         if sort_columns:
             df = df.sort_values(sort_columns, kind="stable").reset_index(drop=True)

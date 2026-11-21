@@ -31,7 +31,10 @@ def _docling_markdown(pdf_file) -> str:
         from docling.datamodel.pipeline_options import PdfPipelineOptions, RapidOcrOptions
         from docling.document_converter import DocumentConverter, PdfFormatOption
     except ImportError as exc:
-        return _pdfplumber_text(pdf_file)
+        raise AIExtractionError(
+            "This PDF has no readable text layer. Install Docling to enable OCR "
+            "for scanned statements."
+        ) from exc
 
     pdf_file.seek(0)
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temporary_file:
@@ -74,6 +77,14 @@ def _pdfplumber_text(pdf_file) -> str:
             "when processing scanned PDFs."
         )
     return "\n".join(pages)
+
+
+def _extract_document_markdown(pdf_file) -> str:
+    """Use the fast text path first; reserve Docling/OCR for scanned PDFs."""
+    try:
+        return _pdfplumber_text(pdf_file)
+    except AIExtractionError:
+        return _docling_markdown(pdf_file)
 
 
 def _parse_json_response(raw_response: str) -> dict:
@@ -134,9 +145,11 @@ def _normalize_transactions(payload: dict, payment_method: str) -> pd.DataFrame:
         category, traveling_category = _category_for_description(
             item, row.get("category")
         )
+        parsed_date = pd.to_datetime(row.get("date"), errors="coerce")
+        normalized_date = None if pd.isna(parsed_date) else parsed_date.date()
         normalized.append(
             {
-                "date": row.get("date"),
+                "date": normalized_date,
                 "items": item,
                 "amount": amount,
                 "category": category,
@@ -153,7 +166,7 @@ def _normalize_transactions(payload: dict, payment_method: str) -> pd.DataFrame:
 
 
 def extract_expenses_with_ai(pdf_file, payment_method: str) -> pd.DataFrame:
-    markdown = _docling_markdown(pdf_file)
+    markdown = _extract_document_markdown(pdf_file)
     # Keep prompts bounded while retaining the beginning and end of statements,
     # where headers and closing transactions commonly appear.
     if len(markdown) > 80000:

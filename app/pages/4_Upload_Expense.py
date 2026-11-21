@@ -1,6 +1,6 @@
 import streamlit as st # type: ignore
 from modules.upload_pdf.component.upload import pdf_upload # type: ignore
-from modules.upload_pdf.pipeline.common import SOURCE_OPTIONS, AI_SOURCE
+from modules.upload_pdf.pipeline.common import SOURCE_OPTIONS
 from modules.upload_pdf.pipeline.pipeline import pipeline # type: ignore
 
 st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
@@ -10,7 +10,6 @@ def reset_upload_expense_state():
     for key in [
         "uploaded_pdf_files_list",
         "uploaded_pdf_sources",
-        "uploaded_pdf_card_names",
         "selected_action",
         "pdf_uploader",
         "review_expense_data",
@@ -58,7 +57,6 @@ def upload_expense():
         st.session_state['upload_pdf_state'] = True
         st.session_state['uploaded_pdf_files_list'] = []
         st.session_state['uploaded_pdf_sources'] = {}
-        st.session_state['uploaded_pdf_card_names'] = {}
 
     if st.session_state['upload_pdf_state']:
         uploaded_pdf = pdf_upload()
@@ -66,9 +64,8 @@ def upload_expense():
             st.session_state['uploaded_pdf_files_list'] = uploaded_pdf
             st.success(f"Uploaded {len(uploaded_pdf)} file(s).")
             st.markdown("### Statement sources")
-            st.caption("Choose the source for each file so each statement uses the right ETL pipeline.")
+            st.caption("Choose the card/source for each file. Other (AI/OCR) uses the new extraction route.")
             selected_sources = {}
-            selected_card_names = {}
             for index, uploaded_file in enumerate(uploaded_pdf):
                 current_source = st.session_state.get("uploaded_pdf_sources", {}).get(
                     uploaded_file.name,
@@ -82,19 +79,7 @@ def upload_expense():
                     else 0,
                     key=f"source_{index}_{uploaded_file.name}",
                 )
-                default_card_name = st.session_state.get("uploaded_pdf_card_names", {}).get(
-                    uploaded_file.name,
-                    "" if selected_sources[uploaded_file.name] == AI_SOURCE
-                    else selected_sources[uploaded_file.name],
-                )
-                selected_card_names[uploaded_file.name] = st.text_input(
-                    "Credit card name / payment method",
-                    value=default_card_name,
-                    key=f"card_name_{index}_{uploaded_file.name}",
-                    help="Choose the bank parser above and name the specific card used for this statement.",
-                ).strip()
             st.session_state["uploaded_pdf_sources"] = selected_sources
-            st.session_state["uploaded_pdf_card_names"] = selected_card_names
 
         if st.button("Submit"):
             if not st.session_state.get("uploaded_pdf_files_list"):
@@ -107,7 +92,6 @@ def upload_expense():
             done = pipeline(
                 st.session_state['uploaded_pdf_files_list'],
                 st.session_state.get("uploaded_pdf_sources", {}),
-                st.session_state.get("uploaded_pdf_card_names", {}),
             )
             if done:
                 reset_upload_expense_state()
