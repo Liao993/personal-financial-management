@@ -31,7 +31,12 @@ def get_ollama_host() -> str:
     return configured_host.rstrip("/")
 
 
-def ask_ollama(system_prompt: str, user_prompt: str, expect_json: bool = False) -> str:
+def ask_ollama(
+    system_prompt: str,
+    user_prompt: str,
+    expect_json: bool = False,
+    timeout_seconds: int | None = None,
+) -> str:
     ollama_host = get_ollama_host()
     parsed_host = urlparse(ollama_host)
     if parsed_host.scheme not in {"http", "https"} or not parsed_host.netloc:
@@ -47,12 +52,21 @@ def ask_ollama(system_prompt: str, user_prompt: str, expect_json: bool = False) 
             {"role": "user", "content": user_prompt},
         ],
         "stream": False,
+        # Keep the model loaded between statement files and make extraction
+        # deterministic. Both settings avoid avoidable reload/generation time.
+        "keep_alive": os.environ.get("OLLAMA_KEEP_ALIVE", "10m"),
+        "options": {
+            "temperature": 0,
+        },
     }
     if expect_json:
         payload["format"] = "json"
+    request_timeout = timeout_seconds or int(os.environ.get("OLLAMA_TIMEOUT_SECONDS", "60"))
 
     try:
-        response = requests.post(f"{ollama_host}/api/chat", json=payload, timeout=60)
+        response = requests.post(
+            f"{ollama_host}/api/chat", json=payload, timeout=request_timeout
+        )
         response.raise_for_status()
     except requests.exceptions.ConnectionError as exc:
         raise OllamaUnavailableError(

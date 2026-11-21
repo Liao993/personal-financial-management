@@ -7,7 +7,8 @@ import pandas as pd
 import streamlit as st  # type: ignore
 
 
-SOURCE_OPTIONS = ["RBC", "PC", "Scotia_Red"]
+AI_SOURCE = "Other (AI/OCR)"
+SOURCE_OPTIONS = ["RBC", "PC", "Scotia_Red", AI_SOURCE]
 
 
 def infer_statement_year(lines, filename: str | None = None) -> str | None:
