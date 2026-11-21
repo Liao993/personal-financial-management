@@ -8,6 +8,22 @@ def income_input_form(edit_mode_form_key, review_data_key):
     review_button = False
 
     form_version = st.session_state.get("income_form_version", 0)
+    exclude_from_monthly = st.checkbox(
+        "Exclude from monthly calculation",
+        value=False,
+        key=f"income_exclude_from_monthly_{form_version}",
+        help="Excluded income creates a linked Deposit transaction for fund tracking.",
+    )
+
+    selected_fund_category = None
+    if exclude_from_monthly:
+        selected_fund_category = st.selectbox(
+            "Fund Category",
+            options=fund_categories or ["Others"],
+            key=f"income_fund_category_{form_version}",
+            help="The linked Deposit transaction will use this fund category.",
+        )
+
     with st.form(f"income_form_{form_version}"):
         income_date = st.date_input("Date", value=date.today())
         income_amount = st.number_input("Earning Amount", min_value=0.0, format="%.2f", value=fixed_income_data)
@@ -23,19 +39,6 @@ def income_input_form(edit_mode_form_key, review_data_key):
         notes = notes_input if notes_input else None  # Set notes to None if empty string
 
         income_regular = st.checkbox("Regular Income", value=True)
-        exclude_from_monthly = st.checkbox(
-            "Exclude from monthly calculation",
-            value=False,
-            help="Excluded income creates a linked Deposit transaction for fund tracking.",
-        )
-
-        selected_fund_category = None
-        if exclude_from_monthly:
-            selected_fund_category = st.selectbox(
-                "Fund Category",
-                options=fund_categories or ["Others"],
-                help="The linked Deposit transaction will use this fund category.",
-            )
 
         # Deposit account selector
         # Default to the first account (the main chequing account)

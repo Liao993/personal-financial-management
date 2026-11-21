@@ -18,6 +18,19 @@ def render_income_section():
 
     form_version = st.session_state.get("mobile_income_form_version", 0)
     default_account = account_name_list[0] if account_name_list else "Main Chequing"
+    exclude_from_monthly = st.checkbox(
+        "Exclude from monthly calculation",
+        value=False,
+        key=f"mobile_income_exclude_from_monthly_{form_version}",
+        help="Excluded income creates a linked Deposit transaction for fund tracking.",
+    )
+    selected_fund_category = None
+    if exclude_from_monthly:
+        selected_fund_category = st.selectbox(
+            "Fund Category",
+            options=fund_categories or ["Others"],
+            key=f"mobile_income_fund_category_{form_version}",
+        )
 
     with st.form(f"mobile_income_form_{form_version}"):
         income_date = st.date_input("Date", value=date.today(), key=f"mobile_income_date_{form_version}")
@@ -30,19 +43,6 @@ def render_income_section():
         )
         income_source = st.selectbox("Source", INCOME_SOURCE_OPTIONS, key=f"mobile_income_source_{form_version}")
         income_regular = st.checkbox("Regular Income", value=True, key=f"mobile_income_regular_{form_version}")
-        exclude_from_monthly = st.checkbox(
-            "Exclude from monthly calculation",
-            value=False,
-            key=f"mobile_income_exclude_from_monthly_{form_version}",
-            help="Excluded income creates a linked Deposit transaction for fund tracking.",
-        )
-        selected_fund_category = None
-        if exclude_from_monthly:
-            selected_fund_category = st.selectbox(
-                "Fund Category",
-                options=fund_categories or ["Others"],
-                key=f"mobile_income_fund_category_{form_version}",
-            )
         notes_input = st.text_input("Notes (optional)", "", key=f"mobile_income_notes_{form_version}")
         deposit_account = st.selectbox(
             "Deposit Into Account",
