@@ -3,14 +3,15 @@ import streamlit as st
 import pandas as pd
 
 from datetime import date, datetime
-from decimal import Decimal
 
 from backend.transaction_backend import fetch_all_transaction_data
 
 from backend.retirement_limits_backend import (
     fetch_retirement_limits,
-    update_retirement_limits,
+    fetch_retirement_limit_entries,
+    update_retirement_limits_by_year,
 )
+from utils.data import years
 
 from modules.current_saving.component.TFSA import TFSA
 from modules.current_saving.component.RRSP import RRSP
@@ -114,34 +115,48 @@ def TFSA_and_RRSP():
     # Edit contribution limits
     # --------------------------------------------------
 
-    with st.expander("Edit total contribution limits", expanded=False):
+    with st.expander("Edit contribution limits by year", expanded=False):
 
         with st.form("retirement_account_limits_form"):
-
-            tfsa_limit = st.number_input(
-                "TFSA total limit",
-                min_value=0.0,
-                value=float(limits["TFSA"]),
-                step=100.0,
-                format="%.2f",
+            saved_entries = fetch_retirement_limit_entries()
+            saved = {
+                (int(entry["year"]), entry["account_type"]): float(entry["amount"])
+                for entry in saved_entries
+            }
+            # Include the full contribution-history window beginning in 2019,
+            # plus the configured future years and any years already saved.
+            entry_years = sorted(
+                set(range(2019, max(years) + 1))
+                | {year for year, _ in saved}
             )
-
-            rrsp_limit = st.number_input(
-                "RRSP total limit",
-                min_value=0.0,
-                value=float(limits["RRSP"]),
-                step=100.0,
-                format="%.2f",
+            limits_df = pd.DataFrame({
+                "Year": entry_years,
+                "TFSA": [saved.get((year, "TFSA"), 0.0) for year in entry_years],
+                "RRSP": [saved.get((year, "RRSP"), 0.0) for year in entry_years],
+            })
+            edited_limits = st.data_editor(
+                limits_df,
+                hide_index=True,
+                use_container_width=True,
+                disabled=["Year"],
+                column_config={
+                    "Year": st.column_config.NumberColumn("Year", format="%d"),
+                    "TFSA": st.column_config.NumberColumn("TFSA", min_value=0.0, step=100.0, format="$%.2f"),
+                    "RRSP": st.column_config.NumberColumn("RRSP", min_value=0.0, step=100.0, format="$%.2f"),
+                },
             )
 
             submitted = st.form_submit_button("Save limits")
 
             if submitted:
 
-                update_retirement_limits(
-                    Decimal(str(tfsa_limit)),
-                    Decimal(str(rrsp_limit)),
-                )
+                entries = []
+                for row in edited_limits.to_dict("records"):
+                    entries.extend([
+                        {"year": int(row["Year"]), "account_type": "TFSA", "amount": row["TFSA"]},
+                        {"year": int(row["Year"]), "account_type": "RRSP", "amount": row["RRSP"]},
+                    ])
+                update_retirement_limits_by_year(entries)
 
                 st.success("TFSA and RRSP limits updated.")
 

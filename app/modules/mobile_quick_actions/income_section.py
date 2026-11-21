@@ -1,7 +1,7 @@
 import streamlit as st  # type: ignore
 from datetime import date
 
-from utils.data import fixed_income_data, account_name_list
+from utils.data import fixed_income_data, account_name_list, fund_categories
 from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data
 
@@ -18,6 +18,19 @@ def render_income_section():
 
     form_version = st.session_state.get("mobile_income_form_version", 0)
     default_account = account_name_list[0] if account_name_list else "Main Chequing"
+    exclude_from_monthly = st.checkbox(
+        "Exclude from monthly calculation",
+        value=False,
+        key=f"mobile_income_exclude_from_monthly_{form_version}",
+        help="Excluded income creates a linked Deposit transaction for fund tracking.",
+    )
+    selected_fund_category = None
+    if exclude_from_monthly:
+        selected_fund_category = st.selectbox(
+            "Fund Category",
+            options=fund_categories or ["Others"],
+            key=f"mobile_income_fund_category_{form_version}",
+        )
 
     with st.form(f"mobile_income_form_{form_version}"):
         income_date = st.date_input("Date", value=date.today(), key=f"mobile_income_date_{form_version}")
@@ -37,8 +50,8 @@ def render_income_section():
             index=0,
             key=f"mobile_income_deposit_account_{form_version}",
             help=(
-                "Every earning creates a linked Deposit transaction. "
-                "Only chequing earnings are included in Monthly Saving Calculation."
+                "Only income excluded from monthly calculation creates a linked Deposit "
+                "transaction for fund tracking."
             ),
         )
         submitted = st.form_submit_button("Save Income")
@@ -49,6 +62,8 @@ def render_income_section():
             "amount": income_amount,
             "source": income_source,
             "regular": income_regular,
+            "exclude_from_monthly": exclude_from_monthly,
+            "fund_category": selected_fund_category,
             "notes": notes_input if notes_input else None,
             "deposit_account": deposit_account,
         }
