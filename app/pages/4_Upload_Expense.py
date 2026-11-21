@@ -1,6 +1,7 @@
 import streamlit as st # type: ignore
 from modules.upload_pdf.component.upload import pdf_upload # type: ignore
 from modules.upload_pdf.pipeline.common import SOURCE_OPTIONS
+from utils.data import payment_method
 from modules.upload_pdf.pipeline.pipeline import pipeline # type: ignore
 
 st.set_page_config(page_title="Upload Expense", page_icon="💸", layout='wide')
@@ -10,6 +11,7 @@ def reset_upload_expense_state():
     for key in [
         "uploaded_pdf_files_list",
         "uploaded_pdf_sources",
+        "uploaded_pdf_payment_methods",
         "selected_action",
         "pdf_uploader",
         "review_expense_data",
@@ -57,6 +59,7 @@ def upload_expense():
         st.session_state['upload_pdf_state'] = True
         st.session_state['uploaded_pdf_files_list'] = []
         st.session_state['uploaded_pdf_sources'] = {}
+        st.session_state['uploaded_pdf_payment_methods'] = {}
 
     if st.session_state['upload_pdf_state']:
         uploaded_pdf = pdf_upload()
@@ -64,22 +67,42 @@ def upload_expense():
             st.session_state['uploaded_pdf_files_list'] = uploaded_pdf
             st.success(f"Uploaded {len(uploaded_pdf)} file(s).")
             st.markdown("### Statement sources")
-            st.caption("Choose the card/source for each file. Other (AI/OCR) uses the new extraction route.")
+            st.caption("Choose the statement parser and payment method for each file.")
             selected_sources = {}
+            selected_payment_methods = {}
             for index, uploaded_file in enumerate(uploaded_pdf):
                 current_source = st.session_state.get("uploaded_pdf_sources", {}).get(
                     uploaded_file.name,
                     SOURCE_OPTIONS[0],
                 )
                 selected_sources[uploaded_file.name] = st.selectbox(
-                    uploaded_file.name,
+                    f"Statement Source — {uploaded_file.name}",
                     SOURCE_OPTIONS,
                     index=SOURCE_OPTIONS.index(current_source)
                     if current_source in SOURCE_OPTIONS
                     else 0,
                     key=f"source_{index}_{uploaded_file.name}",
                 )
+                selected_payment_methods[uploaded_file.name] = st.selectbox(
+                    f"Payment Method — {uploaded_file.name}",
+                    payment_method,
+                    index=payment_method.index(
+                        st.session_state.get("uploaded_pdf_payment_methods", {}).get(
+                            uploaded_file.name,
+                            selected_sources[uploaded_file.name]
+                            if selected_sources[uploaded_file.name] in payment_method
+                            else payment_method[0],
+                        )
+                    )
+                    if st.session_state.get("uploaded_pdf_payment_methods", {}).get(
+                        uploaded_file.name,
+                        selected_sources[uploaded_file.name],
+                    ) in payment_method
+                    else 0,
+                    key=f"payment_method_{index}_{uploaded_file.name}",
+                )
             st.session_state["uploaded_pdf_sources"] = selected_sources
+            st.session_state["uploaded_pdf_payment_methods"] = selected_payment_methods
 
         if st.button("Submit"):
             if not st.session_state.get("uploaded_pdf_files_list"):
@@ -96,6 +119,7 @@ def upload_expense():
             done = pipeline(
                 st.session_state['uploaded_pdf_files_list'],
                 st.session_state.get("uploaded_pdf_sources", {}),
+                st.session_state.get("uploaded_pdf_payment_methods", {}),
             )
             if done:
                 reset_upload_expense_state()

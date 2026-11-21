@@ -138,7 +138,9 @@ def build_statement_review_table(dataframe: pd.DataFrame) -> pd.DataFrame:
         "date",
         "items",
         "payment_method",
+        "statement_source",
         "statement_file",
+        "injection_source",
         "source_notes",
     ]
     columns = [column for column in columns if column in review_df.columns]
@@ -209,11 +211,13 @@ def display_editable_dataframe(dataframe):
             st.session_state[review_data],
             column_config={
                 "payment_method": st.column_config.TextColumn(
-                    "Statement Source",
+                    "Payment Method",
                 ),
+                "statement_source": st.column_config.TextColumn("Statement Source"),
                 "statement_file": st.column_config.TextColumn(
                     "Statement File",
                 ),
+                "injection_source": st.column_config.TextColumn("Injection Source"),
                 "date": st.column_config.DateColumn(
                     "Date", format="YYYY-MM-DD", required=True
                 ),

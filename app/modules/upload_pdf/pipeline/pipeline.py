@@ -22,13 +22,15 @@ PIPELINES = {
 }
 
 
-def pipeline(pdf_files, source_by_filename):
+def pipeline(pdf_files, source_by_filename, payment_method_by_filename=None):
+    payment_method_by_filename = payment_method_by_filename or {}
     transformed_frames = []
 
     for pdf_file in pdf_files:
         source = source_by_filename.get(pdf_file.name, SOURCE_OPTIONS[0])
+        selected_payment_method = payment_method_by_filename.get(pdf_file.name) or source
         if source == AI_SOURCE:
-            payment_method = source
+            payment_method = selected_payment_method
             try:
                 transformed_data = extract_expenses_with_ai(
                     pdf_file,
@@ -56,7 +58,8 @@ def pipeline(pdf_files, source_by_filename):
             st.warning(f"No expense rows found in {pdf_file.name}.")
             continue
 
-        transformed_data["payment_method"] = source
+        transformed_data["payment_method"] = selected_payment_method
+        transformed_data["statement_source"] = source
         transformed_data["statement_file"] = pdf_file.name
         transformed_data["injection_source"] = pdf_file.name  # persisted to DB
         transformed_frames.append(transformed_data)

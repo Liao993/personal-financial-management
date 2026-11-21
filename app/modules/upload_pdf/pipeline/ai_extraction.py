@@ -271,7 +271,12 @@ Rules:
         f"{markdown}"
     )
     try:
-        response = ask_ollama(system_prompt, user_prompt, expect_json=True)
+        response = ask_ollama(
+            system_prompt,
+            user_prompt,
+            expect_json=True,
+            timeout_seconds=180,
+        )
     except Exception as exc:
         raise AIExtractionError(f"AI extraction failed: {exc}") from exc
 
@@ -294,12 +299,16 @@ Keep every actual purchase, omit payments/totals, and return JSON only.
 
 Previous response:
 {response}
+
+Document content to use as the source of truth:
+{markdown}
 """
         try:
             repaired = ask_ollama(
                 "You repair transaction-extraction JSON. Return JSON only.",
                 repair_prompt,
                 expect_json=True,
+                timeout_seconds=120,
             )
             return _normalize_transactions(
                 _parse_json_response(repaired),

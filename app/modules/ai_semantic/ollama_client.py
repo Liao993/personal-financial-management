@@ -31,7 +31,12 @@ def get_ollama_host() -> str:
     return configured_host.rstrip("/")
 
 
-def ask_ollama(system_prompt: str, user_prompt: str, expect_json: bool = False) -> str:
+def ask_ollama(
+    system_prompt: str,
+    user_prompt: str,
+    expect_json: bool = False,
+    timeout_seconds: int | None = None,
+) -> str:
     ollama_host = get_ollama_host()
     parsed_host = urlparse(ollama_host)
     if parsed_host.scheme not in {"http", "https"} or not parsed_host.netloc:
@@ -50,9 +55,12 @@ def ask_ollama(system_prompt: str, user_prompt: str, expect_json: bool = False) 
     }
     if expect_json:
         payload["format"] = "json"
+    request_timeout = timeout_seconds or int(os.environ.get("OLLAMA_TIMEOUT_SECONDS", "60"))
 
     try:
-        response = requests.post(f"{ollama_host}/api/chat", json=payload, timeout=60)
+        response = requests.post(
+            f"{ollama_host}/api/chat", json=payload, timeout=request_timeout
+        )
         response.raise_for_status()
     except requests.exceptions.ConnectionError as exc:
         raise OllamaUnavailableError(
