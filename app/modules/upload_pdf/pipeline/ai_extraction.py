@@ -87,7 +87,7 @@ def _extract_document_markdown(pdf_file) -> str:
         return _docling_markdown(pdf_file)
 
 
-def _parse_json_response(raw_response: str) -> dict:
+def _parse_json_response(raw_response: str):
     try:
         return json.loads(raw_response)
     except json.JSONDecodeError:
@@ -98,6 +98,24 @@ def _parse_json_response(raw_response: str) -> dict:
             return json.loads(match.group(0))
         except json.JSONDecodeError as exc:
             raise AIExtractionError("The extraction model returned malformed JSON.") from exc
+
+
+def _transaction_rows(payload) -> list[dict]:
+    """Accept the canonical response and common equivalent model responses."""
+    if isinstance(payload, list):
+        return [row for row in payload if isinstance(row, dict)]
+    if not isinstance(payload, dict):
+        return []
+
+    for key in ("transactions", "expenses", "rows", "records", "data", "items"):
+        candidate = payload.get(key)
+        if isinstance(candidate, list):
+            return [row for row in candidate if isinstance(row, dict)]
+
+    # Some models return a single transaction object instead of a list.
+    if any(key in payload for key in ("date", "transaction_date", "description", "merchant")):
+        return [payload]
+    return []
 
 
 def _category_for_description(description: str, proposed_category: str | None) -> tuple[str, str | None]:
@@ -121,20 +139,33 @@ def _category_for_description(description: str, proposed_category: str | None) -
     return "Not Categorized", None
 
 
-def _normalize_transactions(payload: dict, payment_method: str) -> pd.DataFrame:
-    rows = payload.get("transactions") if isinstance(payload, dict) else None
-    if not isinstance(rows, list):
-        raise AIExtractionError("The extraction model returned no transaction list.")
+def _normalize_transactions(payload, payment_method: str) -> pd.DataFrame:
+    rows = _transaction_rows(payload)
+    if not rows:
+        raise AIExtractionError(
+            "The extraction model returned no recognizable transaction rows. "
+            "Expected transactions, expenses, rows, records, or data."
+        )
 
     normalized = []
     for row in rows:
         if not isinstance(row, dict):
             continue
-        item = str(row.get("items") or "").strip()
+        item = str(
+            row.get("items")
+            or row.get("description")
+            or row.get("merchant")
+            or row.get("merchant_name")
+            or ""
+        ).strip()
         if not item:
             continue
         try:
-            amount = float(row.get("amount"))
+            amount = float(
+                row.get("amount")
+                if row.get("amount") is not None
+                else row.get("transaction_amount", row.get("charge", row.get("value")))
+            )
         except (TypeError, ValueError):
             continue
         if amount < 0:
@@ -145,7 +176,10 @@ def _normalize_transactions(payload: dict, payment_method: str) -> pd.DataFrame:
         category, traveling_category = _category_for_description(
             item, row.get("category")
         )
-        parsed_date = pd.to_datetime(row.get("date"), errors="coerce")
+        parsed_date = pd.to_datetime(
+            row.get("date") or row.get("transaction_date") or row.get("purchase_date"),
+            errors="coerce",
+        )
         normalized_date = None if pd.isna(parsed_date) else parsed_date.date()
         normalized.append(
             {
@@ -157,7 +191,7 @@ def _normalize_transactions(payload: dict, payment_method: str) -> pd.DataFrame:
                 "trip": None,
                 "amount_for_number_of_travelers": None,
                 "paid_for_number_of_travlerers": None,
-                "source_notes": row.get("source_notes"),
+                "source_notes": row.get("source_notes") or row.get("notes"),
                 "payment_method": payment_method,
             }
         )
@@ -198,4 +232,30 @@ Rules:
         response = ask_ollama(system_prompt, user_prompt, expect_json=True)
     except Exception as exc:
         raise AIExtractionError(f"AI extraction failed: {exc}") from exc
-    return _normalize_transactions(_parse_json_response(response), payment_method)
+
+    parsed_response = _parse_json_response(response)
+    try:
+        return _normalize_transactions(parsed_response, payment_method)
+    except AIExtractionError as first_error:
+        # A short repair call handles models that returned valid JSON with the
+        # wrong top-level shape, without reprocessing the PDF.
+        repair_prompt = f"""The previous extraction response was valid JSON but did not contain
+recognizable transaction rows. Convert it to exactly this JSON shape:
+{{"transactions": [{{"date":"YYYY-MM-DD", "items":"merchant", "amount": 0.0,
+"category":"Not Categorized", "source_notes":null}}]}}
+Keep every actual purchase, omit payments/totals, and return JSON only.
+
+Previous response:
+{response}
+"""
+        try:
+            repaired = ask_ollama(
+                "You repair transaction-extraction JSON. Return JSON only.",
+                repair_prompt,
+                expect_json=True,
+            )
+            return _normalize_transactions(_parse_json_response(repaired), payment_method)
+        except Exception as repair_error:
+            raise AIExtractionError(
+                f"{first_error} Repair attempt also failed: {repair_error}"
+            ) from repair_error
