@@ -46,6 +46,7 @@ reload_sample_data() {
     run_db_sql /docker-entrypoint-initdb.d/11_fix_emergency_transfer_direction.sql
     run_db_sql /docker-entrypoint-initdb.d/12_backfill_income_transactions.sql
     run_db_sql /docker-entrypoint-initdb.d/14_income_monthly_exclusion_and_retirement_years.sql
+    run_db_sql /docker-entrypoint-initdb.d/15_income_transaction_sync.sql
     run_db_sql /docker-entrypoint-initdb.d/13_remove_transaction_category_and_update_income_sources.sql
 
     echo "Refreshing dbt models..."

@@ -51,7 +51,7 @@ def _income_schema_columns(cursor) -> set[str]:
         FROM information_schema.columns
         WHERE table_schema = 'public'
           AND table_name = 'income'
-          AND column_name IN ('deposit_account', 'exclude_from_monthly')
+          AND column_name IN ('deposit_account', 'exclude_from_monthly', 'fund_category')
         """
     )
     return {row[0] for row in cursor.fetchall()}
@@ -79,6 +79,7 @@ def insert_income_data(validated_data: dict):
         optional_columns = _income_schema_columns(cursor)
         has_deposit_account = "deposit_account" in optional_columns
         has_exclude_from_monthly = "exclude_from_monthly" in optional_columns
+        has_fund_category = "fund_category" in optional_columns
 
         # 1. Insert income row and return the new id
         columns = ["date", "amount", "source", "regular", "notes"]
@@ -93,6 +94,9 @@ def insert_income_data(validated_data: dict):
         if has_exclude_from_monthly:
             columns.append("exclude_from_monthly")
             values.append(validated_data.get("exclude_from_monthly", False))
+        if has_fund_category:
+            columns.append("fund_category")
+            values.append(validated_data.get("fund_category"))
         placeholders = ", ".join(["%s"] * len(values))
         query = f"""
             INSERT INTO income ({', '.join(columns)})
@@ -102,29 +106,7 @@ def insert_income_data(validated_data: dict):
         cursor.execute(query, values)
         new_income_id = cursor.fetchone()[0]
 
-        # Normal income is intentionally independent from the transaction
-        # ledger. Excluded income is a fund/account movement and gets a link.
-        if has_deposit_account and validated_data.get("exclude_from_monthly", False):
-            fund_cat = _fund_category_for_account(deposit_account)
-            source_label = validated_data.get("source", "income")
-            source_notes = f"income deposit – {source_label}"
-            cursor.execute(
-                """
-                INSERT INTO transactions (
-                    date, account_name, transaction_type, amount,
-                    fund_category, source_notes, income_id
-                )
-                VALUES (%s, %s, 'Deposit', %s, %s, %s, %s)
-                """,
-                (
-                    validated_data["date"],
-                    deposit_account,
-                    validated_data["amount"],
-                    fund_cat,
-                    source_notes,
-                    new_income_id,
-                ),
-            )
+        # The database trigger creates/synchronizes the linked transaction.
 
         conn.commit()
 

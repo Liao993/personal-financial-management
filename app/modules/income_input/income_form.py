@@ -1,6 +1,6 @@
 import streamlit as st # type: ignore
 from datetime import date
-from utils.data import fixed_income_data, account_name_list
+from utils.data import fixed_income_data, account_name_list, fund_categories
 
 
 def income_input_form(edit_mode_form_key, review_data_key):
@@ -29,6 +29,14 @@ def income_input_form(edit_mode_form_key, review_data_key):
             help="Excluded income creates a linked Deposit transaction for fund tracking.",
         )
 
+        selected_fund_category = None
+        if exclude_from_monthly:
+            selected_fund_category = st.selectbox(
+                "Fund Category",
+                options=fund_categories or ["Others"],
+                help="The linked Deposit transaction will use this fund category.",
+            )
+
         # Deposit account selector
         # Default to the first account (the main chequing account)
         default_account = account_name_list[0] if account_name_list else "Main Chequing"
@@ -52,6 +60,7 @@ def income_input_form(edit_mode_form_key, review_data_key):
             "source": income_source,
             "regular": income_regular,
             "exclude_from_monthly": exclude_from_monthly,
+            "fund_category": selected_fund_category,
             "notes": notes,
             "deposit_account": deposit_account,
         }

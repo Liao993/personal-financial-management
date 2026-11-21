@@ -63,6 +63,7 @@ case "$CMD" in
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/11_fix_emergency_transfer_direction.sql
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/12_backfill_income_transactions.sql
         $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/14_income_monthly_exclusion_and_retirement_years.sql
+        $DC exec -T db psql -v ON_ERROR_STOP=1 -U "${POSTGRES_USER:-hhn}" -d "${POSTGRES_DB:-budget_db}" -f /docker-entrypoint-initdb.d/15_income_transaction_sync.sql
 
         ;;    dbt)
         $DC run --rm dbt dbt run ;;

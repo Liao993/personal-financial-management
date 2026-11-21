@@ -1,7 +1,7 @@
 import streamlit as st  # type: ignore
 from datetime import date
 
-from utils.data import fixed_income_data, account_name_list
+from utils.data import fixed_income_data, account_name_list, fund_categories
 from utils.validation import validate_income_data
 from backend.income_backend import insert_income_data
 
@@ -36,6 +36,13 @@ def render_income_section():
             key=f"mobile_income_exclude_from_monthly_{form_version}",
             help="Excluded income creates a linked Deposit transaction for fund tracking.",
         )
+        selected_fund_category = None
+        if exclude_from_monthly:
+            selected_fund_category = st.selectbox(
+                "Fund Category",
+                options=fund_categories or ["Others"],
+                key=f"mobile_income_fund_category_{form_version}",
+            )
         notes_input = st.text_input("Notes (optional)", "", key=f"mobile_income_notes_{form_version}")
         deposit_account = st.selectbox(
             "Deposit Into Account",
@@ -56,6 +63,7 @@ def render_income_section():
             "source": income_source,
             "regular": income_regular,
             "exclude_from_monthly": exclude_from_monthly,
+            "fund_category": selected_fund_category,
             "notes": notes_input if notes_input else None,
             "deposit_account": deposit_account,
         }
