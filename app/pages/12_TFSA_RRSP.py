@@ -123,7 +123,12 @@ def TFSA_and_RRSP():
                 (int(entry["year"]), entry["account_type"]): float(entry["amount"])
                 for entry in saved_entries
             }
-            entry_years = sorted(set(years) | {year for year, _ in saved})
+            # Include the full contribution-history window beginning in 2019,
+            # plus the configured future years and any years already saved.
+            entry_years = sorted(
+                set(range(2019, max(years) + 1))
+                | {year for year, _ in saved}
+            )
             limits_df = pd.DataFrame({
                 "Year": entry_years,
                 "TFSA": [saved.get((year, "TFSA"), 0.0) for year in entry_years],
