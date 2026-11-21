@@ -13,6 +13,7 @@ def review_income_input(review_data_key):
     income_notes        = reviewed_data.get('notes', '')
     default_account = account_name_list[0] if account_name_list else 'Main Chequing'
     deposit_account     = reviewed_data.get('deposit_account', default_account)
+    exclude_from_monthly = 'Yes' if reviewed_data.get('exclude_from_monthly', False) else 'No'
 
     data = {
         "Date":            [income_date],
@@ -21,6 +22,7 @@ def review_income_input(review_data_key):
         "Regular":         [income_regular],
         "Notes":           [income_notes],
         "Deposit Account": [deposit_account],
+        "Exclude from Monthly Calculation": [exclude_from_monthly],
     }
 
     df = pd.DataFrame(data)

@@ -51,10 +51,15 @@ def _income_schema_columns(cursor) -> set[str]:
         FROM information_schema.columns
         WHERE table_schema = 'public'
           AND table_name = 'income'
-          AND column_name IN ('deposit_account')
+          AND column_name IN ('deposit_account', 'exclude_from_monthly')
         """
     )
     return {row[0] for row in cursor.fetchall()}
+
+
+def _monthly_income_clause(cursor) -> str:
+    """Return the monthly-inclusion predicate when the migration is present."""
+    return "exclude_from_monthly = FALSE" if "exclude_from_monthly" in _income_schema_columns(cursor) else "TRUE"
 
 
 # ---------------------------------------------------------------------------
@@ -73,36 +78,33 @@ def insert_income_data(validated_data: dict):
         cursor = conn.cursor()
         optional_columns = _income_schema_columns(cursor)
         has_deposit_account = "deposit_account" in optional_columns
+        has_exclude_from_monthly = "exclude_from_monthly" in optional_columns
 
         # 1. Insert income row and return the new id
+        columns = ["date", "amount", "source", "regular", "notes"]
+        values = [
+            validated_data["date"], validated_data["amount"],
+            validated_data["source"], validated_data["regular"],
+            validated_data["notes"],
+        ]
         if has_deposit_account:
-            query = """
-                INSERT INTO income (date, amount, source, regular, notes, deposit_account)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                RETURNING id
-            """
-            values = (
-                validated_data["date"], validated_data["amount"],
-                validated_data["source"], validated_data["regular"],
-                validated_data["notes"], deposit_account,
-            )
-        else:
-            query = """
-                INSERT INTO income (date, amount, source, regular, notes)
-                VALUES (%s, %s, %s, %s, %s)
-                RETURNING id
-            """
-            values = (
-                validated_data["date"], validated_data["amount"],
-                validated_data["source"], validated_data["regular"],
-                validated_data["notes"],
-            )
+            columns.append("deposit_account")
+            values.append(deposit_account)
+        if has_exclude_from_monthly:
+            columns.append("exclude_from_monthly")
+            values.append(validated_data.get("exclude_from_monthly", False))
+        placeholders = ", ".join(["%s"] * len(values))
+        query = f"""
+            INSERT INTO income ({', '.join(columns)})
+            VALUES ({placeholders})
+            RETURNING id
+        """
         cursor.execute(query, values)
         new_income_id = cursor.fetchone()[0]
 
-        # 2. Every income deposit gets a linked Deposit transaction. This keeps
-        # account-level flow complete regardless of which account receives it.
-        if has_deposit_account:
+        # Normal income is intentionally independent from the transaction
+        # ledger. Excluded income is a fund/account movement and gets a link.
+        if has_deposit_account and validated_data.get("exclude_from_monthly", False):
             fund_cat = _fund_category_for_account(deposit_account)
             source_label = validated_data.get("source", "income")
             source_notes = f"income deposit – {source_label}"
@@ -142,11 +144,14 @@ def fetch_annual_income_by_month(year, excluded_sources=None):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
+        monthly_clause = _monthly_income_clause(cursor)
         query = """
             SELECT EXTRACT(MONTH FROM date) AS month, SUM(amount) As amount
             FROM income
             WHERE EXTRACT(YEAR FROM date) = %s
+              AND {monthly_clause}
         """
+        query = query.format(monthly_clause=monthly_clause)
         params = [year]
         if excluded_sources:
             query += " AND source <> ALL(%s)"
@@ -180,15 +185,18 @@ def fetch_all_income_by_month(excluded_sources=None):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
+        monthly_clause = _monthly_income_clause(cursor)
         query = """
             SELECT CAST(EXTRACT(YEAR FROM date) AS INTEGER) AS year,
                    CAST(EXTRACT(MONTH FROM date) AS INTEGER) AS month,
                    SUM(amount) AS amount
             FROM income
+            WHERE {monthly_clause}
         """
+        query = query.format(monthly_clause=monthly_clause)
         params = []
         if excluded_sources:
-            query += " WHERE source <> ALL(%s)"
+            query += " AND source <> ALL(%s)"
             params.append(list(excluded_sources))
         query += """
             GROUP BY 1, 2
@@ -217,8 +225,13 @@ def fetch_monthly_income(year, month):
     if conn:
         cursor = conn.cursor()
         try:
-            has_deposit_account = "deposit_account" in _income_schema_columns(cursor)
-            account_filter = "AND deposit_account ILIKE '%%chequing%%'" if has_deposit_account else ""
+            income_columns = _income_schema_columns(cursor)
+            if "exclude_from_monthly" in income_columns:
+                account_filter = "AND exclude_from_monthly = FALSE"
+            elif "deposit_account" in income_columns:
+                account_filter = "AND deposit_account ILIKE '%%chequing%%'"
+            else:
+                account_filter = ""
             query = f"""
                 SELECT SUM(amount)
                 FROM income

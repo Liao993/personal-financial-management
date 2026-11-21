@@ -30,6 +30,12 @@ def render_income_section():
         )
         income_source = st.selectbox("Source", INCOME_SOURCE_OPTIONS, key=f"mobile_income_source_{form_version}")
         income_regular = st.checkbox("Regular Income", value=True, key=f"mobile_income_regular_{form_version}")
+        exclude_from_monthly = st.checkbox(
+            "Exclude from monthly calculation",
+            value=False,
+            key=f"mobile_income_exclude_from_monthly_{form_version}",
+            help="Excluded income creates a linked Deposit transaction for fund tracking.",
+        )
         notes_input = st.text_input("Notes (optional)", "", key=f"mobile_income_notes_{form_version}")
         deposit_account = st.selectbox(
             "Deposit Into Account",
@@ -37,8 +43,8 @@ def render_income_section():
             index=0,
             key=f"mobile_income_deposit_account_{form_version}",
             help=(
-                "Every earning creates a linked Deposit transaction. "
-                "Only chequing earnings are included in Monthly Saving Calculation."
+                "Only income excluded from monthly calculation creates a linked Deposit "
+                "transaction for fund tracking."
             ),
         )
         submitted = st.form_submit_button("Save Income")
@@ -49,6 +55,7 @@ def render_income_section():
             "amount": income_amount,
             "source": income_source,
             "regular": income_regular,
+            "exclude_from_monthly": exclude_from_monthly,
             "notes": notes_input if notes_input else None,
             "deposit_account": deposit_account,
         }

@@ -9,6 +9,31 @@ from utils.connection import get_db_connection
 ACCOUNT_TYPES = ("TFSA", "RRSP")
 
 
+def fetch_retirement_limit_entries() -> list[dict[str, Any]]:
+    """Return the persisted year-by-year TFSA/RRSP limit entries."""
+    conn = get_db_connection()
+    if conn is None:
+        return []
+    try:
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT tax_year, account_type, annual_amount
+                    FROM retirement_account_limits_by_year
+                    ORDER BY tax_year, account_type
+                    """
+                )
+                return [
+                    {"year": year, "account_type": account_type, "amount": amount}
+                    for year, account_type, amount in cursor.fetchall()
+                ]
+        except Exception:
+            return []
+    finally:
+        conn.close()
+
+
 def fetch_retirement_limits() -> dict[str, Any]:
     """
     Return persisted retirement account limits and their last-updated timestamps.
@@ -44,6 +69,20 @@ def fetch_retirement_limits() -> dict[str, Any]:
 
             rows = cursor.fetchall()
 
+            # Prefer year-level values when the new table is available and
+            # fall back to the legacy total table during migration rollout.
+            try:
+                cursor.execute(
+                    """
+                    SELECT account_type, COALESCE(SUM(annual_amount), 0)
+                    FROM retirement_account_limits_by_year
+                    GROUP BY account_type
+                    """
+                )
+                yearly_totals = dict(cursor.fetchall())
+            except Exception:
+                yearly_totals = {}
+
             limits = {
                 account_type: {
                     "total_limit": total_limit,
@@ -57,8 +96,8 @@ def fetch_retirement_limits() -> dict[str, Any]:
             for account_type in ACCOUNT_TYPES:
                 account_data = limits.get(account_type, {})
 
-                result[account_type] = account_data.get(
-                    "total_limit", Decimal("0")
+                result[account_type] = yearly_totals.get(
+                    account_type, account_data.get("total_limit", Decimal("0"))
                 )
 
                 result[f"{account_type}_updated_at"] = account_data.get(
@@ -112,5 +151,36 @@ def update_retirement_limits(
         conn.rollback()
         raise
 
+    finally:
+        conn.close()
+
+
+def update_retirement_limits_by_year(entries: list[dict[str, Any]]) -> None:
+    """Replace the year-level TFSA/RRSP limits in one transaction."""
+    conn = get_db_connection()
+    if conn is None:
+        raise RuntimeError("Could not connect to the database.")
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("DELETE FROM retirement_account_limits_by_year")
+            rows = [
+                (entry["account_type"], int(entry["year"]), Decimal(str(entry["amount"])))
+                for entry in entries
+                if entry["account_type"] in ACCOUNT_TYPES and Decimal(str(entry["amount"])) >= 0
+            ]
+            if rows:
+                cursor.executemany(
+                    """
+                    INSERT INTO retirement_account_limits_by_year
+                        (account_type, tax_year, annual_amount, updated_at)
+                    VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
+                    """,
+                    rows,
+                )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         conn.close()

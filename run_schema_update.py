@@ -14,6 +14,7 @@ SCHEMA_FILES = [
     '06_income_deposit_account.sql',
     '07_transaction_category.sql',
     '08_retirement_account_limits.sql',
+    '14_income_monthly_exclusion_and_retirement_years.sql',
 ]
 
 

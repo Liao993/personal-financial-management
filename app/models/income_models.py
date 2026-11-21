@@ -7,6 +7,7 @@ class Income(BaseModel):
     amount: float
     source: str
     regular: bool = True
+    exclude_from_monthly: bool = False
     notes: Optional[str] = None
     deposit_account: Optional[str] = None
 

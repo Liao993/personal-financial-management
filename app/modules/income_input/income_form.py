@@ -23,6 +23,11 @@ def income_input_form(edit_mode_form_key, review_data_key):
         notes = notes_input if notes_input else None  # Set notes to None if empty string
 
         income_regular = st.checkbox("Regular Income", value=True)
+        exclude_from_monthly = st.checkbox(
+            "Exclude from monthly calculation",
+            value=False,
+            help="Excluded income creates a linked Deposit transaction for fund tracking.",
+        )
 
         # Deposit account selector
         # Default to the first account (the main chequing account)
@@ -33,9 +38,8 @@ def income_input_form(edit_mode_form_key, review_data_key):
             options=account_name_list if account_name_list else [default_account],
             index=default_index,
             help=(
-                "Choose which account receives this earning. Every earning creates a linked "
-                "Deposit transaction for account-flow reporting. Only chequing earnings are "
-                "included in Monthly Saving Calculation."
+                "Choose which account receives this earning. Only income excluded from monthly "
+                "calculation creates a linked Deposit transaction."
             ),
         )
 
@@ -47,6 +51,7 @@ def income_input_form(edit_mode_form_key, review_data_key):
             "amount": income_amount,
             "source": income_source,
             "regular": income_regular,
+            "exclude_from_monthly": exclude_from_monthly,
             "notes": notes,
             "deposit_account": deposit_account,
         }
