@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import json
 import re
-import tempfile
-from pathlib import Path
 
 import pandas as pd
 
@@ -36,44 +34,34 @@ def _statement_year(text: str, filename: str | None = None) -> str | None:
     return None
 
 
-def _docling_markdown(pdf_file) -> str:
-    """Convert a PDF to layout-aware Markdown using Docling + OCR."""
+def _pymupdf_text(pdf_file) -> str:
+    """Extract the native text layer quickly without rendering or OCR."""
     try:
-        from docling.datamodel.base_models import InputFormat
-        from docling.datamodel.pipeline_options import PdfPipelineOptions, RapidOcrOptions
-        from docling.document_converter import DocumentConverter, PdfFormatOption
+        import fitz  # PyMuPDF
     except ImportError as exc:
         raise AIExtractionError(
-            "This PDF has no readable text layer. Install Docling to enable OCR "
-            "for scanned statements."
+            "PyMuPDF is not installed. Install the PDF native-text dependency "
+            "before using AI/OCR extraction."
         ) from exc
 
     pdf_file.seek(0)
-    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temporary_file:
-        temporary_file.write(pdf_file.read())
-        temporary_path = Path(temporary_file.name)
-
+    document = fitz.open(stream=pdf_file.read(), filetype="pdf")
+    pages = []
     try:
-        options = PdfPipelineOptions()
-        options.do_ocr = True
-        options.do_table_structure = True
-        options.ocr_options = RapidOcrOptions(lang=["en"], model_size="tiny")
-        converter = DocumentConverter(
-            format_options={
-                InputFormat.PDF: PdfFormatOption(pipeline_options=options),
-            }
-        )
-        result = converter.convert(str(temporary_path))
-        markdown = result.document.export_to_markdown()
-        if not markdown or not markdown.strip():
-            raise AIExtractionError("Docling returned no readable text from the PDF.")
-        return markdown
+        for page_number, page in enumerate(document, start=1):
+            text = page.get_text("text", sort=True) or ""
+            if text.strip():
+                pages.append(f"\n## Page {page_number}\n{text.strip()}")
     finally:
-        temporary_path.unlink(missing_ok=True)
+        document.close()
+
+    if not pages:
+        raise AIExtractionError("No native text layer was found in this PDF.")
+    return "\n".join(pages)
 
 
 def _pdfplumber_text(pdf_file) -> str:
-    """Lightweight fallback for born-digital PDFs when Docling is unavailable."""
+    """Fallback native-text extractor for unusual digital PDF layouts."""
     import pdfplumber
 
     pdf_file.seek(0)
@@ -84,19 +72,23 @@ def _pdfplumber_text(pdf_file) -> str:
             if text.strip():
                 pages.append(f"\n## Page {page_number}\n{text}")
     if not pages:
-        raise AIExtractionError(
-            "No text layer was found. Install Docling for layout recognition and OCR "
-            "when processing scanned PDFs."
-        )
+        raise AIExtractionError("No native text layer was found in this PDF.")
     return "\n".join(pages)
 
 
-def _extract_document_markdown(pdf_file) -> str:
-    """Use the fast text path first; reserve Docling/OCR for scanned PDFs."""
+def _extract_document_text(pdf_file) -> str:
+    """Use PyMuPDF first and never invoke OCR in the normal upload workflow."""
     try:
-        return _pdfplumber_text(pdf_file)
-    except AIExtractionError:
-        return _docling_markdown(pdf_file)
+        return _pymupdf_text(pdf_file)
+    except AIExtractionError as pymupdf_error:
+        try:
+            return _pdfplumber_text(pdf_file)
+        except AIExtractionError as pdfplumber_error:
+            raise AIExtractionError(
+                "This PDF appears to be scanned or has no readable native text layer. "
+                "OCR is disabled for the fast AI workflow. "
+                f"PyMuPDF: {pymupdf_error}; pdfplumber: {pdfplumber_error}"
+            ) from pdfplumber_error
 
 
 def _parse_json_response(raw_response: str):
@@ -239,7 +231,7 @@ def extract_expenses_with_ai(
     payment_method: str,
     filename: str | None = None,
 ) -> pd.DataFrame:
-    markdown = _extract_document_markdown(pdf_file)
+    markdown = _extract_document_text(pdf_file)
     statement_year = _statement_year(markdown, filename)
     # Keep prompts bounded while retaining the beginning and end of statements,
     # where headers and closing transactions commonly appear.

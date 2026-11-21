@@ -52,6 +52,12 @@ def ask_ollama(
             {"role": "user", "content": user_prompt},
         ],
         "stream": False,
+        # Keep the model loaded between statement files and make extraction
+        # deterministic. Both settings avoid avoidable reload/generation time.
+        "keep_alive": os.environ.get("OLLAMA_KEEP_ALIVE", "10m"),
+        "options": {
+            "temperature": 0,
+        },
     }
     if expect_json:
         payload["format"] = "json"
