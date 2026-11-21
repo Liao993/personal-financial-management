@@ -11,6 +11,8 @@ from modules.upload_pdf.pipeline.scotia_red.scotia_red_extracted import scotia_r
 from modules.upload_pdf.pipeline.scotia_red.scotia_red_transformed import scotia_red_transformed
 from modules.upload_pdf.pipeline.display import display_editable_dataframe
 from modules.upload_pdf.pipeline.common import SOURCE_OPTIONS
+from modules.upload_pdf.pipeline.common import AI_SOURCE
+from modules.upload_pdf.pipeline.ai_extraction import extract_expenses_with_ai
 
 
 PIPELINES = {
@@ -20,29 +22,40 @@ PIPELINES = {
 }
 
 
-def pipeline(pdf_files, source_by_filename):
+def pipeline(pdf_files, source_by_filename, card_name_by_filename=None):
+    card_name_by_filename = card_name_by_filename or {}
     transformed_frames = []
 
     for pdf_file in pdf_files:
         source = source_by_filename.get(pdf_file.name, SOURCE_OPTIONS[0])
-        if source not in PIPELINES:
-            st.error(f"Unsupported statement source for {pdf_file.name}: {source}")
-            continue
+        if source == AI_SOURCE:
+            payment_method = card_name_by_filename.get(pdf_file.name) or "Other Credit Card"
+            try:
+                transformed_data = extract_expenses_with_ai(pdf_file, payment_method)
+            except Exception as exc:
+                st.error(f"Could not process {pdf_file.name} with AI/OCR: {exc}")
+                continue
+        else:
+            if source not in PIPELINES:
+                st.error(f"Unsupported statement source for {pdf_file.name}: {source}")
+                continue
 
-        extract_fn, transform_fn = PIPELINES[source]
-        try:
-            pdf_file.seek(0)
-            extracted_data = extract_fn([pdf_file])
-            transformed_data = transform_fn(extracted_data)
-        except Exception as exc:
-            st.error(f"Could not process {pdf_file.name} as {source}: {exc}")
-            continue
+            extract_fn, transform_fn = PIPELINES[source]
+            try:
+                pdf_file.seek(0)
+                extracted_data = extract_fn([pdf_file])
+                transformed_data = transform_fn(extracted_data)
+            except Exception as exc:
+                st.error(f"Could not process {pdf_file.name} as {source}: {exc}")
+                continue
 
         if transformed_data is None or transformed_data.empty:
             st.warning(f"No expense rows found in {pdf_file.name}.")
             continue
 
-        transformed_data["payment_method"] = source
+        transformed_data["payment_method"] = card_name_by_filename.get(pdf_file.name) or (
+            "Other Credit Card" if source == AI_SOURCE else source
+        )
         transformed_data["statement_file"] = pdf_file.name
         transformed_data["injection_source"] = pdf_file.name  # persisted to DB
         transformed_frames.append(transformed_data)
