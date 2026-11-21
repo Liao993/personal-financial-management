@@ -123,23 +123,28 @@ def build_statement_review_table(dataframe: pd.DataFrame) -> pd.DataFrame:
     )
     review_df["secondary_fund_amount"] = np.where(has_secondary, secondary_amount, 0.0)
 
-    # Keep the amount, trip, and withdrawal allocation fields together so the
-    # common editing path does not require horizontal scrolling.
+    # Keep the review table in the same order as the editor. The first fields
+    # are the ones most often checked manually, followed by allocation and
+    # statement metadata.
     columns = [
+        "date",
+        "items",
         "amount",
         "category",
         "traveling_category",
         "trip",
+        "amount_for_number_of_travelers",
+        "paid_for_number_of_travlerers",
         "exclude_from_monthly",
         "target_fund_category",
-        "primary_fund_amount",
         "split_fund_category_1",
         "secondary_fund_amount",
-        "date",
-        "items",
-        "payment_method",
-        "statement_file",
+        "primary_fund_amount",
         "source_notes",
+        "payment_method",
+        "statement_source",
+        "statement_file",
+        "injection_source",
     ]
     columns = [column for column in columns if column in review_df.columns]
     sort_columns = [column for column in ["payment_method", "date"] if column in review_df.columns]
@@ -182,6 +187,11 @@ def display_editable_dataframe(dataframe):
 
         # Initialise columns if missing
         df = st.session_state[review_data]
+        # AI extraction returns dates as strings. Keep this as pandas
+        # datetime64 rather than object/date so Streamlit recognizes the
+        # underlying column as compatible with DateColumn.
+        if "date" in df.columns:
+            df["date"] = pd.to_datetime(df["date"], errors="coerce")
         sort_columns = [column for column in ["payment_method", "date"] if column in df.columns]
         if sort_columns:
             df = df.sort_values(sort_columns, kind="stable").reset_index(drop=True)
@@ -198,17 +208,42 @@ def display_editable_dataframe(dataframe):
         ]:
             if col not in df.columns:
                 df[col] = default
+
+        preferred_order = [
+            "date",
+            "items",
+            "amount",
+            "category",
+            "traveling_category",
+            "trip",
+            "amount_for_number_of_travelers",
+            "paid_for_number_of_travlerers",
+            "exclude_from_monthly",
+            "target_fund_category",
+            "split_fund_category_1",
+            "split_amount_1",
+            "source_notes",
+            "payment_method",
+            "statement_source",
+            "statement_file",
+            "injection_source",
+        ]
+        ordered_columns = [column for column in preferred_order if column in df.columns]
+        ordered_columns += [column for column in df.columns if column not in ordered_columns]
+        df = df[ordered_columns]
         st.session_state[review_data] = df
 
         edited_df = st.data_editor(
             st.session_state[review_data],
             column_config={
                 "payment_method": st.column_config.TextColumn(
-                    "Statement Source",
+                    "Payment Method",
                 ),
+                "statement_source": st.column_config.TextColumn("Statement Source"),
                 "statement_file": st.column_config.TextColumn(
                     "Statement File",
                 ),
+                "injection_source": st.column_config.TextColumn("Injection Source"),
                 "date": st.column_config.DateColumn(
                     "Date", format="YYYY-MM-DD", required=True
                 ),
@@ -250,6 +285,16 @@ def display_editable_dataframe(dataframe):
                     default=0.0,
                     format="%.2f",
                 ),
+                "amount_for_number_of_travelers": st.column_config.NumberColumn(
+                    "Travelers",
+                    min_value=0,
+                    step=1,
+                ),
+                "paid_for_number_of_travlerers": st.column_config.NumberColumn(
+                    "Paid Travelers",
+                    min_value=0,
+                    step=1,
+                ),
                 "source_notes": st.column_config.TextColumn(
                     "Source Notes",
                     help="Use this to distinguish a real same-day duplicate purchase.",
@@ -258,7 +303,16 @@ def display_editable_dataframe(dataframe):
             use_container_width=True,
             hide_index=True,
             num_rows="dynamic",
-            disabled=[column for column in ["payment_method", "statement_file", "injection_source"] if column in df.columns],
+            disabled=[
+                column
+                for column in [
+                    "payment_method",
+                    "statement_source",
+                    "statement_file",
+                    "injection_source",
+                ]
+                if column in df.columns
+            ],
         )
 
         if st.button("Confirm your changes"):

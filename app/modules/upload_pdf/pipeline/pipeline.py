@@ -11,6 +11,8 @@ from modules.upload_pdf.pipeline.scotia_red.scotia_red_extracted import scotia_r
 from modules.upload_pdf.pipeline.scotia_red.scotia_red_transformed import scotia_red_transformed
 from modules.upload_pdf.pipeline.display import display_editable_dataframe
 from modules.upload_pdf.pipeline.common import SOURCE_OPTIONS
+from modules.upload_pdf.pipeline.common import AI_SOURCE
+from modules.upload_pdf.pipeline.ai_extraction import extract_expenses_with_ai
 
 
 PIPELINES = {
@@ -20,29 +22,66 @@ PIPELINES = {
 }
 
 
-def pipeline(pdf_files, source_by_filename):
+def _batch_key(pdf_files, source_by_filename, payment_method_by_filename):
+    """Identify one upload batch so Streamlit reruns do not re-extract PDFs."""
+    return tuple(
+        (
+            pdf_file.name,
+            getattr(pdf_file, "size", None),
+            source_by_filename.get(pdf_file.name, SOURCE_OPTIONS[0]),
+            payment_method_by_filename.get(pdf_file.name, ""),
+        )
+        for pdf_file in pdf_files
+    )
+
+
+def pipeline(pdf_files, source_by_filename, payment_method_by_filename=None):
+    payment_method_by_filename = payment_method_by_filename or {}
+
+    batch_key = _batch_key(
+        pdf_files, source_by_filename, payment_method_by_filename
+    )
+    cached_key = st.session_state.get("upload_pipeline_batch_key")
+    cached_data = st.session_state.get("upload_pipeline_data")
+    if cached_key == batch_key and cached_data is not None:
+        return display_editable_dataframe(cached_data)
+
     transformed_frames = []
 
     for pdf_file in pdf_files:
         source = source_by_filename.get(pdf_file.name, SOURCE_OPTIONS[0])
-        if source not in PIPELINES:
-            st.error(f"Unsupported statement source for {pdf_file.name}: {source}")
-            continue
+        selected_payment_method = payment_method_by_filename.get(pdf_file.name) or source
+        if source == AI_SOURCE:
+            payment_method = selected_payment_method
+            try:
+                transformed_data = extract_expenses_with_ai(
+                    pdf_file,
+                    payment_method,
+                    filename=pdf_file.name,
+                )
+            except Exception as exc:
+                st.error(f"Could not process {pdf_file.name} with AI/OCR: {exc}")
+                continue
+        else:
+            if source not in PIPELINES:
+                st.error(f"Unsupported statement source for {pdf_file.name}: {source}")
+                continue
 
-        extract_fn, transform_fn = PIPELINES[source]
-        try:
-            pdf_file.seek(0)
-            extracted_data = extract_fn([pdf_file])
-            transformed_data = transform_fn(extracted_data)
-        except Exception as exc:
-            st.error(f"Could not process {pdf_file.name} as {source}: {exc}")
-            continue
+            extract_fn, transform_fn = PIPELINES[source]
+            try:
+                pdf_file.seek(0)
+                extracted_data = extract_fn([pdf_file])
+                transformed_data = transform_fn(extracted_data)
+            except Exception as exc:
+                st.error(f"Could not process {pdf_file.name} as {source}: {exc}")
+                continue
 
         if transformed_data is None or transformed_data.empty:
             st.warning(f"No expense rows found in {pdf_file.name}.")
             continue
 
-        transformed_data["payment_method"] = source
+        transformed_data["payment_method"] = selected_payment_method
+        transformed_data["statement_source"] = source
         transformed_data["statement_file"] = pdf_file.name
         transformed_data["injection_source"] = pdf_file.name  # persisted to DB
         transformed_frames.append(transformed_data)
@@ -52,4 +91,6 @@ def pipeline(pdf_files, source_by_filename):
         return False
 
     combined_data = pd.concat(transformed_frames, ignore_index=True)
+    st.session_state["upload_pipeline_batch_key"] = batch_key
+    st.session_state["upload_pipeline_data"] = combined_data
     return display_editable_dataframe(combined_data)
