@@ -6,7 +6,6 @@ from utils.data import (
     fund_categories,
 )
 from modules.transaction.transaction_review import record_saving_transaction
-from modules.transaction.transaction_instruction import instruction
 
 
 def transaction_form():
@@ -16,8 +15,6 @@ def transaction_form():
     )
 
     drop_down_list()
-    instruction()
-
     st.markdown(
         "<p style='font-size: 24px; color: #16a085;'>"
         "<b>Fill in the account transfer below:</b></p>",

@@ -1,11 +1,12 @@
 import streamlit as st # type: ignore
 from modules.transaction.transaction_form import transaction_form
 from modules.transaction.fund_transfer_form import fund_transfer_form
+from modules.transaction.transaction_instruction import instruction
 from modules.transaction.transaction_review import display_recorded_transactions
 from modules.transaction.transaction_saving import transaction_savings_action
 from backend.transaction_backend import fetch_last_transaction_data
 
-st.set_page_config(page_title="Account Transfers", page_icon="🔁", layout="wide")
+st.set_page_config(page_title="Transfers", page_icon="🔁", layout="wide")
 
 
 def reset_transaction_page_state():
@@ -31,6 +32,7 @@ def transaction_actions_page():
             "Fund Transfer moves money between funds in one account."
         ),
     )
+    instruction()
 
     if 'show_the_form' not in st.session_state:
         st.session_state['show_the_form'] = True
