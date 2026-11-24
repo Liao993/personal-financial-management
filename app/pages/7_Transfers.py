@@ -15,7 +15,9 @@ st.set_page_config(page_title="Transfers", page_icon="🔁", layout="wide")
 def reset_transaction_page_state():
     st.session_state["show_the_form"] = True
     st.session_state["recorded_transactions"] = []
-    st.session_state["transfer_mode"] = "Account Transfer"
+    # Apply this before the radio widget is created on the next rerun. Setting
+    # transfer_mode here would modify a widget after it was instantiated.
+    st.session_state["reset_transfer_mode"] = True
     st.session_state["transaction_form_version"] = (
         st.session_state.get("transaction_form_version", 0) + 1
     )
@@ -23,6 +25,9 @@ def reset_transaction_page_state():
 
 def transaction_actions_page():
     st.markdown("<h1 style='text-align: center; color: #16a085'>Transfers</h1>", unsafe_allow_html=True)
+
+    if st.session_state.pop("reset_transfer_mode", False):
+        st.session_state["transfer_mode"] = "Account Transfer"
 
     transfer_mode = st.radio(
         "Transfer Type",
