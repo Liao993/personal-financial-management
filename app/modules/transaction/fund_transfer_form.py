@@ -1,5 +1,6 @@
 import streamlit as st  # type: ignore
 from datetime import datetime
+from decimal import Decimal, ROUND_HALF_UP
 
 from utils.data import account_name_list, fund_categories
 from modules.transaction.transaction_review import record_saving_transaction
@@ -10,13 +11,14 @@ def build_fund_transfer_transactions(
     account_name: str,
     fund_moving_out: str,
     fund_moving_in: str,
-    amount: float,
+    amount: float | Decimal,
     source_notes: str | None = None,
 ) -> list[dict]:
     """Build the two schema-compatible rows for one fund transfer."""
     if fund_moving_out == fund_moving_in:
         raise ValueError("Fund Moving Out and Fund Moving In must be different.")
-    if amount <= 0:
+    amount_decimal = Decimal(str(amount)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    if amount_decimal <= Decimal("0.00"):
         raise ValueError("Fund transfer amount must be greater than zero.")
 
     note_suffix = f" {source_notes.strip()}" if source_notes and source_notes.strip() else ""
@@ -25,7 +27,7 @@ def build_fund_transfer_transactions(
             "transaction_date": transaction_date,
             "account_name": account_name,
             "transaction_type": "Withdrawal",
-            "amount": -amount,
+            "amount": -amount_decimal,
             "fund_category": fund_moving_out,
             "source_notes": f"Fund transfer to {fund_moving_in}.{note_suffix}",
         },
@@ -33,7 +35,7 @@ def build_fund_transfer_transactions(
             "transaction_date": transaction_date,
             "account_name": account_name,
             "transaction_type": "Deposit",
-            "amount": amount,
+            "amount": amount_decimal,
             "fund_category": fund_moving_in,
             "source_notes": f"Fund transfer from {fund_moving_out}.{note_suffix}",
         },
@@ -84,6 +86,7 @@ def fund_transfer_form():
         "Amount",
         min_value=0.0,
         step=0.01,
+        format="%.2f",
         key=f"fund_transfer_amount_{form_version}",
     )
     source_notes = st.text_input(
