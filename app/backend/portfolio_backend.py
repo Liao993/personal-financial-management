@@ -331,12 +331,16 @@ def fetch_total_deposit(tab_key: str = None) -> float:
       "tfsa"       -> accounts containing 'TFSA'
       "rrsp"       -> accounts containing 'RRSP'
       "retirement" -> accounts containing 'Retire'
+      "medium_term" -> accounts containing 'Medium'
+      "travelling" -> accounts containing 'Travel'
       None (or any other value, e.g. "total") -> combined TFSA + RRSP + Retire
     """
     keyword_map = {
         "tfsa": "TFSA",
         "rrsp": "RRSP",
         "retirement": "Retire",
+        "medium_term": "Medium",
+        "travelling": "Travel",
     }
 
     conn = get_db_connection()
